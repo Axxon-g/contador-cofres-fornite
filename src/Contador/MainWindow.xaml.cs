@@ -25,6 +25,7 @@ public partial class MainWindow : Window
     private bool checkingPresence, recording;
     private bool initializing = true, closing;
     private bool watcherStarted;
+    private volatile OverlayView? lastOverlay;
     private string importNotice = "";
 
     public MainWindow()
@@ -49,6 +50,8 @@ public partial class MainWindow : Window
         data = store.LoadData();
         sessionCounter.ExcludeHistory(data);
         ReportWriter.SessionFilter = sessionCounter.Includes;
+        lastOverlay = sessionCounter.Overlay(Profiles.View(data,config),false);
+        ReportWriter.OverlayWriter = (target, _) => ObsHud.Write(target,lastOverlay!);
         tracker = new Tracker(store, config, data);
         DemosPath.Text = config.DemosFolder;
         OverlayCheck.IsChecked = config.ShowOverlay;
@@ -166,6 +169,7 @@ public partial class MainWindow : Window
     {
         // Keep the session count consistent with the dashboard, including imports.
         var model = sessionCounter.Overlay(Profiles.View(data, config), recording);
+        lastOverlay = model;
         if (watcherStarted) NativeOverlay.Update(model);
         ReportWriter.WriteOverlay(store, model);
     }
@@ -183,7 +187,14 @@ public partial class MainWindow : Window
             // The lightweight presence probe stays responsive while a replay is being decoded.
             // Data snapshots for overlay totals are only built outside the scanner's mutation window.
             if (!vm.IsBusy) UpdateOverlay();
-            else if (watcherStarted) NativeOverlay.SetMatchPresence(recording);
+            else if (lastOverlay is { } previous)
+            {
+                var model = previous with { CurrentLive=recording, Current=recording ? "…" : previous.Last,
+                    Badge=recording ? "EN PARTIDA" : null };
+                lastOverlay=model;
+                if(watcherStarted) NativeOverlay.Update(model);
+                ReportWriter.WriteOverlay(store,model);
+            }
         }
         finally { checkingPresence = false; }
     }

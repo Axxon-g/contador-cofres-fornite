@@ -5,7 +5,7 @@
   <p>
     <img src="https://img.shields.io/badge/Windows-10%20%2F%2011-1B2B23?style=flat-square" alt="Windows 10 y 11">
     <img src="https://img.shields.io/badge/Arquitectura-x64-1B2B23?style=flat-square" alt="Arquitectura x64">
-    <img src="https://img.shields.io/badge/Versi%C3%B3n-1.2.2-F1CA76?style=flat-square&amp;labelColor=1B2B23" alt="Versión 1.2.2">
+    <img src="https://img.shields.io/badge/Versi%C3%B3n-1.2.3-F1CA76?style=flat-square&amp;labelColor=1B2B23" alt="Versión 1.2.3">
     <a href="LICENSE"><img src="https://img.shields.io/badge/Licencia-MIT-1B2B23?style=flat-square" alt="Licencia MIT"></a>
   </p>
   <p>
@@ -105,7 +105,7 @@ Actívalo en **Ajustes → Mostrar contador sobre el juego**. En Fortnite, selec
 
 Desbloquéalo para arrastrarlo a otra posición. Bloquéalo al jugar para que el ratón lo atraviese.
 
-**Para OBS:** añade una fuente **Navegador**, activa **Archivo local** y selecciona `overlay.html` en la carpeta de datos. Puedes encontrarla desde **Ajustes → Abrir datos**.
+**Para OBS:** añade una fuente **Navegador**, activa **Archivo local** y selecciona `overlay.html` en la carpeta de datos. Puedes encontrarla desde **Ajustes → Abrir datos**. Desde la versión 1.2.3, la fuente de OBS usa el mismo HUD que aparece sobre el juego: moneda, fondo transparente, estado, última partida, sesión y tesoros. Se actualiza cada dos segundos sin recargar toda la página. Mantén la app abierta y conserva `overlay-data.js` junto a `overlay.html`; ambos se generan automáticamente. Si tenías la fuente anterior, actualízala una vez en OBS después de abrir esta versión. Usa inicialmente un ancho de 300 y alto de 180 píxeles, y ajusta la escala en la escena.
 
 ## Cómo funciona
 
@@ -179,7 +179,8 @@ Desde **Ajustes → Abrir datos** puedes acceder a `%APPDATA%\ContadorModern`.
 | `config.json` | Preferencias y cuenta seleccionada. |
 | `Backups/` | Respaldos de la importación automática. |
 | `report.html` | Informe que se abre en el navegador. |
-| `overlay.html` | Fuente local de navegador para OBS. |
+| `overlay.html` | HUD transparente para la fuente Navegador de OBS. |
+| `overlay-data.js` | Cifras y estado actualizados automáticamente por la app. |
 | `matches.csv` | Exportación generada del historial. |
 | `errors.log` | Diagnóstico, cuando se registran errores. |
 
@@ -194,7 +195,7 @@ Instala el [SDK de .NET 10 para Windows x64](https://dotnet.microsoft.com/downlo
 .\build.bat
 ```
 
-El ejecutable autónomo se genera en `dist\1.2.2\Contador.exe`. La primera compilación necesita conexión para restaurar dependencias.
+El ejecutable autónomo se genera en `dist\1.2.3\Contador.exe`. La primera compilación necesita conexión para restaurar dependencias.
 
 Para desarrollar o ejecutar las comprobaciones:
 

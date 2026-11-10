@@ -74,6 +74,7 @@ public static class ReportWriter
 {
     public static readonly DateTime SessionStartUtc = DateTime.UtcNow;
     public static Func<MatchRecord, bool>? SessionFilter { get; set; }
+    public static Action<Store, OverlayView>? OverlayWriter { get; set; }
 
     /// <summary>Set while several replays are being analyzed: the report shows a loading card and refreshes faster.</summary>
     public static volatile ScanProgress? Progress;
@@ -98,7 +99,7 @@ public static class ReportWriter
         {
             var view = Profiles.View(data, config);
             WriteAtomic(store.ReportPath, Report(config, view, Profiles.List(data)));
-            WriteAtomic(store.OverlayPath, Overlay(OverlayModel.Build(view, null, false)));
+            WriteOverlay(store, OverlayModel.Build(view, null, false));
             WriteAtomic(store.CsvPath, Csv(data));
         }
         catch (Exception ex)
@@ -441,6 +442,7 @@ public static class ReportWriter
     {
         try
         {
+            if (OverlayWriter != null) { OverlayWriter(store,view); return; }
             WriteAtomic(store.OverlayPath, Overlay(view));
         }
         catch

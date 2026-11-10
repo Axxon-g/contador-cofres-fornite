@@ -152,6 +152,31 @@ try
         var frame = TokenIcon.Frame(size);
         Check(frame[0] == 137 && System.Buffers.Binary.BinaryPrimitives.ReadInt32BigEndian(frame.AsSpan(16,4)) == size,"Icono integrado multirresolucion " + size);
     }
+    var obsStore = new Store(Path.Combine(folder,"obs"));
+    var hudView = new OverlayView("2318","28","última partida",false,null,[],"23","0","28");
+    ObsHud.Write(obsStore,hudView);
+    var browserHud=File.ReadAllText(obsStore.OverlayPath);
+    Check(browserHud.Contains("background:transparent!important") && !browserHud.Contains("class=\"box\""),"OBS usa HUD transparente sin tarjeta antigua");
+    Check(browserHud.Contains("data:image/png;base64,") && browserHud.Contains("Última partida") && browserHud.Contains("Esta sesión") && browserHud.Contains("Tesoros"),"OBS usa moneda integrada y mismas etiquetas");
+    Check(browserHud.Contains("overlay-data.js?t=") && !browserHud.Contains("http://") && !browserHud.Contains("https://") && !browserHud.Contains("http-equiv=\"refresh\""),"OBS actualiza localmente sin recargar ni acceder a red");
+    var dataFile=Path.Combine(obsStore.Folder,"overlay-data.js");
+    Check(File.ReadAllText(dataFile).Contains("\"inMatch\":false"),"OBS recibe estado en espera");
+    ObsHud.Write(obsStore,hudView with {CurrentLive=true,Session="28"});
+    var js=File.ReadAllText(dataFile);
+    Check(js.Contains("\"inMatch\":true") && js.Contains("\"session\":\"28\""),"OBS actualiza estado y sesion desde la vista compartida");
+    try
+    {
+        ReportWriter.OverlayWriter=(target,_)=>ObsHud.Write(target,hudView with {CurrentLive=true});
+        ReportWriter.WriteAll(obsStore,new Config(),new TrackerData());
+        var afterReport=File.ReadAllText(obsStore.OverlayPath);
+        Check(afterReport.Contains("class=\"hud\"") && afterReport.Contains("\"inMatch\":true"),"Generar informe no restaura tarjeta ni borra estado de partida");
+    }
+    finally { ReportWriter.OverlayWriter=null; }
+    if(args.Length==2 && args[0]=="--obs-preview")
+    {
+        var previewStore = new Store(args[1]);
+        ObsHud.Write(previewStore,hudView);
+    }
     Console.WriteLine($"{checks} comprobaciones correctas.");
 }
 finally { Directory.Delete(folder, recursive:true); }

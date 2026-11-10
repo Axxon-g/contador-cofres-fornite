@@ -9,7 +9,7 @@ Sube los cambios del proyecto, incluidos README.md y la carpeta docs/ con sus im
 El ejecutable ya compilado está en:
 
 ```text
-C:\Users\axxob\OneDrive\Documentos\GitHub\contador\dist\1.2.2\Contador.exe
+C:\Users\axxob\OneDrive\Documentos\GitHub\contador\dist\1.2.3\Contador.exe
 ```
 
 Si cambias el código, vuelve a compilar antes de adjuntar el archivo. Mantén el nombre **Contador.exe**: el enlace de descarga del README lo utiliza.
@@ -17,10 +17,10 @@ Si cambias el código, vuelve a compilar antes de adjuntar el archivo. Mantén e
 ## Crear la primera Release
 
 1. Abre [la página de nueva Release](https://github.com/Axxon-g/contador-cofres-fornite/releases/new).
-2. En **Choose a tag**, escribe **v1.2.2** y elige **Create new tag** si todavía no existe.
+2. En **Choose a tag**, escribe **v1.2.3** y elige **Create new tag** si todavía no existe.
 3. En **Target**, selecciona la rama que contiene el código actualizado.
-4. Usa como título **Contador 1.2.2 — Cierre corregido**.
-5. Copia el contenido de [RELEASE-v1.2.2.md](RELEASE-v1.2.2.md) en la descripción.
+4. Usa como título **Contador 1.2.3 — Overlay unificado**.
+5. Copia el contenido de [RELEASE-v1.2.3.md](RELEASE-v1.2.3.md) en la descripción.
 6. En el área para adjuntar binarios, arrastra **dist/1.2.0/Contador.exe**. Espera a que termine la carga.
 7. Comprueba que aparece el archivo **Contador.exe**, selecciona **Set as latest release** y pulsa **Publish release**.
 
