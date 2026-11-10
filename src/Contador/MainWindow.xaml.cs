@@ -50,6 +50,7 @@ public partial class MainWindow : Window
         data = store.LoadData();
         sessionCounter.ExcludeHistory(data);
         ReportWriter.SessionFilter = sessionCounter.Includes;
+        ReportWriter.ReportBrandImage = () => "data:image/png;base64," + Convert.ToBase64String(TokenIcon.Frame(128));
         lastOverlay = sessionCounter.Overlay(Profiles.View(data,config),false);
         ReportWriter.OverlayWriter = (target, _) => ObsHud.Write(target,lastOverlay!);
         tracker = new Tracker(store, config, data);

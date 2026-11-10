@@ -177,6 +177,16 @@ try
         var previewStore = new Store(args[1]);
         ObsHud.Write(previewStore,hudView);
     }
+    try
+    {
+        ReportWriter.ReportBrandImage=()=>"data:image/png;base64,"+Convert.ToBase64String(TokenIcon.Frame(128));
+        var styledReport=ReportWriter.Report(new Config(),sessionData,Profiles.List(sessionData));
+        Check(styledReport.Contains("--bg:#101C2E") && styledReport.Contains("--card:#182D48") && styledReport.Contains("background:#6E2636"),"Reporte usa colores del launcher");
+        Check(styledReport.Contains("class=\"brand-coin\"") && styledReport.Contains("data:image/png;base64,"),"Reporte incluye moneda sin archivos externos");
+        Check(!styledReport.Contains("prefers-color-scheme:light") && !styledReport.Contains("--card:#f2e6c9"),"Reporte no vuelve al tema antiguo claro");
+        Check(styledReport.Contains("Cofres por día") && styledReport.Contains("Últimas partidas") && styledReport.Contains("Por tipo de cofre"),"Reporte conserva graficos y tablas");
+    }
+    finally {ReportWriter.ReportBrandImage=null;}
     Console.WriteLine($"{checks} comprobaciones correctas.");
 }
 finally { Directory.Delete(folder, recursive:true); }

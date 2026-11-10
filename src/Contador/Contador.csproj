@@ -2,7 +2,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType><TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable>
-    <AssemblyName>Contador</AssemblyName><Version>1.2.3</Version>
+    <AssemblyName>Contador</AssemblyName><Version>1.2.4</Version>
     <ApplicationIcon>Assets/Contador.ico</ApplicationIcon>
     <PublishTrimmed>false</PublishTrimmed><EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>

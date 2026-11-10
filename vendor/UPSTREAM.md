@@ -11,3 +11,5 @@ Contador 1.2 adapts NativeOverlay.cs to show explicit status/last-match/session/
 Contador 1.2.1 adds a native icon drawing callback for the coin embedded in Contador.Engine. The icon handle is destroyed after painting; the legacy chest remains a fallback if no callback is provided.
 
 Contador 1.2.3 routes ReportWriter.WriteAll through WriteOverlay and accepts an optional OverlayWriter callback. The desktop supplies the same immutable HUD snapshot to OBS and native presentation; the legacy writer remains the fallback for upstream entry points.
+
+Contador 1.2.4 restyles the report with the launcher's navy/crimson/gold palette and Segoe UI. ReportBrandImage supplies a self-contained coin image. Report statistics and replay analysis are unchanged.

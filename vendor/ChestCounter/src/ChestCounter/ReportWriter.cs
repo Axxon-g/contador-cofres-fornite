@@ -75,6 +75,7 @@ public static class ReportWriter
     public static readonly DateTime SessionStartUtc = DateTime.UtcNow;
     public static Func<MatchRecord, bool>? SessionFilter { get; set; }
     public static Action<Store, OverlayView>? OverlayWriter { get; set; }
+    public static Func<string>? ReportBrandImage { get; set; }
 
     /// <summary>Set while several replays are being analyzed: the report shows a loading card and refreshes faster.</summary>
     public static volatile ScanProgress? Progress;
@@ -122,29 +123,30 @@ public static class ReportWriter
     // "Logbook" look (direction A): parchment cards on a night-sea background (a day version follows Windows' light
     // mode). Titles use the embedded Pirata One font; figures use Bahnschrift, installed with Windows.
     private const string Style = """
-        :root{--bg:#0f1b24;--ink:#efe2c4;--ink2:#f7ecd2;--muted:#b8b0a0;--title:#f0c057;--card:#f2e6c9;--cink:#2a1c0f;--cmuted:#6b5a44;--line:#d8c59c;--track:#e4d3ad;--gold:#c9a24f;--star:#6c3fb5;--team:#1f7f7a;--warn:#a3361f;--warnbg:rgba(200,65,47,.10)}
-        @media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#efe4c9;--ink:#2a1c0f;--ink2:#2a1c0f;--muted:#6b5a44;--title:#7a4a1e;--card:#fffaf0;--line:#e2d2ae;--track:#efe2c4}}
-        :root[data-theme="light"]{--bg:#efe4c9;--ink:#2a1c0f;--ink2:#2a1c0f;--muted:#6b5a44;--title:#7a4a1e;--card:#fffaf0;--line:#e2d2ae;--track:#efe2c4}
+        :root{color-scheme:dark;--bg:#101C2E;--ink:#FFF4DF;--ink2:#FFF4DF;--muted:#BDCEE3;--title:#FFF4DF;--card:#182D48;--cink:#FFF4DF;--cmuted:#BDCEE3;--line:#4F7295;--track:#294360;--gold:#FFC857;--star:#D7B6FF;--team:#9EDDD6;--warn:#FFB09A;--warnbg:#412B38}
         *{box-sizing:border-box}
         body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Segoe UI",system-ui,-apple-system,sans-serif}
         main{max-width:1120px;margin:0 auto;padding:36px 16px 56px;display:flex;flex-direction:column;gap:28px}
-        .pirate{font-family:"Pirata One","Segoe UI",serif;font-weight:400}
-        .num{font-family:Bahnschrift,"Segoe UI",sans-serif;font-stretch:75%;font-variant-numeric:tabular-nums}
-        header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;border-bottom:2px solid var(--gold);padding-bottom:16px}
+        .pirate{font-family:"Segoe UI",system-ui,sans-serif;font-weight:600}
+        .num{font-family:"Segoe UI",system-ui,sans-serif;font-variant-numeric:tabular-nums}
+        header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px;background:#6E2636;padding:24px;border-radius:12px}
+        .brand-coin{width:76px;height:76px;object-fit:contain;flex:none}
         .brand{display:flex;align-items:center;gap:14px}
-        h1{margin:0;font-size:44px;line-height:1;color:var(--title)}
+        h1{margin:0;font-size:30px;line-height:1.2;color:var(--title);text-wrap:balance}
         .who{font-size:15px;color:var(--muted);margin-top:4px}.who b{color:var(--ink2)}
         .muted{color:var(--muted)}
-        h2{margin:0 0 10px;font-size:26px;line-height:1.2;color:var(--title)}
+        h2{margin:0 0 14px;font-size:21px;font-weight:600;line-height:1.2;color:var(--title)}
         .tiles{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
         .tile{background:var(--card);color:var(--cink);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:2px}
         .tile .v{font-size:36px;font-weight:700;line-height:1.1}
         .tile .l{font-size:13px;color:var(--cmuted)}
         .tile .s{font-size:12px;color:var(--cmuted);margin-top:4px}
-        .tile.hero{grid-column:span 2;background:#7a4a1e;color:#fbecc4;border:2px solid #e7b440;justify-content:space-between}
-        .tile.hero .k{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#f3cf7a}
-        .tile.hero .v{font-size:60px;color:#ffd36a;line-height:1}
-        .tile.hero .l{color:#fbecc4}
+        .tile.hero{grid-column:span 2;background:var(--card);color:var(--ink);justify-content:space-between}
+        .tile.hero .k{font-size:16px;color:var(--muted)}
+        .tile.hero .v{font-size:60px;color:var(--gold);line-height:1.1}
+        .tile.hero .l{color:var(--muted)}
+        ::selection{background:#695128;color:var(--ink)}
+        :focus-visible{outline:2px solid var(--gold);outline-offset:3px}
         @media (max-width:820px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.tile.hero{grid-column:span 2}}
         .card{background:var(--card);color:var(--cink);border:1px solid var(--line);border-radius:8px;padding:6px 16px;overflow-x:auto}
         .two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
@@ -158,7 +160,7 @@ public static class ReportWriter
         .big{font-size:20px}
         .items{color:var(--cmuted);font-size:13px}
         .star{color:var(--star);font-weight:600}
-        .gold{color:#b9821c}
+        .gold{color:var(--gold)}
         .sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:10px;vertical-align:-1px}
         .meter{display:block;width:140px;height:6px;background:var(--track);border-radius:3px;overflow:hidden}
         .meter i{display:block;height:6px}
@@ -169,7 +171,7 @@ public static class ReportWriter
         .bars{display:flex;align-items:stretch;gap:4px;height:150px;padding-top:26px}
         .col{flex:1;min-width:5px;display:flex;align-items:flex-end;position:relative;cursor:default}
         .bar{width:100%;background:var(--gold);border-radius:3px 3px 0 0;transition:filter .12s}
-        .bar.top{background:#c8412f}
+        .bar.top{background:#E48987}
         .bar.zero{background:var(--line);height:3px!important}
         .col:hover .bar{filter:brightness(1.15)}
         .tip{position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--cink);color:var(--card);
@@ -191,11 +193,11 @@ public static class ReportWriter
         footer{font-size:13px;color:var(--muted);border-top:1px dashed var(--gold);padding-top:14px}
         .loading{display:flex;gap:16px;align-items:center;background:var(--card);color:var(--cink);border:2px solid var(--gold);border-radius:8px;padding:16px 18px}
         .loading .muted{color:var(--cmuted)}
-        .spin{width:30px;height:30px;flex:none;border:3px solid var(--line);border-top-color:#b9821c;border-radius:50%;animation:spin .8s linear infinite}
+        .spin{width:30px;height:30px;flex:none;border:3px solid var(--line);border-top-color:#FFC857;border-radius:50%;animation:spin .8s linear infinite}
         @keyframes spin{to{transform:rotate(360deg)}}
         .loading .grow{flex:1;min-width:0}
         .pbar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin:8px 0 6px}
-        .pbar i{display:block;height:100%;background:#b9821c}
+        .pbar i{display:block;height:100%;background:#FFC857}
         .profiles{margin-top:-16px;font-size:13px}
         """;
 
@@ -227,11 +229,11 @@ public static class ReportWriter
 
     private static readonly Dictionary<string, string> KindColor = new()
     {
-        [ChestKinds.Normal] = "#c9a24f",
-        [ChestKinds.Rare] = "#2c7fb8",
-        [ChestKinds.Buried] = "#8a5a2b",
-        [ChestKinds.Extraction] = "#1f7f7a",
-        [ChestKinds.PosterChest] = "#7a4fc2",
+        [ChestKinds.Normal] = "#FFC857",
+        [ChestKinds.Rare] = "#67B7F0",
+        [ChestKinds.Buried] = "#E8AA79",
+        [ChestKinds.Extraction] = "#9EDDD6",
+        [ChestKinds.PosterChest] = "#D7B6FF",
         [ChestKinds.Other] = "#9a8f7a",
     };
 
@@ -263,7 +265,7 @@ public static class ReportWriter
             <meta name="viewport" content="width=device-width,initial-scale=1">
             <meta http-equiv="refresh" content="{(progress != null ? 2 : 15)}">
             <title>{title}</title><style>{FontFace}{Style}</style></head><body><main>
-            <header><div class="brand">{ChestIcon}<div><h1 class="pirate">{title}</h1>{(player.Length > 0 ? $"<div class=\"who\"><b>{H(player)}</b></div>" : "")}</div></div>
+            <header><div class="brand">{(ReportBrandImage is { } brand ? $"<img class=\"brand-coin\" src=\"{H(brand())}\" alt=\"Moneda de Contador\">" : ChestIcon)}<div><h1 class="pirate">{title}</h1>{(player.Length > 0 ? $"<div class=\"who\"><b>{H(player)}</b></div>" : "")}</div></div>
             <span class="muted" style="font-size:13px">{updated}</span></header>
             {LoadingCard(progress)}{ProfilesLine(profiles, player)}
             <section class="tiles">
@@ -400,7 +402,7 @@ public static class ReportWriter
             var treasure = string.Join("<br>", m.TreasureFinds.Select(f => $"<span class=\"{(f.FromGoldenChest ? "gold" : "star")}\">{(f.FromGoldenChest ? "★★" : "★")} {H(f.DisplayName)}</span>"))
                 + string.Concat(m.TeamTreasureFinds.Select((f, i) => $"<span class=\"team\">{(i == 0 && m.TreasureFinds.Count == 0 ? "" : "<br>")}{TeamIcon} ★ {H(f.DisplayName)}</span>"));
             var win = m.Placement == 1;
-            sb.Append($"<tr><td class=\"nw num items\">{L.DateTimeShort(When(m))}</td><td>{H(Pretty.Playlist(m.Playlist))}</td><td class=\"nw num\"{(win ? " style=\"color:#b9821c;font-weight:700\"" : "")}>{H(Pretty.Placement(m))}</td><td class=\"n num big\">{m.ChestsOpened}</td><td class=\"items\">{treasure}</td></tr>");
+            sb.Append($"<tr><td class=\"nw num items\">{L.DateTimeShort(When(m))}</td><td>{H(Pretty.Playlist(m.Playlist))}</td><td class=\"nw num\"{(win ? " style=\"color:#FFC857;font-weight:700\"" : "")}>{H(Pretty.Placement(m))}</td><td class=\"n num big\">{m.ChestsOpened}</td><td class=\"items\">{treasure}</td></tr>");
         }
         sb.Append("</table></div></section>");
 

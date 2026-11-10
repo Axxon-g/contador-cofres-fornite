@@ -1,6 +1,6 @@
 # Verificación de Contador 1.2.1
 
-- Compilación Windows x64 autónoma: ejecutable dist/1.2.3/Contador.exe.
+- Compilación Windows x64 autónoma: ejecutable dist/1.2.4/Contador.exe.
 - 35 comprobaciones correctas con una copia del historial real: cabeceras, perfiles, persistencia, importación, respaldo, detección de partida, retirada del aviso al finalizar y exclusión de repeticiones abandonadas.
 - Sesión comprobada con historial anterior, importaciones, repeticiones antiguas y varias partidas nuevas. Última partida y sesión se calculan por separado.
 - Capturas nativas del overlay en espera y en partida, con etiquetas de última partida, sesión y tesoros.
@@ -22,3 +22,7 @@ Tres pruebas con ventanas WPF nativas pasaron: cierre inmediato, cierre mientras
 La fuente de OBS utiliza ObsHud y la misma vista inmutable que NativeOverlay. Pasaron 46 comprobaciones del motor/HUD, incluidas transparencia, moneda, etiquetas, datos locales, estado de partida y protección frente a la regeneración del informe. Se ejecutó también el JavaScript generado con un documento simulado: actualizó cifras y estado, y solicitó exclusivamente el archivo local cada dos segundos.
 
 No se verificó visualmente dentro de OBS. Los navegadores de pruebas locales fallaron al iniciarse y la herramienta de navegador bloqueó la apertura de archivos locales por política. La compilación y las pruebas de generación/actualización pasaron; queda comprobar la apariencia en la fuente Navegador de OBS.
+
+## Reporte renovado en 1.2.4
+
+Se actualizó el CSS del reporte a la paleta y tipografía del launcher y se integró la moneda en una URI de datos. Se añadieron comprobaciones de colores, imagen embebida, ausencia del tema claro anterior y conservación de gráficos y tablas. La herramienta de navegador de esta sesión no permite abrir archivos locales; no se certifica una inspección visual del reporte en ese navegador.
