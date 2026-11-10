@@ -151,6 +151,8 @@ public static class NativeOverlay
     }
 
     /// <summary>Replaces what is shown. The window resizes itself to fit.</summary>
+    public static Func<IntPtr,int,int,int,bool>? DrawCounterIcon { get; set; }
+
     public static void SetMatchPresence(bool recording)
     {
         Update(_view with { CurrentLive = recording, Current = recording ? "…" : _view.Last,
@@ -647,7 +649,7 @@ public static class NativeOverlay
                 TextWidth(hdc, _fontHudSmall, "Última partida" + Sep + (v.Last ?? "—"), out _),
                 TextWidth(hdc, _fontHudSmall, "Tesoros" + Sep + v.Treasures, out _),
             }.Max();
-            w = lockW + pad + Math.Max(Sc(26) + Sc(8) + bigW, rowsW) + pad + Sc(14);
+            w = lockW + pad + Math.Max(Sc(34) + Sc(8) + bigW, rowsW) + pad + Sc(14);
             h = pad + _hudBigH + 4 * (_hudSmallH + Sc(2)) + pad;
             w = Math.Max(_stableW, w);
             _stableW = w;
@@ -814,10 +816,11 @@ public static class NativeOverlay
         // Total, with the chest.
         var bigW = TextWidth(hdc, _fontHudBig, v.Total, out _);
         Outlined(hdc, _fontHudBig, live ? gold : white, v.Total, left, y, right, y + _hudBigH, DT_RIGHT);
-        var iw = Sc(26);
-        var ih = Sc(22);
+        var iw = Sc(34);
+        var ih = iw;
         var ix = right - bigW - Sc(8) - iw;
-        Chest(hdc, ix, y + (_hudBigH - ih) / 2, iw, ih, gold, Rgb(224, 165, 38), ink, ink);
+        if (DrawCounterIcon?.Invoke(hdc, ix, y + (_hudBigH - ih) / 2, iw) != true)
+            Chest(hdc, ix, y + (_hudBigH - ih) / 2, iw, ih, gold, Rgb(224, 165, 38), ink, ink);
         y += _hudBigH + Sc(2);
 
         // Last match (or the match in progress), session, treasures.

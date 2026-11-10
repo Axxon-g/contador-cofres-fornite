@@ -133,6 +133,8 @@ try
     Check(!sessionOverlay.CurrentLive && sessionOverlay.Session == "12" && sessionOverlay.Last == "3", "Ultima partida y sesion se calculan por separado");
     if (args.Length == 2 && args[0] == "--overlay-preview")
     {
+        var painted = 0;
+        NativeOverlay.DrawCounterIcon = (dc,x,y,size) => { var ok = TokenIcon.Draw(dc,x,y,size); if(ok) Interlocked.Increment(ref painted); return ok; };
         Directory.CreateDirectory(args[1]);
         NativeOverlay.SetStyle("hud"); NativeOverlay.SetAppearance(100,100);
         NativeOverlay.Start(-20000,-20000,true,(_,_)=>{},_=>{});
@@ -143,6 +145,12 @@ try
             Check(NativeOverlay.Snapshot(Path.Combine(args[1],active?"overlay-en-partida.png":"overlay-espera.png")),"Captura overlay");
         }
         NativeOverlay.Stop();
+        Check(painted > 0,"Moneda integrada se dibuja mediante icono nativo");
+    }
+    foreach(var size in new[] {16,24,32,48,64,128,256})
+    {
+        var frame = TokenIcon.Frame(size);
+        Check(frame[0] == 137 && System.Buffers.Binary.BinaryPrimitives.ReadInt32BigEndian(frame.AsSpan(16,4)) == size,"Icono integrado multirresolucion " + size);
     }
     Console.WriteLine($"{checks} comprobaciones correctas.");
 }

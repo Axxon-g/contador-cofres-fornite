@@ -7,3 +7,5 @@ Source files are retained verbatim. Binary presentation resources (.ico, .woff2)
 No changes to chest classification, replay decoding, deduplication or attribution.
 
 Contador 1.2 adapts NativeOverlay.cs to show explicit status/last-match/session/treasure labels and a lightweight presence update. ReportWriter.cs accepts an optional SessionFilter so its session totals match the desktop app. These presentation changes do not modify replay analysis.
+
+Contador 1.2.1 adds a native icon drawing callback for the coin embedded in Contador.Engine. The icon handle is destroyed after painting; the legacy chest remains a fallback if no callback is provided.

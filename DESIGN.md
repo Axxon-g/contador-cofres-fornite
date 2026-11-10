@@ -119,3 +119,7 @@ El estado tiene título, detalle y acción. El panel de ayuda usa azul tonal y t
 
 ### Don't:
 - Don't descargar imágenes en ejecución, añadir transiciones ornamentales ni datos ficticios.
+
+## Iconografía 1.2.1
+
+La moneda se distribuye en Assets/Contador.ico con siete tamaños (16 a 256). ApplicationIcon y Window.Icon usan el mismo recurso; el motor lo embebe como Contador.Token.ico y lo dibuja en el overlay mediante CreateIconFromResourceEx/DrawIconEx. Cada handle temporal se libera con DestroyIcon. Se verificó también el icono extraído por Windows del ejecutable publicado.

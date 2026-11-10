@@ -4,4 +4,5 @@
 <Compile Include="../../vendor/ChestCounter/src/ChestCounter/*.cs" Exclude="../../vendor/ChestCounter/src/ChestCounter/Program.cs"/>
 <ProjectReference Include="../../vendor/ChestCounter/lib/FortniteReplayReader/FortniteReplayReader.csproj"/>
 <EmbeddedResource Include="../../vendor/ChestCounter/RELEASE_NOTES.md" LogicalName="ReleaseNotes.md"/>
+<EmbeddedResource Include="../Contador/Assets/Contador.ico" LogicalName="Contador.Token.ico"/>
 </ItemGroup></Project>

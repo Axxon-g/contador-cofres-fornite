@@ -1,5 +1,5 @@
 <Window x:Class="Contador.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-Style="{StaticResource {x:Type Window}}" Title="Contador · Fortnite" Width="1120" Height="780" MinWidth="860" MinHeight="640" WindowStartupLocation="CenterScreen">
+Style="{StaticResource {x:Type Window}}" Icon="/Contador;component/Assets/Contador.ico" Title="Contador · Fortnite" Width="1120" Height="780" MinWidth="860" MinHeight="640" WindowStartupLocation="CenterScreen">
 <Grid>
 <Grid.ColumnDefinitions><ColumnDefinition Width="200"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
 <Border Background="#6E2636" Padding="22,30">

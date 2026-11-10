@@ -9,6 +9,7 @@ public partial class App : Application
         if (!created) { MessageBox.Show("Contador ya está abierto. Búscalo en la barra de tareas.", "Contador"); Shutdown(); return; }
         DispatcherUnhandledException += (_, a) => { MessageBox.Show(a.Exception.Message, "No se pudo completar la operación"); a.Handled = true; };
         base.OnStartup(e);
+        ChestCounter.NativeOverlay.DrawCounterIcon = Contador.Engine.TokenIcon.Draw;
     }
     protected override void OnExit(ExitEventArgs e) { instance?.Dispose(); base.OnExit(e); }
 }
