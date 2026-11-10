@@ -1,1 +1,1 @@
-<Solution><Project Path="src/Contador/Contador.csproj"/><Project Path="src/Contador.Engine/Contador.Engine.csproj"/><Project Path="tests/Contador.Checks/Contador.Checks.csproj"/></Solution>
+<Solution><Project Path="src/Contador/Contador.csproj"/><Project Path="src/Contador.Engine/Contador.Engine.csproj"/><Project Path="tests/Contador.Checks/Contador.Checks.csproj"/><Project Path="tests/Contador.DesktopChecks/Contador.DesktopChecks.csproj"/></Solution>

@@ -23,7 +23,7 @@ public partial class MainWindow : Window
     private readonly SessionCounter sessionCounter = new(DateTime.UtcNow);
     private readonly DispatcherTimer presenceTimer = new() { Interval = TimeSpan.FromSeconds(2) };
     private bool checkingPresence, recording;
-    private bool initializing = true, closing, allowClose;
+    private bool initializing = true, closing;
     private bool watcherStarted;
     private string importNotice = "";
 
@@ -81,7 +81,8 @@ public partial class MainWindow : Window
         };
         timer.Tick += async (_, _) => await ScanAsync();
         presenceTimer.Tick += async (_, _) => await CheckPresenceAsync();
-        Closing += OnClosing;
+        _ = new WindowCloseController(this, SaveBeforeCloseAsync, BeginClose,
+            ex => MessageBox.Show(this, ex.Message, "No se pudieron guardar los datos"));
     }
 
     private async Task ScanAsync()
@@ -266,18 +267,17 @@ public partial class MainWindow : Window
         }
         catch (Exception ex) { ShowError(ex); }
     }
-    private async void OnClosing(object? sender, CancelEventArgs e)
+    private void BeginClose()
     {
-        if (allowClose) return;
-        e.Cancel = true;
-        if (closing) return;
         closing = true; timer.Stop(); presenceTimer.Stop();
         vm.Status = "Guardando antes de salir";
         vm.StatusDetail = vm.IsBusy ? "Esperando a que termine el análisis actual…" : "Cerrando el contador…";
         vm.NotifyAll();
+    }
+    private async Task SaveBeforeCloseAsync()
+    {
         await gate.WaitAsync();
         try { NativeOverlay.Stop(); store.SaveConfig(config); store.SaveData(data); }
-        catch (Exception ex) { MessageBox.Show(this, ex.Message, "No se pudieron guardar los datos"); }
-        finally { gate.Release(); allowClose = true; Close(); }
+        finally { gate.Release(); }
     }
 }

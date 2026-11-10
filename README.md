@@ -5,7 +5,7 @@
   <p>
     <img src="https://img.shields.io/badge/Windows-10%20%2F%2011-1B2B23?style=flat-square" alt="Windows 10 y 11">
     <img src="https://img.shields.io/badge/Arquitectura-x64-1B2B23?style=flat-square" alt="Arquitectura x64">
-    <img src="https://img.shields.io/badge/Versi%C3%B3n-1.2.1-F1CA76?style=flat-square&amp;labelColor=1B2B23" alt="Versión 1.2.1">
+    <img src="https://img.shields.io/badge/Versi%C3%B3n-1.2.2-F1CA76?style=flat-square&amp;labelColor=1B2B23" alt="Versión 1.2.2">
     <a href="LICENSE"><img src="https://img.shields.io/badge/Licencia-MIT-1B2B23?style=flat-square" alt="Licencia MIT"></a>
   </p>
   <p>
@@ -194,13 +194,14 @@ Instala el [SDK de .NET 10 para Windows x64](https://dotnet.microsoft.com/downlo
 .\build.bat
 ```
 
-El ejecutable autónomo se genera en `dist\1.2.1\Contador.exe`. La primera compilación necesita conexión para restaurar dependencias.
+El ejecutable autónomo se genera en `dist\1.2.2\Contador.exe`. La primera compilación necesita conexión para restaurar dependencias.
 
 Para desarrollar o ejecutar las comprobaciones:
 
 ```powershell
 dotnet run --project src/Contador/Contador.csproj
 dotnet run --project tests/Contador.Checks/Contador.Checks.csproj -c Release
+dotnet run --project tests/Contador.DesktopChecks/Contador.DesktopChecks.csproj -c Release
 ```
 
 La versión 1.2.1 pasó 43 comprobaciones, incluidas pruebas de importación sobre una copia de historial real. Esto comprueba conservación y combinación de datos; no sustituye validar el lector contra nuevas versiones de Fortnite.
