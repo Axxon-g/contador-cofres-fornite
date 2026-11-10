@@ -2,19 +2,20 @@
 name: Contador desktop
 description: Aplicación nativa de recuento para Windows
 colors:
-  ground: "#101615"
-  panel: "#19221F"
-  ink: "#F3F5ED"
-  muted: "#B4C1B7"
-  gold: "#F1CA76"
-  line: "#35443B"
-  pine: "#1B2B23"
+  ground: "#101C2E"
+  panel: "#182D48"
+  ink: "#FFF4DF"
+  muted: "#BDCEE3"
+  gold: "#FFC857"
+  line: "#4F7295"
+  pirate-red: "#6E2636"
   ready: "#A9D5A5"
-  row-alternate: "#17201C"
-  row-selected: "#3C503E"
-  help-surface: "#223428"
-  help-ink: "#D0DFC9"
-  text-selection: "#73613C"
+  status-attention: "#F1CA76"
+  row-alternate: "#14243A"
+  row-selected: "#365779"
+  help-surface: "#20364C"
+  help-ink: "#E2D1AD"
+  text-selection: "#695128"
 typography:
   body:
     fontFamily: Segoe UI
@@ -73,16 +74,16 @@ components:
 
 Operate: una aplicación de recuento para Windows. Navegación nativa, tabla ordenable, selección de carpetas y exportación con diálogos del sistema.
 
-Interfaz de noche para acompañar una sesión de juego.
+Interfaz de noche para acompañar una sesión de juego, con azul marino, rojo pirata y dorado de tesoro. La moneda aportada por el usuario forma parte de la identidad local de v1.2.
 
 **Key Characteristics:**
 - Estado siempre en texto además del color.
 - Segoe UI respeta la plataforma Windows.
-- Sin imágenes externas, transiciones ornamentales ni datos ficticios.
+- Moneda pirata integrada; sin descargas de imágenes, transiciones ornamentales ni datos ficticios.
 
 ## Colors
 
-Verde carbón para el fondo, pino para la navegación, panel verde oscuro, texto claro y secundario apagado. El dorado enlaza el total y la selección de navegación; el verde claro indica detección disponible. Los valores normativos están en el frontmatter, extraídos del XAML y de los estados de navegación y detección.
+Azul marino para el fondo, rojo pirata para la navegación, panel azul oscuro, texto marfil y secundario azul claro. El dorado enlaza el total y la selección de navegación; el verde claro indica detección disponible. Los valores normativos están en el frontmatter, extraídos del XAML y de los estados de navegación y detección.
 
 ## Typography
 
@@ -104,11 +105,11 @@ Radios de controles 8 y paneles 10 unidades. Los controles nativos conservan su 
 
 ## Components
 
-Botones con borde discreto; al pasar el puntero el borde es dorado. El foco de teclado añade un borde dorado de 2 unidades. Desactivados: opacidad 0.45. Navegación activa: fondo dorado y texto carbón.
+Botones con borde discreto; al pasar el puntero el borde es dorado. El foco de teclado añade un borde dorado de 2 unidades. Desactivados: opacidad 0.45. Navegación activa: fondo dorado y texto azul marino.
 
-Campos oscuros con cursor dorado y selección tostada. Selector de cuenta, casillas y deslizador son controles WPF. Tabla de solo lectura, ordenable, filas de 48 unidades, fondos alternos y selección verde más clara.
+Campos oscuros con cursor dorado y selección tostada. Selector de cuenta, casillas y deslizador son controles WPF. Tabla de solo lectura, ordenable, filas de 48 unidades, fondos alternos y selección azul más clara.
 
-El estado tiene título, detalle y acción. El panel de ayuda usa verde tonal y texto claro. Las superficies específicas se describen en `.impeccable/surfaces/desktop.md`.
+El estado tiene título, detalle y acción. El panel de ayuda usa azul tonal y texto arena. La moneda se muestra a 112 × 112 unidades con proporciones conservadas; `Assets/pirate-shop-token.png` es un Resource WPF integrado, cargado mediante URI de componente y con nombre accesible. El estado de partida ocupa una línea dorada de 18 unidades y peso Bold antes del estado del lector. Las superficies específicas se describen en `.impeccable/surfaces/desktop.md`.
 
 ## Do's and Don'ts
 
@@ -117,4 +118,4 @@ El estado tiene título, detalle y acción. El panel de ayuda usa verde tonal y 
 - Do usar Segoe UI y los diálogos del sistema.
 
 ### Don't:
-- Don't introducir imágenes externas, transiciones ornamentales ni datos ficticios.
+- Don't descargar imágenes en ejecución, añadir transiciones ornamentales ni datos ficticios.

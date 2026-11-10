@@ -2,7 +2,7 @@
 
 Native Windows desktop, C# WPF (`net10.0-windows`). Source authority: `src/Contador/App.xaml`, `MainWindow.xaml`, and navigation/status assignments in `MainWindow.xaml.cs`. Root `DESIGN.md` records the extracted system; `PRODUCT.md` retains product truth.
 
-The charcoal workspace, pine navigation rail and gold count/active navigation establish the night-session atmosphere. Segoe UI and Windows controls keep the application familiar. Ready state uses pale green; every status also has text. This is a code-led surface with no comp.
+The navy workspace, pirate-red navigation rail, ivory text and treasure-gold count/active navigation establish the night-session atmosphere. The user-supplied pirate token is embedded as a WPF Resource, displayed at 112 × 112 with Uniform stretch and accessible name “Moneda de tesoro pirata”; it needs no network image request. Segoe UI and Windows controls keep the application familiar. Ready state uses pale green; every status also has text. This is a code-led surface with no comp.
 
 ## Composition
 
@@ -12,11 +12,12 @@ The total is the strongest figure (76, SemiBold, gold); session count is seconda
 
 ## Implementation boundary
 
-Use native controls and OS folder/export dialogs. Preserve keyboard access, named inputs and state text. The inherited overlay is independently configurable. The replay reader remains the source of supported-format counting; do not show fabricated match data or imply live-game counting.
+Use native controls and OS folder/export dialogs. Preserve keyboard access, named inputs and state text. The inherited overlay is independently configurable. The replay reader remains the source of supported-format counting; do not show fabricated match data or imply live-game counting. Presence separately probes headers of recently written replay files (three-minute window), without reading the game process. The gold banner reads “EN PARTIDA · Cofres al finalizar” or “Esperando partida”; completed replay processing supplies the figures.
+
+Session means completed matches since opening the app, excluding baseline history and historical imports. Dashboard, native overlay and report session filter share this rule, scoped to the selected account. Dashboard copy reads “Cofres de esta sesión” and “N partidas desde que abriste la app”. Overlay labels distinguish total, “Esta sesión”, “Última partida”, “Tesoros” and presence (“En partida” / “Esperando”); presence does not imply a live chest count.
 
 `.impeccable/design.json` records extracted color metadata in schema version 2. Root DESIGN.md owns extracted token primitives in frontmatter; sidecar color metadata references the same names. No tonal ramps, browser component previews, web hook or detector were fabricated: this is WPF, with no web component library. Empty motion/shadow/breakpoint arrays mean none were extracted; window constraints are documented here rather than misrepresented as CSS breakpoints.
 
 ## Evidence boundary
 
-Final review accepted source/preview-scoped delivery. Build, native runtime behavior, live resizing, keyboard interaction and replay count accuracy remain unverified. Existing review captures are in `.impeccable/review`; they do not establish a successful native run.
-
+v1.2 source and screenshot review is accepted for shipping. Publish succeeded: `dist/1.2.0/Contador.exe` reports version 1.2.0.0. All 35 runtime checks passed with copies of actual histories, and native overlay snapshots passed. Current review captures are in the task workspace `work/v12-review`; earlier captures remain in `.impeccable/review`. No browser detector applies to this native Windows surface.

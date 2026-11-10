@@ -20,7 +20,9 @@ public partial class MainWindow : Window
     private readonly Tracker tracker;
     private readonly SemaphoreSlim gate = new(1, 1);
     private readonly DispatcherTimer timer = new() { Interval = TimeSpan.FromSeconds(8) };
-    private readonly DateTime sessionStarted = DateTime.UtcNow;
+    private readonly SessionCounter sessionCounter = new(DateTime.UtcNow);
+    private readonly DispatcherTimer presenceTimer = new() { Interval = TimeSpan.FromSeconds(2) };
+    private bool checkingPresence, recording;
     private bool initializing = true, closing, allowClose;
     private bool watcherStarted;
     private string importNotice = "";
@@ -45,6 +47,8 @@ public partial class MainWindow : Window
         // Counts completed matches; no speculative live total.
         config.LiveUpdate = false;
         data = store.LoadData();
+        sessionCounter.ExcludeHistory(data);
+        ReportWriter.SessionFilter = sessionCounter.Includes;
         tracker = new Tracker(store, config, data);
         DemosPath.Text = config.DemosFolder;
         OverlayCheck.IsChecked = config.ShowOverlay;
@@ -54,6 +58,8 @@ public partial class MainWindow : Window
         initializing = false;
         Loaded += async (_, _) =>
         {
+            presenceTimer.Start();
+            await CheckPresenceAsync();
             await gate.WaitAsync();
             vm.IsBusy = true; vm.NotifyAll();
             try
@@ -64,6 +70,7 @@ public partial class MainWindow : Window
                 var imported = await Task.Run(() => HistoryImporter.Import(store, data,
                     Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)));
                 importNotice = string.Join(" ", new[] { imported.Summary }.Concat(imported.Warnings).Where(s => s.Length > 0));
+                sessionCounter.ExcludeHistory(data);
                 Refresh();
                 await Task.Run(() => tracker.UpgradeIfNeeded());
                 store.SaveConfig(config);
@@ -73,6 +80,7 @@ public partial class MainWindow : Window
             if (!closing) { ApplyOverlay(); await ScanAsync(); if (!closing) timer.Start(); }
         };
         timer.Tick += async (_, _) => await ScanAsync();
+        presenceTimer.Tick += async (_, _) => await CheckPresenceAsync();
         Closing += OnClosing;
     }
 
@@ -97,13 +105,13 @@ public partial class MainWindow : Window
             var errors = data.ProcessedFiles.Values.Count(v => v.StartsWith("error:", StringComparison.Ordinal));
             vm.Status = !exists ? "No se encontró la carpeta de repeticiones"
                 : tracker.IsFinishing ? "La partida terminó. Preparando el recuento"
-                : tracker.HasPending || tracker.IsLive ? "Partida en curso"
+                : recording ? "Partida en curso"
                 : errors > 0 ? "Hay repeticiones que no se pudieron leer"
                 : "Listo para tu próxima partida";
             vm.StatusColor = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString(exists && errors == 0 ? "#A9D5A5" : "#F1CA76")!;
             vm.StatusDetail = !exists ? "Activa Grabar repeticiones en Fortnite o elige la carpeta correcta en Ajustes."
                 : errors > 0 ? $"{errors} archivos con error. Consulta el registro en Ajustes; el lector puede necesitar una actualización."
-                : tracker.HasPending || tracker.IsLive ? "Los cofres se sumarán cuando Fortnite finalice la repetición."
+                : recording ? "Los cofres se sumarán cuando Fortnite finalice la repetición."
                 : "Detección automática cada 8 segundos. Solo se cuentan partidas de Battle Royale.";
             vm.Footer = count > 0 ? $"{count} partida(s) añadida(s) · Última revisión {DateTime.Now:HH:mm:ss}"
                 : $"Última revisión {DateTime.Now:HH:mm:ss} · Historial guardado localmente";
@@ -117,7 +125,7 @@ public partial class MainWindow : Window
 
     private void Refresh()
     {
-        vm.Refresh(data, config, sessionStarted);
+        vm.Refresh(data, config, sessionCounter);
         var profiles = Profiles.List(data);
         initializing = true;
         ProfilePicker.ItemsSource = profiles;
@@ -156,14 +164,27 @@ public partial class MainWindow : Window
     private void UpdateOverlay()
     {
         // Keep the session count consistent with the dashboard, including imports.
-        var model = OverlayModel.Build(Profiles.View(data, config), null, tracker.HasPending || tracker.IsLive);
-        model = model with
-        {
-            Session = vm.Session,
-            Rows = model.Rows.Select(r => r.Label == "Sesión" ? r with { Value = vm.Session + " cofres", Detail = null } : r).ToList()
-        };
+        var model = sessionCounter.Overlay(Profiles.View(data, config), recording);
         if (watcherStarted) NativeOverlay.Update(model);
         ReportWriter.WriteOverlay(store, model);
+    }
+    private async Task CheckPresenceAsync()
+    {
+        if (closing || checkingPresence) return;
+        checkingPresence = true;
+        try
+        {
+            var folder = config.DemosFolder;
+            recording = await Task.Run(() => MatchPresence.IsRecording(folder, DateTime.UtcNow));
+            if (closing) return;
+            vm.MatchState = recording ? "EN PARTIDA · Cofres al finalizar" : "Esperando partida";
+            vm.NotifyAll();
+            // The lightweight presence probe stays responsive while a replay is being decoded.
+            // Data snapshots for overlay totals are only built outside the scanner's mutation window.
+            if (!vm.IsBusy) UpdateOverlay();
+            else if (watcherStarted) NativeOverlay.SetMatchPresence(recording);
+        }
+        finally { checkingPresence = false; }
     }
     private void Navigate(string page)
     {
@@ -250,7 +271,7 @@ public partial class MainWindow : Window
         if (allowClose) return;
         e.Cancel = true;
         if (closing) return;
-        closing = true; timer.Stop();
+        closing = true; timer.Stop(); presenceTimer.Stop();
         vm.Status = "Guardando antes de salir";
         vm.StatusDetail = vm.IsBusy ? "Esperando a que termine el análisis actual…" : "Cerrando el contador…";
         vm.NotifyAll();

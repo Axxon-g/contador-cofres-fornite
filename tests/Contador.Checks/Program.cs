@@ -111,6 +111,39 @@ try
         result = HistoryImporter.Import(realStore,realData,args[1]);
         Check(result.Added == 0 && result.Updated == 0, "Historial real no cambia al reabrir");
     }
+    var now = DateTime.UtcNow;
+    var presenceFolder = Path.Combine(folder,"presence"); Directory.CreateDirectory(presenceFolder);
+    var presenceFile = Path.Combine(presenceFolder,"match.replay");
+    File.Copy(livePath,presenceFile);
+    Check(MatchPresence.IsRecording(presenceFolder,now), "Detecta partida activa sin descifrar cofres");
+    File.Copy(finished,presenceFile,true);
+    Check(!MatchPresence.IsRecording(presenceFolder,now), "Fin de partida retira aviso inmediatamente");
+    File.Copy(livePath,presenceFile,true); File.SetLastWriteTimeUtc(presenceFile,now.AddMinutes(-5));
+    Check(!MatchPresence.IsRecording(presenceFolder,now), "Repeticion abandonada no indica partida activa");
+    Check(!MatchPresence.IsRecording(Path.Combine(folder,"absent"),now), "Carpeta ausente no indica partida activa");
+    var sessionData = new TrackerData { Matches = [new() {SessionId="baseline",ChestsOpened=17,MatchStartUtc=now.AddMinutes(-10),DurationSeconds=600}] };
+    var session = new SessionCounter(now); session.ExcludeHistory(sessionData);
+    sessionData.Matches.Add(new() {SessionId="imported",ChestsOpened=800,MatchStartUtc=now.AddDays(-1),AnalyzedAtUtc=now.AddSeconds(5)});
+    Check(session.Matches(sessionData).Count == 0, "Sesion excluye historial y repeticiones antiguas reanalizadas");
+    sessionData.Matches.Add(new() {SessionId="new",ChestsOpened=9,MatchStartUtc=now.AddMinutes(-1),DurationSeconds=120,AnalyzedAtUtc=now.AddSeconds(60)});
+    var sessionOverlay = session.Overlay(sessionData,true);
+    Check(sessionOverlay.CurrentLive && sessionOverlay.Session == "9" && sessionOverlay.Last == "9", "Overlay refleja partida y sesion real");
+    sessionData.Matches.Add(new() {SessionId="next",ChestsOpened=3,MatchStartUtc=now.AddSeconds(100),DurationSeconds=60});
+    sessionOverlay = session.Overlay(sessionData,false);
+    Check(!sessionOverlay.CurrentLive && sessionOverlay.Session == "12" && sessionOverlay.Last == "3", "Ultima partida y sesion se calculan por separado");
+    if (args.Length == 2 && args[0] == "--overlay-preview")
+    {
+        Directory.CreateDirectory(args[1]);
+        NativeOverlay.SetStyle("hud"); NativeOverlay.SetAppearance(100,100);
+        NativeOverlay.Start(-20000,-20000,true,(_,_)=>{},_=>{});
+        foreach(var active in new[] {false,true})
+        {
+            NativeOverlay.Update(new OverlayView("2290",active?"…":"17","última partida",active,active?"EN PARTIDA":null,[],"22","83","17"));
+            Thread.Sleep(400);
+            Check(NativeOverlay.Snapshot(Path.Combine(args[1],active?"overlay-en-partida.png":"overlay-espera.png")),"Captura overlay");
+        }
+        NativeOverlay.Stop();
+    }
     Console.WriteLine($"{checks} comprobaciones correctas.");
 }
 finally { Directory.Delete(folder, recursive:true); }

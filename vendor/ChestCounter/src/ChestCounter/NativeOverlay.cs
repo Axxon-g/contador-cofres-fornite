@@ -151,6 +151,12 @@ public static class NativeOverlay
     }
 
     /// <summary>Replaces what is shown. The window resizes itself to fit.</summary>
+    public static void SetMatchPresence(bool recording)
+    {
+        Update(_view with { CurrentLive = recording, Current = recording ? "…" : _view.Last,
+            Badge = recording ? "EN PARTIDA" : null });
+    }
+
     public static void Update(OverlayView view)
     {
         _view = view;
@@ -615,7 +621,7 @@ public static class NativeOverlay
         {
             return new HudRow(L.T("En partie", "In a match", "En partida"), "", true); // figures readable only at the end
         }
-        return new HudRow(L.T("Dernière", "Last", "Última"), v.Last ?? "—", false);
+        return new HudRow(L.T("État", "Status", "Estado"), L.T("En attente", "Waiting", "Esperando"), false);
     }
 
     private static int Sc(double v) => (int)Math.Round(v * _scale);
@@ -633,15 +639,16 @@ public static class NativeOverlay
             var lockW = Sc(22);
             var bigW = TextWidth(hdc, _fontHudBig, v.Total, out _hudBigH);
             var state = StateRow(v);
-            var sessionLabel = L.T("Session", "Session", "Sesión");
+            var sessionLabel = L.T("Cette session", "This session", "Esta sesión");
             var rowsW = new[]
             {
                 Sc(14) + TextWidth(hdc, _fontHudSmall, state.Label + Sep + state.Value, out _hudSmallH),
                 TextWidth(hdc, _fontHudSmall, sessionLabel + Sep + v.Session, out _),
-                Sc(22) + TextWidth(hdc, _fontHudSmall, v.Treasures, out _),
+                TextWidth(hdc, _fontHudSmall, "Última partida" + Sep + (v.Last ?? "—"), out _),
+                TextWidth(hdc, _fontHudSmall, "Tesoros" + Sep + v.Treasures, out _),
             }.Max();
             w = lockW + pad + Math.Max(Sc(26) + Sc(8) + bigW, rowsW) + pad + Sc(14);
-            h = pad + _hudBigH + 3 * (_hudSmallH + Sc(2)) + pad;
+            h = pad + _hudBigH + 4 * (_hudSmallH + Sc(2)) + pad;
             w = Math.Max(_stableW, w);
             _stableW = w;
             _lockRect = new RECT { Left = Sc(2), Top = 0, Right = lockW, Bottom = h };
@@ -821,11 +828,11 @@ public static class NativeOverlay
             Disc(hdc, stateLeft - Sc(12), y + rowH / 2 - Sc(4), Sc(9), Rgb(255, 59, 48), ink, 1);
         }
         y += rowH + Sc(2);
-        LabelValue(hdc, L.T("Session", "Session", "Sesión"), v.Session, left, right, y, rowH, white);
+        LabelValue(hdc, L.T("Dernière partie", "Last match", "Última partida"), v.Last ?? "—", left, right, y, rowH, white);
         y += rowH + Sc(2);
-        var tw = TextWidth(hdc, _fontHudSmall, v.Treasures, out _);
-        Outlined(hdc, _fontHudSmall, Rgb(214, 190, 255), v.Treasures, left, y, right, y + rowH, DT_RIGHT, thin: true);
-        Star(hdc, right - tw - Sc(12), y + rowH / 2, Sc(8), Rgb(196, 155, 255), ink);
+        LabelValue(hdc, L.T("Cette session", "This session", "Esta sesión"), v.Session, left, right, y, rowH, white);
+        y += rowH + Sc(2);
+        LabelValue(hdc, L.T("Trésors", "Treasures", "Tesoros"), v.Treasures, left, right, y, rowH, gold);
     }
 
     private static uint Rgb(byte r, byte g, byte b) => (uint)(r | (g << 8) | (b << 16));

@@ -73,6 +73,7 @@ public sealed record ScanProgress(int Done, int Total);
 public static class ReportWriter
 {
     public static readonly DateTime SessionStartUtc = DateTime.UtcNow;
+    public static Func<MatchRecord, bool>? SessionFilter { get; set; }
 
     /// <summary>Set while several replays are being analyzed: the report shows a loading card and refreshes faster.</summary>
     public static volatile ScanProgress? Progress;
@@ -80,6 +81,7 @@ public static class ReportWriter
     /// <summary>A match belongs to this session if it ended after the tool was started (backlog replays do not count).</summary>
     public static bool IsThisSession(MatchRecord m)
     {
+        if (SessionFilter != null) return SessionFilter(m);
         var start = m.MatchStartUtc ?? m.AnalyzedAtUtc;
         if (start.Kind == DateTimeKind.Unspecified)
         {

@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
 using ChestCounter;
+using Contador.Engine;
 
 namespace Contador;
 
@@ -30,6 +31,8 @@ public sealed class Dashboard : INotifyPropertyChanged
     public string Stats { get; set; } = "0 partidas · 0 tesoros";
     public string EmptyMessage { get; set; } = "Todavía no hay partidas. Activa las repeticiones y juega una partida.";
     public string Footer { get; set; } = "Lectura local · Sin conexión a tu cuenta de Epic";
+    public string MatchState { get; set; } = "Esperando partida";
+    public string SessionDetail { get; set; } = "0 partidas desde que abriste la app";
     public bool IsBusy { get; set; }
     public bool Paused { get; set; }
     public bool CanEdit => !IsBusy;
@@ -50,11 +53,13 @@ public sealed class Dashboard : INotifyPropertyChanged
         foreach (var row in rows.Where(r => (r.Date+" "+r.Mode).Contains(search, StringComparison.CurrentCultureIgnoreCase)))
             History.Add(row);
     }
-    public void Refresh(TrackerData data, Config config, DateTime sessionStarted)
+    public void Refresh(TrackerData data, Config config, SessionCounter sessionCounter)
     {
         var matches = Profiles.View(data, config).Matches;
         Total = matches.Sum(m => (long)m.ChestsOpened).ToString("N0", L.Culture);
-        Session = matches.Where(m => m.AnalyzedAtUtc >= sessionStarted).Sum(m => (long)m.ChestsOpened).ToString("N0", L.Culture);
+        var sessionMatches = sessionCounter.Matches(Profiles.View(data, config));
+        Session = sessionMatches.Sum(m => (long)m.ChestsOpened).ToString("N0", L.Culture);
+        SessionDetail = $"{sessionMatches.Count} partidas desde que abriste la app";
         ProfileLabel = Profiles.Current(data, config)?.Name ?? "Tu cuenta se detectará al leer la primera partida.";
         var ordered = matches.OrderByDescending(m => m.MatchStartUtc ?? m.AnalyzedAtUtc).ToList();
         LastMatch = ordered.Count > 0 ? $"Última partida: {ordered[0].ChestsOpened} cofres" : "Última partida: todavía no hay datos.";

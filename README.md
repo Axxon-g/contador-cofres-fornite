@@ -5,7 +5,7 @@
   <p>
     <img src="https://img.shields.io/badge/Windows-10%20%2F%2011-1B2B23?style=flat-square" alt="Windows 10 y 11">
     <img src="https://img.shields.io/badge/Arquitectura-x64-1B2B23?style=flat-square" alt="Arquitectura x64">
-    <img src="https://img.shields.io/badge/Versi%C3%B3n-1.1.0-F1CA76?style=flat-square&amp;labelColor=1B2B23" alt="Versión 1.1.0">
+    <img src="https://img.shields.io/badge/Versi%C3%B3n-1.2.0-F1CA76?style=flat-square&amp;labelColor=1B2B23" alt="Versión 1.2.0">
     <a href="LICENSE"><img src="https://img.shields.io/badge/Licencia-MIT-1B2B23?style=flat-square" alt="Licencia MIT"></a>
   </p>
   <p>
@@ -71,6 +71,20 @@ Si la carpeta no se encuentra, entra en **Ajustes → Elegir carpeta**. La ubica
 Los historiales se buscan en `%APPDATA%\ChestCounter\data.json` y `%APPDATA%\ChestTracker\data.json`. Los respaldos se guardan en `%APPDATA%\ContadorModern\Backups`.
 
 La recuperación es local a cada equipo. No necesitas scripts ni copiar archivos. Si un historial está dañado o es incompatible, la app lo indica y vuelve a intentarlo al siguiente inicio. **Esta función incorpora datos a Contador; no sincroniza las aplicaciones entre sí.**
+
+## Aviso de partida y contadores claros
+
+La app comprueba la cabecera de las repeticiones cada dos segundos para detectar que Fortnite está grabando. Muestra **EN PARTIDA** en la ventana y en el overlay, incluso si la detección de cofres está pausada. Al dejar de grabarse, retira el aviso. La detección depende de que Fortnite haya creado y actualizado la repetición; no consulta la memoria del juego.
+
+- **Última partida:** cofres de la partida finalizada más reciente.
+- **Esta sesión:** cofres de las partidas jugadas desde que abriste la app. Se reinicia al abrirla y excluye el historial importado y las repeticiones antiguas reanalizadas.
+- **Tesoros:** total de tesoros encontrados en el perfil seleccionado, con su etiqueta visible.
+
+Última partida y sesión pueden coincidir si solo has terminado una partida durante esta ejecución. Los cofres siguen contabilizándose al finalizar; el aviso de partida no es un recuento instantáneo de cada apertura.
+
+<p align="center"><img src="docs/images/overlay-en-partida.png" alt="Overlay de demostración: en partida, última partida 17, sesión 83, tesoros 22" width="260"></p>
+
+La versión 1.2 incorpora una paleta azul marino, rojo y dorado de inspiración pirata y la moneda aportada como referencia visual, integrada en el ejecutable.
 
 ## Overlay para jugar y transmitir
 
@@ -172,7 +186,7 @@ Instala el [SDK de .NET 10 para Windows x64](https://dotnet.microsoft.com/downlo
 .\build.bat
 ```
 
-El ejecutable autónomo se genera en `dist\Contador.exe`. La primera compilación necesita conexión para restaurar dependencias.
+El ejecutable autónomo se genera en `dist\1.2.0\Contador.exe`. La primera compilación necesita conexión para restaurar dependencias.
 
 Para desarrollar o ejecutar las comprobaciones:
 
@@ -181,7 +195,7 @@ dotnet run --project src/Contador/Contador.csproj
 dotnet run --project tests/Contador.Checks/Contador.Checks.csproj -c Release
 ```
 
-La versión 1.1 pasó 28 comprobaciones, incluidas pruebas de importación sobre una copia de historial real. Esto comprueba conservación y combinación de datos; no sustituye validar el lector contra nuevas versiones de Fortnite.
+La versión 1.2 pasó 35 comprobaciones, incluidas pruebas de importación sobre una copia de historial real. Esto comprueba conservación y combinación de datos; no sustituye validar el lector contra nuevas versiones de Fortnite.
 
 Consulta [cómo publicar el ejecutable en GitHub Releases](docs/PUBLICAR.md) y el [estado de verificación](VERIFICACION.md).
 
@@ -198,4 +212,3 @@ Este proyecto no está afiliado, aprobado ni patrocinado por Epic Games. Fortnit
   <a href="https://github.com/Axxon-g/contador-cofres-fornite/releases/latest/download/Contador.exe"><strong>Descargar Contador para Windows</strong></a>
   <p>Abre la app. Juega tu partida. Consulta tu botín.</p>
 </div>
-

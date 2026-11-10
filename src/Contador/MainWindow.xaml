@@ -2,26 +2,26 @@
 Style="{StaticResource {x:Type Window}}" Title="Contador · Fortnite" Width="1120" Height="780" MinWidth="860" MinHeight="640" WindowStartupLocation="CenterScreen">
 <Grid>
 <Grid.ColumnDefinitions><ColumnDefinition Width="200"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-<Border Background="#1B2B23" Padding="22,30">
+<Border Background="#6E2636" Padding="22,30">
 <DockPanel LastChildFill="False">
 <StackPanel DockPanel.Dock="Top">
-<Path Data="M 2,8 L 2,25 34,25 34,8 Z M 2,14 L 34,14 M 15,11 L 21,11 21,18 15,18 Z M 8,8 L 8,3 28,3 28,8" Stroke="#F1CA76" StrokeThickness="2" Height="32" Width="36" Stretch="Uniform" HorizontalAlignment="Left" Margin="0,0,0,16"/>
-<TextBlock Text="Contador" FontSize="25" FontWeight="SemiBold"/><TextBlock Text="Tu botín, en cifras." Foreground="#B4C1B7" Margin="0,6,0,32"/>
+<Image Source="/Contador;component/Assets/pirate-shop-token.png" Width="112" Height="112" Stretch="Uniform" HorizontalAlignment="Left" Margin="0,0,0,16" AutomationProperties.Name="Moneda de tesoro pirata"/>
+<TextBlock Text="Contador" FontSize="25" FontWeight="SemiBold"/><TextBlock Text="Tu botín, en cifras." Foreground="#BDCEE3" Margin="0,6,0,32"/>
 <Button x:Name="NavSummary" Content="_Resumen" Click="SummaryClick" HorizontalContentAlignment="Left" Margin="0,0,0,10"/>
 <Button x:Name="NavHistory" Content="_Historial" Click="HistoryClick" Margin="0,0,0,10"/>
 <Button x:Name="NavSettings" Content="_Ajustes" Click="SettingsClick" Margin="0,0,0,10"/>
 </StackPanel>
 <StackPanel DockPanel.Dock="Bottom">
-<TextBlock Text="FORTNITE" FontWeight="SemiBold" FontSize="13"/><TextBlock Text="Repeticiones locales.&#10;Tus datos se quedan aquí." Foreground="#B4C1B7" FontSize="12" Margin="0,8,0,0"/>
+<TextBlock Text="FORTNITE" FontWeight="SemiBold" FontSize="13"/><TextBlock Text="Repeticiones locales.&#10;Tus datos se quedan aquí." Foreground="#BDCEE3" FontSize="12" Margin="0,8,0,0"/>
 </StackPanel>
 </DockPanel>
 </Border>
 <Grid Grid.Column="1" Margin="32,28">
 <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-<Grid Margin="0,0,0,20"><TextBlock x:Name="PageTitle" Text="Tu próxima partida cuenta." FontSize="28" FontWeight="SemiBold"/><TextBlock Text="v1.1" HorizontalAlignment="Right" Foreground="{StaticResource Muted}"/></Grid>
+<Grid Margin="0,0,0,20"><TextBlock x:Name="PageTitle" Text="Tu próxima partida cuenta." FontSize="28" FontWeight="SemiBold"/><TextBlock Text="v1.2" HorizontalAlignment="Right" Foreground="{StaticResource Muted}"/></Grid>
 <Border Grid.Row="1" Background="{StaticResource Panel}" CornerRadius="10" Padding="16,13" Margin="0,0,0,22">
 <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-<StackPanel><TextBlock Text="{Binding Status}" FontWeight="SemiBold" Foreground="{Binding StatusColor}"/><TextBlock Text="{Binding StatusDetail}" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,4,12,0"/></StackPanel>
+<StackPanel><TextBlock Text="{Binding MatchState}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource Gold}" Margin="0,0,0,8"/><TextBlock Text="{Binding Status}" FontWeight="SemiBold" Foreground="{Binding StatusColor}"/><TextBlock Text="{Binding StatusDetail}" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,4,12,0"/></StackPanel>
 <Button Grid.Column="1" Content="{Binding ScanLabel}" Click="ScanClick" IsEnabled="{Binding CanScan}" Margin="8,0,0,0" VerticalAlignment="Center"/>
 </Grid></Border>
 <Grid Grid.Row="2">
@@ -29,13 +29,13 @@ Style="{StaticResource {x:Type Window}}" Title="Contador · Fortnite" Width="112
 <StackPanel>
 <Grid Margin="0,0,0,24"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
 <StackPanel><TextBlock Text="Cofres abiertos" FontSize="17" Foreground="{StaticResource Muted}"/><TextBlock Text="{Binding Total}" FontSize="76" FontWeight="SemiBold" Foreground="{StaticResource Gold}" Margin="0,0,0,0"/><TextBlock Text="{Binding ProfileLabel}" Foreground="{StaticResource Muted}"/></StackPanel>
-<StackPanel Grid.Column="1" Margin="20,8,0,0"><TextBlock Text="En esta sesión" FontSize="17"/><TextBlock Text="{Binding Session}" FontSize="42" FontWeight="SemiBold" Margin="0,3,0,8"/><TextBlock Text="{Binding LastMatch}" Foreground="{StaticResource Muted}"/><TextBlock Text="{Binding Stats}" Foreground="{StaticResource Muted}" Margin="0,9,0,0"/></StackPanel>
+<StackPanel Grid.Column="1" Margin="20,8,0,0"><TextBlock Text="Cofres de esta sesión" FontSize="17"/><TextBlock Text="{Binding Session}" FontSize="42" FontWeight="SemiBold" Margin="0,3,0,8"/><TextBlock Text="{Binding SessionDetail}" FontSize="12" Foreground="{StaticResource Muted}" Margin="0,0,0,10"/><TextBlock Text="{Binding LastMatch}" Foreground="{StaticResource Muted}"/><TextBlock Text="{Binding Stats}" Foreground="{StaticResource Muted}" Margin="0,9,0,0"/></StackPanel>
 </Grid>
 <Border Height="1" Background="{StaticResource Line}"/>
 <Grid Margin="0,22,0,16"><TextBlock Text="Últimas partidas" FontSize="20" FontWeight="SemiBold"/><Button Content="Ver historial" Click="HistoryClick" HorizontalAlignment="Right" Padding="14,7" Margin="0"/></Grid>
 <TextBlock Text="{Binding EmptyMessage}" Foreground="{StaticResource Muted}" Margin="0,0,0,12"/>
 <DataGrid x:Name="RecentGrid" ItemsSource="{Binding Recent}" MaxHeight="250" AutomationProperties.Name="Últimas partidas"><DataGrid.Columns><DataGridTextColumn Header="Fecha" Binding="{Binding Date}" SortMemberPath="DateSort" Width="*"/><DataGridTextColumn Header="Modo" Binding="{Binding Mode}" Width="*"/><DataGridTextColumn Header="Cofres" Binding="{Binding Chests}" Width="85"/><DataGridTextColumn Header="Posición" Binding="{Binding Placement}" Width="85"/></DataGrid.Columns></DataGrid>
-<Border Background="#223428" Padding="18" CornerRadius="10" Margin="0,20,0,0"><TextBlock Text="Activa Grabar repeticiones en Fortnite → Ajustes → Juego → Repeticiones. Los cofres se suman al finalizar la partida, cuando la repetición está lista." Foreground="#D0DFC9"/></Border>
+<Border Background="#20364C" Padding="18" CornerRadius="10" Margin="0,20,0,0"><TextBlock Text="Activa Grabar repeticiones en Fortnite → Ajustes → Juego → Repeticiones. Los cofres se suman al finalizar la partida, cuando la repetición está lista." Foreground="#E2D1AD"/></Border>
 </StackPanel></ScrollViewer>
 <Grid x:Name="HistoryPanel" Visibility="Collapsed">
 <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
@@ -48,7 +48,7 @@ Style="{StaticResource {x:Type Window}}" Title="Contador · Fortnite" Width="112
 <TextBox x:Name="DemosPath" AutomationProperties.Name="Carpeta de repeticiones" IsReadOnly="True"/>
 <StackPanel Orientation="Horizontal" Margin="0,12,0,24"><Button Content="Elegir carpeta" Click="FolderClick" IsEnabled="{Binding CanEdit}"/><Button Content="Abrir carpeta" Click="OpenDemosClick"/></StackPanel>
 <TextBlock Text="Cuenta" FontSize="20" FontWeight="SemiBold"/>
-<ComboBox x:Name="ProfilePicker" Foreground="#101615" Background="#F3F5ED" DisplayMemberPath="Name" SelectedValuePath="Key" SelectionChanged="ProfileChanged" Margin="0,12,0,24" Padding="10" AutomationProperties.Name="Seleccionar cuenta" IsEnabled="{Binding CanEdit}"/>
+<ComboBox x:Name="ProfilePicker" Foreground="#101C2E" Background="#FFF4DF" DisplayMemberPath="Name" SelectedValuePath="Key" SelectionChanged="ProfileChanged" Margin="0,12,0,24" Padding="10" AutomationProperties.Name="Seleccionar cuenta" IsEnabled="{Binding CanEdit}"/>
 <TextBlock Text="Overlay en el juego" FontSize="20" FontWeight="SemiBold"/>
 <CheckBox x:Name="OverlayCheck" Content="Mostrar contador sobre el juego" Click="OverlayClick" IsEnabled="{Binding CanEdit}"/>
 <StackPanel Orientation="Horizontal" Margin="0,0,0,14"><Button Content="Mostrar / ocultar" Click="ToggleOverlayClick"/><Button Content="Bloquear / mover" Click="LockOverlayClick"/></StackPanel>

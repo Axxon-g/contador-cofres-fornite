@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-10T19:12:45.2872545Z",
+  "generatedAt": "2026-11-10T00:00:00Z",
   "title": "Design System: Contador desktop",
   "extensions": {
     "shadows": [],
@@ -15,37 +15,32 @@
       "ground": {
         "displayName": "ground",
         "role": "neutral",
-        "canonical": "#101615"
+        "canonical": "#101C2E"
       },
       "panel": {
         "displayName": "panel",
         "role": "neutral",
-        "canonical": "#19221F"
+        "canonical": "#182D48"
       },
       "ink": {
         "displayName": "ink",
         "role": "neutral",
-        "canonical": "#F3F5ED"
+        "canonical": "#FFF4DF"
       },
       "muted": {
         "displayName": "muted",
         "role": "neutral",
-        "canonical": "#B4C1B7"
+        "canonical": "#BDCEE3"
       },
       "gold": {
         "displayName": "gold",
         "role": "primary",
-        "canonical": "#F1CA76"
+        "canonical": "#FFC857"
       },
       "line": {
         "displayName": "line",
         "role": "neutral",
-        "canonical": "#35443B"
-      },
-      "pine": {
-        "displayName": "pine",
-        "role": "neutral",
-        "canonical": "#1B2B23"
+        "canonical": "#4F7295"
       },
       "ready": {
         "displayName": "ready",
@@ -55,44 +50,65 @@
       "row-alternate": {
         "displayName": "row-alternate",
         "role": "neutral",
-        "canonical": "#17201C"
+        "canonical": "#14243A"
       },
       "row-selected": {
         "displayName": "row-selected",
         "role": "neutral",
-        "canonical": "#3C503E"
+        "canonical": "#365779"
       },
       "help-surface": {
         "displayName": "help-surface",
         "role": "neutral",
-        "canonical": "#223428"
+        "canonical": "#20364C"
       },
       "help-ink": {
         "displayName": "help-ink",
         "role": "neutral",
-        "canonical": "#D0DFC9"
+        "canonical": "#E2D1AD"
       },
       "text-selection": {
         "displayName": "text-selection",
         "role": "neutral",
-        "canonical": "#73613C"
+        "canonical": "#695128"
+      },
+      "pirate-red": {
+        "displayName": "Rojo pirata",
+        "role": "secondary",
+        "canonical": "#6E2636"
+      },
+      "status-attention": {
+        "displayName": "Atención del lector",
+        "role": "secondary",
+        "canonical": "#F1CA76"
       }
     },
-    "motion": []
+    "motion": [],
+    "nativeAssets": [
+      {
+        "path": "src/Contador/Assets/pirate-shop-token.png",
+        "buildAction": "Resource",
+        "source": "/Contador;component/Assets/pirate-shop-token.png",
+        "width": 112,
+        "height": 112,
+        "stretch": "Uniform",
+        "accessibleName": "Moneda de tesoro pirata"
+      }
+    ]
   },
   "components": [],
   "narrative": {
     "donts": [
-      "Don't introducir imágenes externas, transiciones ornamentales ni datos ficticios."
+      "Don't descargar imágenes en ejecución, añadir transiciones ornamentales ni datos ficticios."
     ],
     "rules": [],
     "keyCharacteristics": [
       "Estado siempre en texto además del color.",
       "Segoe UI respeta la plataforma Windows.",
-      "Sin imágenes externas, transiciones ornamentales ni datos ficticios."
+      "Moneda pirata integrada; sin descargas de imágenes, transiciones ornamentales ni datos ficticios."
     ],
     "northStar": "Operate",
-    "overview": "Operate: una aplicación de recuento para Windows. Navegación nativa, tabla ordenable, selección de carpetas y exportación con diálogos del sistema.\n\nInterfaz de noche para acompañar una sesión de juego.",
+    "overview": "Operate: una aplicación de recuento para Windows. Navegación nativa, tabla ordenable, selección de carpetas y exportación con diálogos del sistema.\n\nInterfaz de noche para acompañar una sesión de juego, con azul marino, rojo pirata y dorado de tesoro. La moneda aportada por el usuario forma parte de la identidad local de v1.2.",
     "dos": [
       "Do mantener el estado en texto además del color.",
       "Do usar Segoe UI y los diálogos del sistema."
