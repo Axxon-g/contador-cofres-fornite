@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" role="img" aria-labelledby="title desc">
+<title id="title">Contador</title><desc id="desc">Tu botín, en cifras. Una aplicación de escritorio para Fortnite.</desc>
+<style>text{font-family:'Segoe UI',Arial,sans-serif}.title{font-size:76px;font-weight:650;fill:#f3f5ed}.subtitle{font-size:27px;fill:#b4c1b7}.tag{font-size:16px;font-weight:600;letter-spacing:2px;fill:#f1ca76}</style>
+<rect width="1200" height="300" rx="20" fill="#101615"/>
+<path d="M875 0h325v300H760z" fill="#1b2b23"/>
+<path d="M1030 0h170v300H915z" fill="#223428"/>
+<g transform="translate(68 72)" fill="none" stroke="#f1ca76" stroke-width="5" stroke-linejoin="round">
+<path d="M0 28h118v77H0zM0 53h118M22 28V8h74v20M49 42h20v28H49z"/>
+</g>
+<text x="222" y="132" class="title">Contador</text>
+<text x="226" y="184" class="subtitle">Tu botín, en cifras.</text>
+<text x="70" y="253" class="tag">HISTORIAL · PERFILES · OVERLAY</text>
+<path d="M980 105h78m-39-39v78" stroke="#f1ca76" stroke-width="3" opacity=".65"/>
+<path d="M1080 188h40m-20-20v40" stroke="#a9d5a5" stroke-width="2" opacity=".7"/>
+</svg>
