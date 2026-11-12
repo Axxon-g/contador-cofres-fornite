@@ -12,7 +12,7 @@
   <p>
     <a href="https://github.com/Axxon-g/contador-cofres-fornite/releases/latest/download/Contador.exe"><img src="docs/images/download.svg" width="310" alt="Descargar Contador.exe para Windows"></a>
   </p>
-  <p><a href="https://github.com/Axxon-g/contador-cofres-fornite/releases">Todas las versiones</a> · <a href="#primeros-pasos">Primeros pasos</a> · <a href="#preguntas-frecuentes">Preguntas frecuentes</a> · <a href="https://github.com/Axxon-g/contador-cofres-fornite/issues">Informar de un problema</a></p>
+  <p><a href="https://github.com/Axxon-g/contador-cofres-fornite/releases">Todas las versiones</a> · <a href="#antes-de-abrir-seguridad-y-aviso-de-windows">Seguridad y SmartScreen</a> · <a href="#primeros-pasos">Primeros pasos</a> · <a href="#preguntas-frecuentes">Preguntas frecuentes</a> · <a href="https://github.com/Axxon-g/contador-cofres-fornite/issues">Informar de un problema</a></p>
   <p><strong>Sin cuentas ni contraseñas. Análisis local en tu equipo.</strong></p>
   <p><sub>La insignia suma las descargas de Contador.exe en todas las versiones publicadas. No cuenta personas únicas y puede tardar en reflejar nuevas descargas.</sub></p>
 </div>
@@ -31,6 +31,54 @@
 El análisis se ejecuta localmente, en tu propio equipo, sobre los archivos de repetición que Fortnite ya guarda. El historial y los ajustes permanecen en tu carpeta de datos local. La app no envía estadísticas, no inyecta código ni modifica la memoria del juego. Solo tú decides si exportas o compartes algún archivo.
 
 Utiliza las repeticiones generadas por Fortnite y un lector comunitario de código abierto; **no es una aplicación oficial ni está aprobada por Epic Games**. Leer esos archivos no permite prometer inmunidad a sanciones. Las condiciones aplicables las establece [Epic Games](https://legal.epicgames.com/epicgames/tos).
+
+## Antes de abrir: seguridad y aviso de Windows
+
+### ¿Por qué aparece «Windows protegió su PC»?
+
+<p align="center">
+  <img src="docs/images/windows-smartscreen.png" alt="Aviso de Microsoft Defender SmartScreen: aplicación Contador con editor desconocido" width="535">
+</p>
+
+El ejecutable distribuido actualmente **no tiene una firma digital de editor verificado**. Microsoft Defender SmartScreen evalúa la reputación del archivo y de su editor; cuando no reconoce la aplicación puede mostrar este aviso y **Editor desconocido**.
+
+**Este aviso, por sí solo, no significa que se haya detectado un virus. Tampoco demuestra que el archivo sea seguro.** Una firma válida identifica al editor, pero incluso una aplicación firmada puede mostrar avisos mientras acumula reputación. Puedes consultar la [explicación oficial de Microsoft](https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/smartscreen-reputation) y nuestras [instrucciones de firma digital](docs/FIRMA.md).
+
+No necesitas desactivar Defender ni SmartScreen, añadir exclusiones o instalar certificados del proyecto. Si tu antivirus muestra una detección concreta o no puedes comprobar el origen del archivo, no lo ejecutes y [comparte el resultado en una incidencia](https://github.com/Axxon-g/contador-cofres-fornite/issues).
+
+### Consulta el análisis de VirusTotal
+
+<p align="center">
+  <a href="https://www.virustotal.com/gui/file/f0ebdf6c9a65c57b66b97957ab37574e96f32c136201fedcd97be4bb05e2a1c6"><img src="docs/images/virustotal-analysis.png" alt="Captura aportada del análisis de VirusTotal: cero detecciones entre 66 motores en el momento de la captura" width="960"></a>
+</p>
+
+La captura aportada muestra **0 detecciones entre 66 motores** en el momento en que se tomó. [Abre el informe en VirusTotal para consultar su estado](https://www.virustotal.com/gui/file/f0ebdf6c9a65c57b66b97957ab37574e96f32c136201fedcd97be4bb05e2a1c6).
+
+Ese informe corresponde exclusivamente al archivo con este **SHA-256**:
+
+```text
+f0ebdf6c9a65c57b66b97957ab37574e96f32c136201fedcd97be4bb05e2a1c6
+```
+
+La huella del ejecutable local **1.2.5** se comprobó el **12 de noviembre de 2026** y coincide con este informe. Aunque VirusTotal muestre el nombre `Contador.dll`, la coincidencia se comprobó por SHA-256, no por nombre. Esto no verifica automáticamente otras descargas o futuras compilaciones. **Comprueba la huella o analiza tu propio archivo.** Un resultado sin detecciones no garantiza ausencia de malware ni constituye una certificación de seguridad.
+
+### Comprueba tú mismo el archivo descargado
+
+1. Descarga **Contador.exe** únicamente desde las [Releases de este repositorio](https://github.com/Axxon-g/contador-cofres-fornite/releases).
+2. Antes de abrirlo, entra en [www.virustotal.com](https://www.virustotal.com/) y selecciona **File / Archivo → Choose file / Elegir archivo**.
+3. Selecciona el ejecutable que acabas de descargar. Revisa y acepta las condiciones del servicio antes de enviarlo.
+4. Espera el resultado y revisa las detecciones y la fecha del análisis. Haz esta comprobación con cada versión nueva si quieres verificar el archivo que vas a utilizar.
+
+> [!NOTE]
+> Subir el ejecutable a VirusTotal es una acción voluntaria que envía ese archivo a un servicio externo. No subas contraseñas, repeticiones, historiales ni otros archivos privados. El análisis local de partidas de Contador no requiere VirusTotal.
+
+Si prefieres comparar el SHA-256 sin subir el archivo, abre PowerShell en su carpeta y ejecuta:
+
+```powershell
+Get-FileHash -LiteralPath .\Contador.exe -Algorithm SHA256
+```
+
+Solo si coincide exactamente con el SHA-256 anterior estás consultando el informe de ese mismo archivo. Si la Release incluye `Contador.exe.sha256`, también puedes comparar la huella con ese archivo; esto comprueba integridad, pero no sustituye una firma digital ni un análisis de seguridad.
 
 ## Primeros pasos
 
@@ -122,6 +170,16 @@ Contador lee los archivos `.replay` que Fortnite guarda en tu equipo. Identifica
 Desde la versión 1.2.5 se revisan las repeticiones cada segundo. Tras finalizar, se comprueba brevemente su estabilidad y se muestran primero las cifras; el informe se genera después. La duración real depende del tamaño del archivo y del equipo.
 
 Fortnite escribe la clave necesaria para leer la repetición al finalizar la partida. Por eso el total se actualiza después, aunque la app esté abierta durante el juego.
+
+### Diagrama del proyecto
+
+<p align="center">
+  <a href="https://gitdiagram.com/axxon-g/contador-cofres-fornite"><img src="docs/images/architecture-diagram.png" alt="Diagrama del proyecto: lectura de repeticiones, análisis, historial local, interfaz y overlays" width="960"></a>
+</p>
+
+[Explora el diagrama interactivo en GitDiagram](https://gitdiagram.com/axxon-g/contador-cofres-fornite) para ver los componentes y sus relaciones. En términos sencillos: **Fortnite guarda la repetición → Contador la lee y analiza → guarda el historial local → actualiza la ventana, el overlay y el informe**.
+
+La imagen es una captura orientativa del diagrama generado por una herramienta externa; puede quedar desactualizada y no constituye una auditoría de seguridad. Puedes contrastarla con el código de este repositorio.
 
 ## Preguntas frecuentes
 

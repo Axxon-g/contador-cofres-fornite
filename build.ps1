@@ -1,3 +1,4 @@
+param([string]$SigningCertificateThumbprint, [uri]$TimestampServer)
 $ErrorActionPreference = 'Stop'
 Set-Location $PSScriptRoot
 if (-not (Get-Command dotnet -ErrorAction SilentlyContinue)) { throw 'Instala el SDK de .NET 10 para Windows x64 desde https://dotnet.microsoft.com/download/dotnet/10.0' }
@@ -11,4 +12,14 @@ if ($LASTEXITCODE -ne 0) { throw 'No pasaron las comprobaciones de cierre de la 
 $publishDir = Join-Path 'dist' ([string]$project.Project.PropertyGroup.Version)
 & dotnet publish src/Contador/Contador.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o $publishDir
 if ($LASTEXITCODE -ne 0) { throw 'No se pudo compilar Contador.' }
+$executable = Join-Path $publishDir 'Contador.exe'
+if ($SigningCertificateThumbprint) {
+    if (-not $TimestampServer) { throw 'Indica -TimestampServer con la URL proporcionada por tu entidad de firma.' }
+    & "$PSScriptRoot/tools/Sign-Release.ps1" -Executable $executable -CertificateThumbprint $SigningCertificateThumbprint -TimestampServer $TimestampServer
+} else {
+    Write-Warning 'Ejecutable sin firma digital: Windows puede mostrar editor desconocido y SmartScreen.'
+}
+$hash = (Get-FileHash -LiteralPath $executable -Algorithm SHA256).Hash.ToLowerInvariant()
+"$hash  Contador.exe" | Set-Content -LiteralPath (Join-Path $publishDir 'Contador.exe.sha256') -Encoding ascii
 Write-Host "Aplicacion disponible en $publishDir\Contador.exe"
+

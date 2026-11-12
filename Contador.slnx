@@ -1,1 +1,9 @@
-<Solution><Project Path="src/Contador/Contador.csproj"/><Project Path="src/Contador.Engine/Contador.Engine.csproj"/><Project Path="tests/Contador.Checks/Contador.Checks.csproj"/><Project Path="tests/Contador.DesktopChecks/Contador.DesktopChecks.csproj"/></Solution>
+<Solution><Project Path="src/Contador/Contador.csproj" />
+  <Folder Name="/vendor/" />
+  <Folder Name="/vendor/ChestCounter/" />
+  <Folder Name="/vendor/ChestCounter/lib/">
+    <Project Path="vendor/ChestCounter/lib/FortniteReplayReader/FortniteReplayReader.csproj" />
+    <Project Path="vendor/ChestCounter/lib/OozSharp/OozSharp.csproj" />
+    <Project Path="vendor/ChestCounter/lib/Unreal.Core/Unreal.Core.csproj" />
+    <Project Path="vendor/ChestCounter/lib/Unreal.Encryption/Unreal.Encryption.csproj" />
+  </Folder><Project Path="src/Contador.Engine/Contador.Engine.csproj" /><Project Path="tests/Contador.Checks/Contador.Checks.csproj" /><Project Path="tests/Contador.DesktopChecks/Contador.DesktopChecks.csproj" /></Solution>
