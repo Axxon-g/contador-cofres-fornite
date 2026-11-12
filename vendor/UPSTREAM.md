@@ -13,3 +13,5 @@ Contador 1.2.1 adds a native icon drawing callback for the coin embedded in Cont
 Contador 1.2.3 routes ReportWriter.WriteAll through WriteOverlay and accepts an optional OverlayWriter callback. The desktop supplies the same immutable HUD snapshot to OBS and native presentation; the legacy writer remains the fallback for upstream entry points.
 
 Contador 1.2.4 restyles the report with the launcher's navy/crimson/gold palette and Segoe UI. ReportBrandImage supplies a self-contained coin image. Report statistics and replay analysis are unchanged.
+
+Contador 1.2.5 adds ReplayFileStability to compare file length/write timestamps, lowers the finalized quiet period to one second, and retries files changed during decoding. Tracker exposes report/compaction options so the desktop can publish counters before generating reports and let the runtime manage memory normally. The decoding thread uses BelowNormal priority; chest attribution/classification remain unchanged.

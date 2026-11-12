@@ -19,7 +19,7 @@ public partial class MainWindow : Window
     private readonly TrackerData data;
     private readonly Tracker tracker;
     private readonly SemaphoreSlim gate = new(1, 1);
-    private readonly DispatcherTimer timer = new() { Interval = TimeSpan.FromSeconds(8) };
+    private readonly DispatcherTimer timer = new() { Interval = TimeSpan.FromSeconds(1) };
     private readonly SessionCounter sessionCounter = new(DateTime.UtcNow);
     private readonly DispatcherTimer presenceTimer = new() { Interval = TimeSpan.FromSeconds(2) };
     private bool checkingPresence, recording;
@@ -27,6 +27,7 @@ public partial class MainWindow : Window
     private bool watcherStarted;
     private volatile OverlayView? lastOverlay;
     private string importNotice = "";
+    private bool reportWritten;
 
     public MainWindow()
     {
@@ -53,7 +54,7 @@ public partial class MainWindow : Window
         ReportWriter.ReportBrandImage = () => "data:image/png;base64," + Convert.ToBase64String(TokenIcon.Frame(128));
         lastOverlay = sessionCounter.Overlay(Profiles.View(data,config),false);
         ReportWriter.OverlayWriter = (target, _) => ObsHud.Write(target,lastOverlay!);
-        tracker = new Tracker(store, config, data);
+        tracker = new Tracker(store, config, data) { WriteReports=false, CompactAfterAnalysis=false };
         DemosPath.Text = config.DemosFolder;
         OverlayCheck.IsChecked = config.ShowOverlay;
         OverlayScale.Value = config.OverlaySize;
@@ -98,17 +99,18 @@ public partial class MainWindow : Window
             vm.Status = "Analizando repeticiones";
             vm.StatusDetail = "Puedes consultar el historial mientras termina el análisis.";
             vm.NotifyAll();
-            var count = await Task.Run(() =>
+            var scan = await Task.Run(() =>
             {
+                var before = data.Matches.Count;
                 var added = tracker.Scan();
-                tracker.UpdateLive(); // Only detects recording state: LiveUpdate is disabled.
-                ReportWriter.WriteAll(store, config, data);
-                return added;
+                return (Added:added,Changed:added>0 || data.Matches.Count!=before);
             });
-            Refresh();
+            var count=scan.Added;
+            if(scan.Changed) Refresh();
             var exists = Directory.Exists(config.DemosFolder);
             var errors = data.ProcessedFiles.Values.Count(v => v.StartsWith("error:", StringComparison.Ordinal));
             vm.Status = !exists ? "No se encontró la carpeta de repeticiones"
+                : count>0 ? "Partida actualizada"
                 : tracker.IsFinishing ? "La partida terminó. Preparando el recuento"
                 : recording ? "Partida en curso"
                 : errors > 0 ? "Hay repeticiones que no se pudieron leer"
@@ -117,11 +119,17 @@ public partial class MainWindow : Window
             vm.StatusDetail = !exists ? "Activa Grabar repeticiones en Fortnite o elige la carpeta correcta en Ajustes."
                 : errors > 0 ? $"{errors} archivos con error. Consulta el registro en Ajustes; el lector puede necesitar una actualización."
                 : recording ? "Los cofres se sumarán cuando Fortnite finalice la repetición."
-                : "Detección automática cada 8 segundos. Solo se cuentan partidas de Battle Royale.";
+                : "Detección cada segundo. Los cofres se actualizan al finalizar la repetición.";
             vm.Footer = count > 0 ? $"{count} partida(s) añadida(s) · Última revisión {DateTime.Now:HH:mm:ss}"
                 : $"Última revisión {DateTime.Now:HH:mm:ss} · Historial guardado localmente";
             if (importNotice.Length > 0) vm.Footer = importNotice;
             UpdateOverlay();
+            vm.NotifyAll();
+            if(scan.Changed || !reportWritten)
+            {
+                await Task.Run(()=>ReportWriter.WriteAll(store,config,data));
+                reportWritten=true;
+            }
             if (vm.Paused) { vm.Status = "Detección en pausa"; vm.StatusDetail = "El análisis anterior terminó. Reanuda la detección para revisar las siguientes repeticiones."; }
         }
         catch (Exception ex) { ShowError(ex); }
@@ -148,7 +156,7 @@ public partial class MainWindow : Window
     {
         if (closing) return;
         await gate.WaitAsync();
-        try { change(); store.SaveConfig(config); Refresh(); UpdateOverlay(); }
+        try { change(); store.SaveConfig(config); Refresh(); UpdateOverlay(); reportWritten=false; }
         catch (Exception ex) { ShowError(ex); }
         finally { gate.Release(); }
     }
@@ -262,7 +270,20 @@ public partial class MainWindow : Window
     }
     private void OpenDemosClick(object sender, RoutedEventArgs e) => OpenPath(config.DemosFolder);
     private void OpenDataClick(object sender, RoutedEventArgs e) => OpenPath(store.Folder);
-    private void ReportClick(object sender, RoutedEventArgs e) => OpenPath(store.ReportPath);
+    private async void ReportClick(object sender, RoutedEventArgs e)
+    {
+        if(closing) return;
+        await gate.WaitAsync();
+        try
+        {
+            if(closing) return;
+            await Task.Run(()=>ReportWriter.WriteAll(store,config,data));
+            reportWritten=true;
+            OpenPath(store.ReportPath);
+        }
+        catch(Exception ex) { ShowError(ex); }
+        finally { gate.Release(); }
+    }
     private void ErrorsClick(object sender, RoutedEventArgs e) => OpenPath(store.ErrorLogPath);
     private void ExportClick(object sender, RoutedEventArgs e)
     {

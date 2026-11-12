@@ -6,7 +6,7 @@
     <img src="https://img.shields.io/badge/Windows-10%20%2F%2011-1B2B23?style=flat-square" alt="Windows 10 y 11">
     <img src="https://img.shields.io/badge/Arquitectura-x64-1B2B23?style=flat-square" alt="Arquitectura x64">
     <a href="https://github.com/Axxon-g/contador-cofres-fornite/releases"><img src="https://img.shields.io/github/downloads/Axxon-g/contador-cofres-fornite/Contador.exe?style=flat-square&amp;label=Descargas&amp;color=FFC857&amp;labelColor=6E2636&amp;displayAssetName=false" alt="Descargas acumuladas de Contador.exe en todas las versiones" title="Descargas del ejecutable, no personas únicas. Se actualiza automáticamente con caché."></a>
-    <img src="https://img.shields.io/badge/Versi%C3%B3n-1.2.4-F1CA76?style=flat-square&amp;labelColor=1B2B23" alt="Versión 1.2.4">
+    <img src="https://img.shields.io/badge/Versi%C3%B3n-1.2.5-F1CA76?style=flat-square&amp;labelColor=1B2B23" alt="Versión 1.2.5">
     <a href="LICENSE"><img src="https://img.shields.io/badge/Licencia-MIT-1B2B23?style=flat-square" alt="Licencia MIT"></a>
   </p>
   <p>
@@ -119,6 +119,8 @@ Contador lee los archivos `.replay` que Fortnite guarda en tu equipo. Identifica
 - Una partida renombrada no vuelve a sumarse.
 - Los historiales y preferencias se guardan localmente; la app no envía estadísticas.
 
+Desde la versión 1.2.5 se revisan las repeticiones cada segundo. Tras finalizar, se comprueba brevemente su estabilidad y se muestran primero las cifras; el informe se genera después. La duración real depende del tamaño del archivo y del equipo.
+
 Fortnite escribe la clave necesaria para leer la repetición al finalizar la partida. Por eso el total se actualiza después, aunque la app esté abierta durante el juego.
 
 ## Preguntas frecuentes
@@ -197,7 +199,7 @@ Instala el [SDK de .NET 10 para Windows x64](https://dotnet.microsoft.com/downlo
 .\build.bat
 ```
 
-El ejecutable autónomo se genera en `dist\1.2.4\Contador.exe`. La primera compilación necesita conexión para restaurar dependencias.
+El ejecutable autónomo se genera en `dist\1.2.5\Contador.exe`. La primera compilación necesita conexión para restaurar dependencias.
 
 Para desarrollar o ejecutar las comprobaciones:
 
@@ -207,7 +209,7 @@ dotnet run --project tests/Contador.Checks/Contador.Checks.csproj -c Release
 dotnet run --project tests/Contador.DesktopChecks/Contador.DesktopChecks.csproj -c Release
 ```
 
-La versión 1.2.4 pasó 52 comprobaciones, incluidas pruebas de importación sobre una copia de historial real. Esto comprueba conservación y combinación de datos; no sustituye validar el lector contra nuevas versiones de Fortnite.
+La versión 1.2.5 pasó 63 comprobaciones del motor y 3 pruebas de cierre WPF, incluidas pruebas de importación sobre una copia de historial real. Esto comprueba conservación y combinación de datos; no sustituye validar el lector contra nuevas versiones de Fortnite.
 
 Consulta [cómo publicar el ejecutable en GitHub Releases](docs/PUBLICAR.md) y el [estado de verificación](VERIFICACION.md).
 

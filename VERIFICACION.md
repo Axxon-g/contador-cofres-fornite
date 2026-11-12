@@ -1,6 +1,6 @@
 # Verificación de Contador 1.2.1
 
-- Compilación Windows x64 autónoma: ejecutable dist/1.2.4/Contador.exe.
+- Compilación Windows x64 autónoma: ejecutable dist/1.2.5/Contador.exe.
 - 35 comprobaciones correctas con una copia del historial real: cabeceras, perfiles, persistencia, importación, respaldo, detección de partida, retirada del aviso al finalizar y exclusión de repeticiones abandonadas.
 - Sesión comprobada con historial anterior, importaciones, repeticiones antiguas y varias partidas nuevas. Última partida y sesión se calculan por separado.
 - Capturas nativas del overlay en espera y en partida, con etiquetas de última partida, sesión y tesoros.
@@ -26,3 +26,9 @@ No se verificó visualmente dentro de OBS. Los navegadores de pruebas locales fa
 ## Reporte renovado en 1.2.4
 
 Se actualizó el CSS del reporte a la paleta y tipografía del launcher y se integró la moneda en una URI de datos. Se añadieron comprobaciones de colores, imagen embebida, ausencia del tema claro anterior y conservación de gráficos y tablas. La herramienta de navegador de esta sesión no permite abrir archivos locales; no se certifica una inspección visual del reporte en ese navegador.
+
+## Actualización rápida en 1.2.5
+
+Pasaron 63 comprobaciones del motor y 3 pruebas WPF de cierre. Las pruebas deterministas verifican dos snapshots idénticos y un segundo de estabilidad, reinicio de espera ante cambios de tamaño o fecha y rechazo de confirmación si el archivo cambia o desaparece durante el análisis.
+
+El sondeo pasa de ocho a un segundo. Launcher y overlays reciben las cifras antes de generar el informe; se elimina el informe repetido sin cambios y la compactación forzada previa a publicar resultados. No se midió la latencia de extremo a extremo durante una partida real en esta sesión; no se promete un tiempo fijo de actualización.

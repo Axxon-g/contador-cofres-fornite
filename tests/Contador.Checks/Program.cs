@@ -187,6 +187,25 @@ try
         Check(styledReport.Contains("Cofres por día") && styledReport.Contains("Últimas partidas") && styledReport.Contains("Por tipo de cofre"),"Reporte conserva graficos y tablas");
     }
     finally {ReportWriter.ReportBrandImage=null;}
+    var stability = new ReplayFileStability();
+    var tick = DateTime.UtcNow;
+    var quiet = TimeSpan.FromSeconds(1);
+    var written = tick.AddSeconds(-2);
+    Check(!stability.Observe("fast",100,written,tick,quiet),"Primera observacion no lee una repeticion en escritura");
+    Check(!stability.Observe("fast",100,written,tick.AddMilliseconds(500),quiet),"Mantiene intervalo minimo de estabilidad");
+    Check(stability.Observe("fast",100,written,tick.AddSeconds(1),quiet),"Repeticion estable disponible al segundo, sin espera de cuatro segundos");
+    Check(!stability.Observe("fast",100,tick.AddSeconds(1),tick.AddSeconds(1),quiet),"Escritura en cabecera con mismo tamano reinicia estabilidad");
+    Check(stability.Observe("fast",100,tick.AddSeconds(1),tick.AddSeconds(2),quiet),"Acepta cabecera estable un segundo despues");
+    Check(!stability.Observe("fast",120,tick.AddSeconds(2),tick.AddSeconds(2),quiet),"Cambio de tamano evita lectura prematura");
+    Check(!stability.Observe("other",120,written,tick.AddSeconds(2),quiet),"No comparte estabilidad entre archivos");
+    Check(stability.Observe("fast",120,tick.AddSeconds(2),tick.AddSeconds(3),quiet),"Reanuda tras finalizar nueva escritura");
+    var changingPath=Path.Combine(folder,"changing.replay");File.WriteAllText(changingPath,"abcd");
+    var changing=new FileInfo(changingPath);var changingKey=Tracker.FileKey(changing);
+    Check(!ReplayFileStability.HasChanged(changing,changingKey),"Snapshot sin cambios puede confirmarse");
+    File.SetLastWriteTimeUtc(changingPath,tick.AddSeconds(2));
+    Check(ReplayFileStability.HasChanged(changing,changingKey),"Cambio con mismo tamano exige reintento y no confirma resultado parcial");
+    File.Delete(changingPath);
+    Check(ReplayFileStability.HasChanged(changing,changingKey),"Archivo desaparecido no se confirma como analizado");
     Console.WriteLine($"{checks} comprobaciones correctas.");
 }
 finally { Directory.Delete(folder, recursive:true); }

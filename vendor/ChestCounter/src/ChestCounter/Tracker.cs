@@ -10,7 +10,7 @@ public sealed class Tracker
     private static readonly TimeSpan QuietPeriod = TimeSpan.FromSeconds(10);
 
     /// <summary>Replay finalized by Fortnite (no longer live, real key written): only a few quiet seconds are needed.</summary>
-    private static readonly TimeSpan FinalizedQuietPeriod = TimeSpan.FromSeconds(4);
+    private static readonly TimeSpan FinalizedQuietPeriod = TimeSpan.FromSeconds(1);
 
     /// <summary>A finished replay not modified for this long is complete for sure (replays left from earlier).</summary>
     private static readonly TimeSpan OldReplayAge = TimeSpan.FromMinutes(1);
@@ -25,7 +25,9 @@ public sealed class Tracker
     private readonly Store _store;
     private readonly Config _config;
     private readonly TrackerData _data;
-    private readonly Dictionary<string, long> _lastSeenSize = new();
+    private readonly ReplayFileStability _stability = new();
+    public bool WriteReports { get; set; } = true;
+    public bool CompactAfterAnalysis { get; set; } = true;
 
     public Tracker(Store store, Config config, TrackerData data)
     {
@@ -125,7 +127,7 @@ public sealed class Tracker
             {
                 bar!.Update(i, file.Name);
                 ReportWriter.Progress = new ScanProgress(i, ready.Count);
-                ReportWriter.WriteAll(_store, _config, _data);
+                if (WriteReports) ReportWriter.WriteAll(_store, _config, _data);
             }
             else
             {
@@ -159,7 +161,7 @@ public sealed class Tracker
         }
 
         var added = outcomes.Count(o => o.Match != null);
-        if (added > 0 || batch)
+        if (WriteReports && (added > 0 || batch))
         {
             ReportWriter.WriteAll(_store, _config, _data);
         }
@@ -185,8 +187,7 @@ public sealed class Tracker
         }
 
         // The file must not have changed for a while and its size must be stable between two scans.
-        var stable = _lastSeenSize.TryGetValue(file.FullName, out var size) && size == file.Length;
-        _lastSeenSize[file.FullName] = file.Length;
+        var stable = _stability.Observe(file.FullName,file.Length,file.LastWriteTimeUtc,DateTime.UtcNow,FinalizedQuietPeriod);
 
         if (live == null)
         {
@@ -226,6 +227,11 @@ public sealed class Tracker
         }
         catch (Exception ex)
         {
+            if (ReplayFileStability.HasChanged(file,key))
+            {
+                HasPending=true;
+                return new Outcome(Skipped: "Repetición todavía actualizándose; se reintentará.");
+            }
             var message = (ex as AggregateException)?.InnerException?.Message ?? ex.Message;
             ErrorLog.Write($"Unreadable replay: {file.FullName} ({file.Length} bytes, {file.LastWriteTime:yyyy-MM-dd HH:mm:ss})", ex);
             _data.ProcessedFiles[key] = "error: " + message;
@@ -233,6 +239,11 @@ public sealed class Tracker
             return new Outcome(Error: $"{file.Name} : {message}");
         }
 
+        if (ReplayFileStability.HasChanged(file,key))
+        {
+            HasPending=true;
+            return new Outcome(Skipped: "La repetición cambió durante el análisis; se reintentará.");
+        }
         record.ReplayFile = file.Name;
 
         if (!record.IsBattleRoyale)
@@ -382,7 +393,7 @@ public sealed class Tracker
         })
         {
             IsBackground = true,
-            Priority = ThreadPriority.Lowest,
+            Priority = ThreadPriority.BelowNormal,
             Name = "ReplayAnalysis",
         };
         worker.Start();
@@ -391,7 +402,7 @@ public sealed class Tracker
             throw new TimeoutException(L.T("analyse trop longue", "analysis took too long", "análisis demasiado largo"));
         }
         bytes = Array.Empty<byte>();
-        ReleaseMemory();
+        if (CompactAfterAnalysis) ReleaseMemory();
         if (failure != null)
         {
             System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(failure).Throw(); // keep the original stack
