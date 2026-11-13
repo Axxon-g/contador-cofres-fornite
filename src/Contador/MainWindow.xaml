@@ -47,8 +47,8 @@ Style="{StaticResource {x:Type Window}}" Icon="/Contador;component/Assets/Contad
 <TextBlock Text="Repeticiones" FontSize="20" FontWeight="SemiBold"/><TextBlock Text="Se leen sin modificar los archivos del juego." Foreground="{StaticResource Muted}" Margin="0,6,0,14"/>
 <TextBox x:Name="DemosPath" AutomationProperties.Name="Carpeta de repeticiones" IsReadOnly="True"/>
 <StackPanel Orientation="Horizontal" Margin="0,12,0,24"><Button Content="Elegir carpeta" Click="FolderClick" IsEnabled="{Binding CanEdit}"/><Button Content="Abrir carpeta" Click="OpenDemosClick"/></StackPanel>
-<TextBlock Text="Cuenta" FontSize="20" FontWeight="SemiBold"/>
-<ComboBox x:Name="ProfilePicker" Foreground="#101C2E" Background="#FFF4DF" DisplayMemberPath="Name" SelectedValuePath="Key" SelectionChanged="ProfileChanged" Margin="0,12,0,24" Padding="10" AutomationProperties.Name="Seleccionar cuenta" IsEnabled="{Binding CanEdit}"/>
+<TextBlock Text="Cuenta" FontSize="20" FontWeight="SemiBold"/><TextBlock Text="Elige una cuenta detectada para consultar sus cofres. Solo aparecen cuentas con partidas guardadas en este equipo." Foreground="{StaticResource Muted}" Margin="0,6,0,0"/>
+<ComboBox x:Name="ProfilePicker" Foreground="#101C2E" Background="#FFF4DF" Margin="0,12,0,24" Padding="10" AutomationProperties.Name="Seleccionar cuenta"/>
 <TextBlock Text="Overlay en el juego" FontSize="20" FontWeight="SemiBold"/>
 <CheckBox x:Name="OverlayCheck" Content="Mostrar contador sobre el juego" Click="OverlayClick" IsEnabled="{Binding CanEdit}"/>
 <StackPanel Orientation="Horizontal" Margin="0,0,0,14"><Button Content="Mostrar / ocultar" Click="ToggleOverlayClick"/><Button Content="Bloquear / mover" Click="LockOverlayClick"/></StackPanel>

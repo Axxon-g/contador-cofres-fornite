@@ -32,3 +32,7 @@ Se actualizó el CSS del reporte a la paleta y tipografía del launcher y se int
 Pasaron 63 comprobaciones del motor y 3 pruebas WPF de cierre. Las pruebas deterministas verifican dos snapshots idénticos y un segundo de estabilidad, reinicio de espera ante cambios de tamaño o fecha y rechazo de confirmación si el archivo cambia o desaparece durante el análisis.
 
 El sondeo pasa de ocho a un segundo. Launcher y overlays reciben las cifras antes de generar el informe; se elimina el informe repetido sin cambios y la compactación forzada previa a publicar resultados. No se midió la latencia de extremo a extremo durante una partida real en esta sesión; no se promete un tiempo fijo de actualización.
+
+## Corrección de cuentas · 1.2.6
+
+La prueba WPF utiliza un ComboBox real con dos cuentas de igual nombre y distintos Epic ID. Mantiene ocupado el bloqueo del analizador, elige la segunda cuenta, simula una actualización y comprueba que la elección pendiente se conserva. Tras liberar el bloqueo verifica el perfil guardado y el total separado; también permite volver al primero y desactiva la lista vacía. Pasaron las cuatro comprobaciones WPF y las 61 comprobaciones básicas del motor. No se ha validado todavía con las partidas de los usuarios que reportaron el problema.

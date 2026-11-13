@@ -14,6 +14,7 @@ namespace Contador;
 public partial class MainWindow : Window
 {
     private readonly Dashboard vm = new();
+    private readonly ProfilePickerController profilePicker;
     private readonly Store store;
     private readonly Config config;
     private readonly TrackerData data;
@@ -23,7 +24,7 @@ public partial class MainWindow : Window
     private readonly SessionCounter sessionCounter = new(DateTime.UtcNow);
     private readonly DispatcherTimer presenceTimer = new() { Interval = TimeSpan.FromSeconds(2) };
     private bool checkingPresence, recording;
-    private bool initializing = true, closing;
+    private bool closing;
     private bool watcherStarted;
     private volatile OverlayView? lastOverlay;
     private string importNotice = "";
@@ -58,9 +59,9 @@ public partial class MainWindow : Window
         DemosPath.Text = config.DemosFolder;
         OverlayCheck.IsChecked = config.ShowOverlay;
         OverlayScale.Value = config.OverlaySize;
+        profilePicker = new ProfilePickerController(ProfilePicker, key => SaveAsync(() => config.Profile = key));
         Refresh();
         Navigate("summary");
-        initializing = false;
         Loaded += async (_, _) =>
         {
             presenceTimer.Start();
@@ -139,11 +140,7 @@ public partial class MainWindow : Window
     private void Refresh()
     {
         vm.Refresh(data, config, sessionCounter);
-        var profiles = Profiles.List(data);
-        initializing = true;
-        ProfilePicker.ItemsSource = profiles;
-        ProfilePicker.SelectedValue = Profiles.Current(data, config)?.Key;
-        initializing = false;
+        profilePicker.Refresh(data, config);
     }
     private void ShowError(Exception ex)
     {
@@ -242,11 +239,7 @@ public partial class MainWindow : Window
             await ScanAsync();
         }
     }
-    private async void ProfileChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (initializing || ProfilePicker.SelectedValue is not string key) return;
-        await SaveAsync(() => config.Profile = key);
-    }
+
     private async void OverlayClick(object sender, RoutedEventArgs e)
     {
         await SaveAsync(() => config.ShowOverlay = OverlayCheck.IsChecked == true);

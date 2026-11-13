@@ -6,7 +6,7 @@
     <img src="https://img.shields.io/badge/Windows-10%20%2F%2011-1B2B23?style=flat-square" alt="Windows 10 y 11">
     <img src="https://img.shields.io/badge/Arquitectura-x64-1B2B23?style=flat-square" alt="Arquitectura x64">
     <a href="https://github.com/Axxon-g/contador-cofres-fornite/releases"><img src="https://img.shields.io/github/downloads/Axxon-g/contador-cofres-fornite/Contador.exe?style=flat-square&amp;label=Descargas&amp;color=FFC857&amp;labelColor=6E2636&amp;displayAssetName=false" alt="Descargas acumuladas de Contador.exe en todas las versiones" title="Descargas del ejecutable, no personas únicas. Se actualiza automáticamente con caché."></a>
-    <img src="https://img.shields.io/badge/Versi%C3%B3n-1.2.5-F1CA76?style=flat-square&amp;labelColor=1B2B23" alt="Versión 1.2.5">
+    <img src="https://img.shields.io/badge/Versi%C3%B3n-1.2.6-F1CA76?style=flat-square&amp;labelColor=1B2B23" alt="Versión 1.2.6">
     <a href="LICENSE"><img src="https://img.shields.io/badge/Licencia-MIT-1B2B23?style=flat-square" alt="Licencia MIT"></a>
   </p>
   <p>
@@ -115,6 +115,12 @@ Si la carpeta no se encuentra, entra en **Ajustes → Elegir carpeta**. La ubica
 </table>
 
 <sub>Vistas previas renderizadas desde la interfaz de la app. La tabla de historial utiliza datos de demostración; no se incluyen en el programa.</sub>
+
+## Elegir una cuenta
+
+Entra en **Ajustes → Cuenta** y selecciona el perfil. Cada opción muestra su nombre, partidas y cofres. Desde la versión **1.2.6**, el selector permanece disponible mientras se analizan repeticiones; si hay un análisis en curso, la elección se aplica al terminar. El resumen, historial, informe y overlays utilizan la cuenta elegida, que se recuerda al volver a abrir la app.
+
+Solo aparecen cuentas con partidas detectadas o importadas en este equipo. No se consulta el historial de otras cuentas por Internet ni se necesitan sus credenciales.
 
 ## ¿Ya usabas otro contador?
 
@@ -257,7 +263,7 @@ Instala el [SDK de .NET 10 para Windows x64](https://dotnet.microsoft.com/downlo
 .\build.bat
 ```
 
-El ejecutable autónomo se genera en `dist\1.2.5\Contador.exe`. La primera compilación necesita conexión para restaurar dependencias.
+El ejecutable autónomo se genera en `dist\1.2.6\Contador.exe`. La primera compilación necesita conexión para restaurar dependencias.
 
 Para desarrollar o ejecutar las comprobaciones:
 

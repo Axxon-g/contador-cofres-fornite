@@ -2,6 +2,9 @@ using System.Windows;
 using System.IO;
 using System.Windows.Threading;
 using Contador;
+using ChestCounter;
+using Contador.Engine;
+using System.Windows.Controls;
 
 namespace Contador.DesktopChecks;
 public static class Program
@@ -19,7 +22,8 @@ public static class Program
                 await Scenario(false, false);
                 await Scenario(true, false);
                 await Scenario(false, true);
-                Console.WriteLine("3 comprobaciones WPF correctas: cierre inmediato, análisis pendiente y error de guardado.");
+                await ProfileSelection();
+                Console.WriteLine("4 comprobaciones WPF correctas: tres escenarios de cierre y selección de cuentas durante un análisis.");
                 application.Shutdown();
             }
             catch (Exception ex) { failure = ex; application.Shutdown(1); }
@@ -29,6 +33,57 @@ public static class Program
         return 0;
     }
 
+    private static async Task ProfileSelection()
+    {
+        L.Set("es");
+        var data = new TrackerData { Matches = [
+            new() { EpicId="A", PlayerName="Jugador", SessionId="a", ChestsOpened=5, AnalyzedAtUtc=DateTime.UtcNow },
+            new() { EpicId="B", PlayerName="Jugador", SessionId="b", ChestsOpened=12, AnalyzedAtUtc=DateTime.UtcNow }
+        ] };
+        var config = new Config { Profile="A" };
+        var picker = new ComboBox();
+        var window = new Window { Content=picker, Width=300, Height=100, Left=-20000, Top=-20000, ShowInTaskbar=false };
+        var folder = Path.Combine(Path.GetTempPath(), "ContadorProfiles-"+Guid.NewGuid());
+        var store = new Store(folder);
+        using var gate = new SemaphoreSlim(0,1); // Replay analysis currently owns the gate.
+        var saved = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var dashboard = new Dashboard { IsBusy=true };
+        ProfilePickerController? controller = null;
+        controller = new ProfilePickerController(picker, async key =>
+        {
+            await gate.WaitAsync();
+            try
+            {
+                config.Profile=key;
+                store.SaveConfig(config);
+                dashboard.Refresh(data,config,new SessionCounter(DateTime.UtcNow));
+                controller!.Refresh(data,config);
+                saved.TrySetResult();
+            }
+            finally { gate.Release(); }
+        });
+        try
+        {
+            controller.Refresh(data,config);
+            window.Show();
+            if(!picker.IsEnabled || picker.Items.Count!=2) throw new Exception("Selector bloqueado durante análisis.");
+            picker.SelectedValue="B";
+            controller.Refresh(data,config); // Scanner refresh must preserve the pending user choice.
+            if((string?)picker.SelectedValue!="B" || config.Profile!="A" || saved.Task.IsCompleted)
+                throw new Exception("La elección pendiente se perdió o modificó datos durante el análisis.");
+            gate.Release();
+            await saved.Task.WaitAsync(TimeSpan.FromSeconds(5));
+            await Task.Yield();
+            var overlay = new SessionCounter(DateTime.UtcNow).Overlay(Profiles.View(data,config),false);
+            if(!picker.IsEnabled || config.Profile!="B" || store.LoadConfig()?.Profile!="B" || dashboard.Total!="12" || Profiles.View(data,config).Matches.Single().EpicId!="B")
+                throw new Exception("La cuenta elegida no se guardó o sus estadísticas se mezclaron.");
+            picker.SelectedValue="A";
+            if(config.Profile!="A" || dashboard.Total!="5") throw new Exception("No permite volver a la primera cuenta.");
+            controller.Refresh(new TrackerData(),config);
+            if(picker.IsEnabled) throw new Exception("Selector sin cuentas debe quedar inactivo.");
+        }
+        finally { window.Close(); if(Directory.Exists(folder)) Directory.Delete(folder,true); }
+    }
     private static async Task Scenario(bool busy, bool saveFails)
     {
         var window = new Window { Width=100, Height=100, Left=-20000, Top=-20000, ShowInTaskbar=false };
