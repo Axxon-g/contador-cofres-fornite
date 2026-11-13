@@ -17,7 +17,7 @@ La app usa código propio para dibujar las piezas; no incorpora el código, inte
 
 ## Red, caché y límites
 
-Solo se solicitan imágenes HTTPS del mapa 43 en fortnite.gg. El proveedor recibe las peticiones de imágenes y la información habitual de conexión, como la IP; no se le envían credenciales, historial, repeticiones ni estadísticas. Se usa un identificador de cliente Contador/1.2.7, sin simular una sesión de navegador ni reenviar cookies.
+Solo se solicitan imágenes HTTPS del mapa 43 en fortnite.gg. El proveedor recibe las peticiones de imágenes y la información habitual de conexión, como la IP; no se le envían credenciales, historial, repeticiones ni estadísticas. Se usa un identificador de cliente Contador seguido de la versión del ejecutable (Contador/1.3.0 en esta versión), sin simular una sesión de navegador ni reenviar cookies.
 
 Se permiten cuatro cargas simultáneas, ocho segundos de espera por petición y dos minutos antes de reintentar una pieza fallida. Los cambios de vista descartan solicitudes pendientes obsoletas. Cada pieza debe ser WebP de 256×256, con un máximo de 2 MB; no se aceptan páginas HTML como imágenes. La memoria conserva hasta 96 piezas; la caché de disco se limita a 128 MB en `%LOCALAPPDATA%/ContadorModern/MapTiles/43`.
 

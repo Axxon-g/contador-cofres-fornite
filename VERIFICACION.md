@@ -1,5 +1,9 @@
 # Verificación de Contador 1.2.1
 
+## Versión del ejecutable · 1.3.0
+
+Proyecto actualizado a 1.3.0. La etiqueta de la ventana y el título del mapa usan AppVersion, derivada de la versión del ensamblado, en lugar de literales separados. Se comprobó por reflexión la etiqueta v1.3 y la versión 1.3.0.0; publicación autocontenida win-x64 completada. Pasaron 18 pruebas WPF y ocho de instancia única. La salida de esta versión está en dist/1.3.0/Contador.exe; el ejecutable histórico de dist/1.2.7 sigue siendo una compilación anterior.
+
 ## HD activado por defecto · 1.2.7
 
 Por petición del usuario, Terreno HD inicia activado. Se mantienen el control para desactivarlo y el respaldo integrado. Las 18 comprobaciones WPF pasan con la nueva condición inicial y verifican desactivación y reactivación. Las pruebas y capturas aisladas bloquean la red para evitar descargas durante su ejecución. Esta modificación sustituye la condición inicial apagada documentada en las verificaciones históricas siguientes.

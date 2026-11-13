@@ -68,7 +68,7 @@ internal static class ViewsPreview
         host.Content = routes;
         var window = new Window
         {
-            Title = "Contador 1.2.7 · Rutas e informe · Vista de prueba",
+            Title = $"Contador {AppVersion.Display} · Rutas e informe · Vista de prueba",
             Width = 1000, Height = 900, MinWidth = 620, Content = root,
             WindowStartupLocation = WindowStartupLocation.CenterScreen
         };

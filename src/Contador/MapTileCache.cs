@@ -42,7 +42,7 @@ public sealed class MapTileCache : IDisposable
         {
             Timeout = TimeSpan.FromSeconds(8)
         };
-        client.DefaultRequestHeaders.UserAgent.ParseAdd("Contador/1.2.7");
+        client.DefaultRequestHeaders.UserAgent.ParseAdd("Contador/" + AppVersion.Full);
         return client;
     }
 

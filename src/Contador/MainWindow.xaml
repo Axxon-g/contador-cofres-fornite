@@ -20,7 +20,7 @@ Style="{StaticResource {x:Type Window}}" Icon="/Contador;component/Assets/Contad
 </Border>
 <Grid Grid.Column="1" Margin="32,28">
 <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-<Grid Margin="0,0,0,20"><TextBlock x:Name="PageTitle" Text="Tu próxima partida cuenta." FontSize="28" FontWeight="SemiBold"/><TextBlock Text="v1.2.7" HorizontalAlignment="Right" Foreground="{StaticResource Muted}"/></Grid>
+<Grid Margin="0,0,0,20"><TextBlock x:Name="PageTitle" Text="Tu próxima partida cuenta." FontSize="28" FontWeight="SemiBold"/><TextBlock Text="{x:Static local:AppVersion.Label}" HorizontalAlignment="Right" Foreground="{StaticResource Muted}"/></Grid>
 <Border x:Name="StatusPanel" Grid.Row="1" Background="{StaticResource Panel}" CornerRadius="10" Padding="16,13" Margin="0,0,0,22">
 <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
 <StackPanel><TextBlock Text="{Binding MatchState}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource Gold}" Margin="0,0,0,8"/><TextBlock Text="{Binding PeriodLabel}" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,0,0,8"/><TextBlock Text="{Binding Status}" FontWeight="SemiBold" Foreground="{Binding StatusColor}"/><TextBlock Text="{Binding StatusDetail}" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,4,12,0"/></StackPanel>

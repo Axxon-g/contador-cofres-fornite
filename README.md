@@ -36,7 +36,7 @@ La actualización 1.3 reúne el mapa interactivo con terreno HD, rutas editables
 Consulta las [notas de Contador 1.3](docs/RELEASE-v1.3.0.md).
 
 > [!NOTE]
-> Este README prepara la publicación 1.3. El botón de descarga apunta a la última Release publicada, que puede seguir siendo anterior. El ejecutable local actual aún está versionado como 1.2.7; antes de publicar 1.3 hay que actualizar su versión y recompilarlo.
+> El botón de descarga apunta a la última Release publicada, que puede seguir siendo anterior hasta que se publique la 1.3. El ejecutable de esta versión se genera en `dist\1.3.0\Contador.exe`.
 
 ### Terreno HD al acercar
 
@@ -346,7 +346,7 @@ Instala el [SDK de .NET 10 para Windows x64](https://dotnet.microsoft.com/downlo
 .\build.bat
 ```
 
-El script utiliza la versión de `src/Contador/Contador.csproj` para elegir la carpeta de salida. Al preparar la versión `1.3.0`, el destino será `dist\1.3.0\Contador.exe`. La configuración actual sigue siendo `1.2.7`; cambiar el README no cambia el ejecutable. La primera compilación necesita conexión para restaurar dependencias.
+El script utiliza la versión de `src/Contador/Contador.csproj` para elegir la carpeta de salida. La versión es `1.3.0` y el destino es `dist\1.3.0\Contador.exe`; la interfaz muestra **v1.3** a partir de esa misma versión. La primera compilación necesita conexión para restaurar dependencias.
 
 Para desarrollar o ejecutar las comprobaciones:
 

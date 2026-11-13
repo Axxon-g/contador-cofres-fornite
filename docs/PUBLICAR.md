@@ -6,7 +6,7 @@ El repositorio contiene el código; GitHub Releases distribuye el programa. Los 
 
 1. Conserva `src`, `tests`, `vendor`, `global.json` y `NuGet.Config`. No elimines `vendor`: el lector se compila desde esa carpeta.
 2. Instala el SDK de .NET 10 para Windows x64.
-3. Actualiza primero la versión del proyecto a `1.3.0` y los textos de versión de la interfaz. El código y el ejecutable actuales siguen en `1.2.7`; no publiques ese binario como 1.3. Desde PowerShell en la raíz, ejecuta ` .\build.bat `.
+3. La versión del proyecto es `1.3.0` y la interfaz deriva su etiqueta v1.3 de esa versión. Desde PowerShell en la raíz, ejecuta ` .\build.bat `.
 4. Comprueba que las pruebas y la publicación terminan correctamente. No publiques una compilación si fallan las comprobaciones.
 5. El resultado queda en `dist\1.3.0\Contador.exe`, acompañado de `Contador.exe.sha256`. Cierra el contador antes de recompilar sobre ese archivo.
 

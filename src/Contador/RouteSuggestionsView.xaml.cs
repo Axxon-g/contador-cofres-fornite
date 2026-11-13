@@ -45,7 +45,7 @@ public partial class RouteSuggestionsView : UserControl
     {
         var window = new Window
         {
-            Title = "Mapa interactivo · Contador 1.2.7", Owner = Window.GetWindow(this),
+            Title = $"Mapa interactivo · Contador {AppVersion.Display}", Owner = Window.GetWindow(this),
             WindowState = WindowState.Maximized, MinWidth = 860, MinHeight = 640,
             Content = new RouteSuggestionsView(Planner, true) { Margin = new Thickness(20) }
         };
