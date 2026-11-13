@@ -36,3 +36,7 @@ El sondeo pasa de ocho a un segundo. Launcher y overlays reciben las cifras ante
 ## Corrección de cuentas · 1.2.6
 
 La prueba WPF utiliza un ComboBox real con dos cuentas de igual nombre y distintos Epic ID. Mantiene ocupado el bloqueo del analizador, elige la segunda cuenta, simula una actualización y comprueba que la elección pendiente se conserva. Tras liberar el bloqueo verifica el perfil guardado y el total separado; también permite volver al primero y desactiva la lista vacía. Pasaron las cuatro comprobaciones WPF y las 61 comprobaciones básicas del motor. No se ha validado todavía con las partidas de los usuarios que reportaron el problema.
+
+## Período por fechas · 1.2.7
+
+Pasaron 77 comprobaciones del motor y las cuatro comprobaciones WPF. Las nuevas pruebas cubren inicio y fin inclusivos, conversión UTC a fecha local, UTC heredada sin Kind, fecha de análisis como respaldo, rango invertido, configuración anterior sin filtro, persistencia, cuenta separada, perfiles sin partidas, historial conservado y coherencia del CSV, informe y overlay. Los calendarios y el mensaje de error se revisaron visualmente con XAML renderizado a 1120×740 y 860×600; las capturas usan estado de demostración. No se ha validado el filtro con historiales de los usuarios que reportaron el problema.

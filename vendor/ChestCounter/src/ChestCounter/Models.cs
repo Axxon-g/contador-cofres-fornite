@@ -84,6 +84,9 @@ public sealed class Config
 
     /// <summary>Selected profile (Epic id or name of the account the player plays on); null = most recent one.</summary>
     public string? Profile { get; set; }
+    /// <summary>Inclusive local-calendar bounds; null preserves the full history.</summary>
+    public DateTime? MatchDateFrom { get; set; }
+    public DateTime? MatchDateThrough { get; set; }
     public string DemosFolder { get; set; } = "";
 
     /// <summary>Open the tool automatically when Fortnite starts (invisible standby process started with Windows).</summary>

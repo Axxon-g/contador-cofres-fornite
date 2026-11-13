@@ -21,3 +21,7 @@ Session means completed matches since opening the app, excluding baseline histor
 ## Evidence boundary
 
 v1.2 source and screenshot review is accepted for shipping. Publish succeeded: `dist/1.2.0/Contador.exe` reports version 1.2.0.0. All 35 runtime checks passed with copies of actual histories, and native overlay snapshots passed. Current review captures are in the task workspace `work/v12-review`; earlier captures remain in `.impeccable/review`. No browser detector applies to this native Windows surface.
+
+## Fechas del contador (1.2.7)
+
+Ajustes includes native DatePicker controls for inclusive local start/end dates, Apply, a 01/11/2026 open-end preset and Clear. Controls wrap at the minimum window width; inline errors describe invalid ranges. The shared status panel names the applied period on every page. History is filtered without deleting stored matches. All-date remains the default; filters persist and scope totals, profiles, CSV, report and overlays.

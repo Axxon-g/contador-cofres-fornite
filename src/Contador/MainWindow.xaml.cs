@@ -59,6 +59,9 @@ public partial class MainWindow : Window
         DemosPath.Text = config.DemosFolder;
         OverlayCheck.IsChecked = config.ShowOverlay;
         OverlayScale.Value = config.OverlaySize;
+        PeriodFrom.Language = PeriodThrough.Language = System.Windows.Markup.XmlLanguage.GetLanguage(System.Globalization.CultureInfo.CurrentCulture.IetfLanguageTag);
+        PeriodFrom.SelectedDate = config.MatchDateFrom;
+        PeriodThrough.SelectedDate = config.MatchDateThrough;
         profilePicker = new ProfilePickerController(ProfilePicker, key => SaveAsync(() => config.Profile = key));
         Refresh();
         Navigate("summary");
@@ -230,6 +233,49 @@ public partial class MainWindow : Window
         }
         vm.NotifyAll();
     }
+    private void PeriodDateError(object? sender, DatePickerDateValidationErrorEventArgs e)
+    {
+        e.ThrowException = false;
+        PeriodError.Text = "Fecha no válida. Elige el día en el calendario o corrige el texto.";
+    }
+    private async void ApplyPeriodClick(object sender, RoutedEventArgs e)
+    {
+        static bool Read(DatePicker picker, out DateTime? date)
+        {
+            date = null;
+            if (string.IsNullOrWhiteSpace(picker.Text)) return true;
+            if (!DateTime.TryParse(picker.Text, System.Globalization.CultureInfo.CurrentCulture,
+                System.Globalization.DateTimeStyles.None, out var value)) return false;
+            date = value.Date;
+            return true;
+        }
+        if (!Read(PeriodFrom, out var from) || !Read(PeriodThrough, out var through))
+        {
+            PeriodError.Text = "Fecha no válida. Elige el día en el calendario o corrige el texto.";
+            return;
+        }
+        await SetPeriodAsync(from, through);
+    }
+    private async Task SetPeriodAsync(DateTime? from, DateTime? through)
+    {
+        if (!MatchPeriod.IsValid(from, through))
+        {
+            PeriodError.Text = "La fecha inicial debe ser anterior o igual a la fecha final.";
+            return;
+        }
+        PeriodError.Text = "Aplicando fechas…";
+        await SaveAsync(() =>
+        {
+            config.MatchDateFrom = from?.Date;
+            config.MatchDateThrough = through?.Date;
+            PeriodFrom.SelectedDate = from?.Date;
+            PeriodThrough.SelectedDate = through?.Date;
+        });
+        PeriodError.Text = "";
+    }
+    private async void EventPeriodClick(object sender, RoutedEventArgs e) =>
+        await SetPeriodAsync(new DateTime(2026,11,1), null);
+    private async void ClearPeriodClick(object sender, RoutedEventArgs e) => await SetPeriodAsync(null,null);
     private async void FolderClick(object sender, RoutedEventArgs e)
     {
         var picker = new OpenFolderDialog { Title = "Carpeta de repeticiones de Fortnite", Multiselect = false };

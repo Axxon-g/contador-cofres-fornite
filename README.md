@@ -6,7 +6,7 @@
     <img src="https://img.shields.io/badge/Windows-10%20%2F%2011-1B2B23?style=flat-square" alt="Windows 10 y 11">
     <img src="https://img.shields.io/badge/Arquitectura-x64-1B2B23?style=flat-square" alt="Arquitectura x64">
     <a href="https://github.com/Axxon-g/contador-cofres-fornite/releases"><img src="https://img.shields.io/github/downloads/Axxon-g/contador-cofres-fornite/Contador.exe?style=flat-square&amp;label=Descargas&amp;color=FFC857&amp;labelColor=6E2636&amp;displayAssetName=false" alt="Descargas acumuladas de Contador.exe en todas las versiones" title="Descargas del ejecutable, no personas únicas. Se actualiza automáticamente con caché."></a>
-    <img src="https://img.shields.io/badge/Versi%C3%B3n-1.2.6-F1CA76?style=flat-square&amp;labelColor=1B2B23" alt="Versión 1.2.6">
+    <img src="https://img.shields.io/badge/Versi%C3%B3n-1.2.7-F1CA76?style=flat-square&amp;labelColor=1B2B23" alt="Versión 1.2.7">
     <a href="LICENSE"><img src="https://img.shields.io/badge/Licencia-MIT-1B2B23?style=flat-square" alt="Licencia MIT"></a>
   </p>
   <p>
@@ -121,6 +121,22 @@ Si la carpeta no se encuentra, entra en **Ajustes → Elegir carpeta**. La ubica
 Entra en **Ajustes → Cuenta** y selecciona el perfil. Cada opción muestra su nombre, partidas y cofres. Desde la versión **1.2.6**, el selector permanece disponible mientras se analizan repeticiones; si hay un análisis en curso, la elección se aplica al terminar. El resumen, historial, informe y overlays utilizan la cuenta elegida, que se recuerda al volver a abrir la app.
 
 Solo aparecen cuentas con partidas detectadas o importadas en este equipo. No se consulta el historial de otras cuentas por Internet ni se necesitan sus credenciales.
+
+## Contar desde una fecha o durante un evento
+
+En **Ajustes → Fechas del contador** puedes elegir **Desde** y **Hasta**, incluidos ambos días. Pulsa **Aplicar fechas** para guardar la selección.
+
+- Para empezar el **1 de noviembre de 2026**, pulsa **Desde 01/11/2026**. Aplica esa fecha inicial y deja el final abierto para seguir sumando nuevas partidas.
+- Puedes dejar cualquiera de las dos fechas vacía para no limitar ese extremo.
+- **Todo el historial** quita el filtro y recupera las cifras históricas sin borrar partidas.
+
+El período activo aparece en la ventana y se aplica al resumen, historial, cofres, tesoros, última partida, sesión, informe, CSV y overlays. El selector conserva todas las cuentas conocidas y muestra sus cifras dentro del período. Las fechas se guardan al cerrar y abrir la aplicación.
+
+Se usa la fecha local de Windows de inicio de la partida. Si un registro antiguo no contiene esa fecha, se utiliza la fecha en que fue analizado; esos registros pueden requerir revisar su origen. El filtro no recupera partidas que no estén guardadas ni convierte la fecha de análisis en una fecha de partida conocida.
+
+Por defecto se conserva **Todo el historial**, también al actualizar desde versiones anteriores. Solo se cambia al elegir un período.
+
+<p align="center"><img src="docs/images/filtro-fechas.png" alt="Ajustes de fechas: calendarios desde y hasta, acceso al 1 de noviembre de 2026 y opción de ver todo el historial" width="960"></p>
 
 ## ¿Ya usabas otro contador?
 
@@ -263,7 +279,7 @@ Instala el [SDK de .NET 10 para Windows x64](https://dotnet.microsoft.com/downlo
 .\build.bat
 ```
 
-El ejecutable autónomo se genera en `dist\1.2.6\Contador.exe`. La primera compilación necesita conexión para restaurar dependencias.
+El ejecutable autónomo se genera en `dist\1.2.7\Contador.exe`. La primera compilación necesita conexión para restaurar dependencias.
 
 Para desarrollar o ejecutar las comprobaciones:
 

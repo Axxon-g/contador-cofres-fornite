@@ -99,9 +99,9 @@ public static class ReportWriter
         try
         {
             var view = Profiles.View(data, config);
-            WriteAtomic(store.ReportPath, Report(config, view, Profiles.List(data)));
+            WriteAtomic(store.ReportPath, Report(config, view, Profiles.List(data, config)));
             WriteOverlay(store, OverlayModel.Build(view, null, false));
-            WriteAtomic(store.CsvPath, Csv(data));
+            WriteAtomic(store.CsvPath, Csv(view));
         }
         catch (Exception ex)
         {
@@ -267,6 +267,7 @@ public static class ReportWriter
             <title>{title}</title><style>{FontFace}{Style}</style></head><body><main>
             <header><div class="brand">{(ReportBrandImage is { } brand ? $"<img class=\"brand-coin\" src=\"{H(brand())}\" alt=\"Moneda de Contador\">" : ChestIcon)}<div><h1 class="pirate">{title}</h1>{(player.Length > 0 ? $"<div class=\"who\"><b>{H(player)}</b></div>" : "")}</div></div>
             <span class="muted" style="font-size:13px">{updated}</span></header>
+            <p class="who">Período: {H(MatchPeriod.Describe(config))}</p>
             {LoadingCard(progress)}{ProfilesLine(profiles, player)}
             <section class="tiles">
               <div class="tile hero"><div class="k">{L.T("Coffres au total", "Chests in total", "Cofres en total")}</div><div class="v num">{totalChests.ToString("N0", Fr)}</div><div class="l">{L.T($"ouverts ou détruits par toi · {session.ToString("N0", Fr)} depuis le lancement", $"opened or destroyed by you · {session.ToString("N0", Fr)} since the tool started", $"abiertos o destruidos por ti · {session.ToString("N0", Fr)} desde que se abrió")}</div></div>

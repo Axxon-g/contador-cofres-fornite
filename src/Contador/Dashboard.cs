@@ -31,6 +31,7 @@ public sealed class Dashboard : INotifyPropertyChanged
     public string Stats { get; set; } = "0 partidas · 0 tesoros";
     public string EmptyMessage { get; set; } = "Todavía no hay partidas. Activa las repeticiones y juega una partida.";
     public string Footer { get; set; } = "Lectura local · Sin conexión a tu cuenta de Epic";
+    public string PeriodLabel { get; set; } = "Período: todo el historial";
     public string MatchState { get; set; } = "Esperando partida";
     public string SessionDetail { get; set; } = "0 partidas desde que abriste la app";
     public bool IsBusy { get; set; }
@@ -55,6 +56,7 @@ public sealed class Dashboard : INotifyPropertyChanged
     }
     public void Refresh(TrackerData data, Config config, SessionCounter sessionCounter)
     {
+        PeriodLabel = "Período: " + MatchPeriod.Describe(config);
         var matches = Profiles.View(data, config).Matches;
         Total = matches.Sum(m => (long)m.ChestsOpened).ToString("N0", L.Culture);
         var sessionMatches = sessionCounter.Matches(Profiles.View(data, config));
@@ -67,7 +69,7 @@ public sealed class Dashboard : INotifyPropertyChanged
         Stats = $"{matches.Count} partidas · {matches.Sum(m => m.TreasureFinds.Count)} tesoros\nMedia {avg:0.0} · Récord {matches.Select(m => m.ChestsOpened).DefaultIfEmpty(0).Max()} cofres";
         rows = ordered.Select(MatchRow.From).ToList();
         Recent.Clear(); foreach (var row in rows.Take(4)) Recent.Add(row);
-        EmptyMessage = matches.Count == 0 ? "Todavía no hay partidas. Activa las repeticiones y juega una partida." : "";
+        EmptyMessage = matches.Count == 0 ? "No hay partidas para esta cuenta en el período elegido. Cambia las fechas en Ajustes o juega una partida con las repeticiones activadas." : "";
         Filter(); NotifyAll();
     }
     public void NotifyAll() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));

@@ -15,3 +15,7 @@ Contador 1.2.3 routes ReportWriter.WriteAll through WriteOverlay and accepts an 
 Contador 1.2.4 restyles the report with the launcher's navy/crimson/gold palette and Segoe UI. ReportBrandImage supplies a self-contained coin image. Report statistics and replay analysis are unchanged.
 
 Contador 1.2.5 adds ReplayFileStability to compare file length/write timestamps, lowers the finalized quiet period to one second, and retries files changed during decoding. Tracker exposes report/compaction options so the desktop can publish counters before generating reports and let the runtime manage memory normally. The decoding thread uses BelowNormal priority; chest attribution/classification remain unchanged.
+
+## Filtro local de fechas (1.2.7)
+
+Config incorpora fechas locales opcionales; MatchPeriod compara días inclusivos sin mutar los registros. Profiles.View comparte el filtro por cuenta y fecha. La lista de perfiles conserva las cuentas sin partidas en el período, con cifras cero. ReportWriter identifica el período y exporta el CSV con la misma vista. Registros sin MatchStartUtc usan AnalyzedAtUtc.

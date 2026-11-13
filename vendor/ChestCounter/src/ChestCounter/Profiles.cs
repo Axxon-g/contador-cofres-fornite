@@ -24,6 +24,13 @@ public static class Profiles
         .OrderByDescending(p => p.LastPlayed)
         .ToList();
 
+    /// <summary>Retain all known accounts, including those with no matches in the chosen period.</summary>
+    public static List<Profile> List(TrackerData d, Config c) => List(d).Select(p =>
+    {
+        var matches = d.Matches.Where(m => Key(m) == p.Key && MatchPeriod.Includes(m,c)).ToList();
+        return p with { Matches=matches.Count, Chests=matches.Sum(m => m.ChestsOpened) };
+    }).ToList();
+
     private static DateTime When(MatchRecord m) => m.MatchStartUtc ?? m.AnalyzedAtUtc;
 
     /// <summary>The selected profile when it exists, else the most recently played one (null = no match yet).</summary>
@@ -46,7 +53,7 @@ public static class Profiles
             Version = d.Version,
             AnalyzerVersion = d.AnalyzerVersion,
             CreatedUtc = d.CreatedUtc,
-            Matches = d.Matches.Where(m => Key(m) == current.Key).ToList(),
+            Matches = d.Matches.Where(m => Key(m) == current.Key && MatchPeriod.Includes(m, c)).ToList(),
             ProcessedFiles = d.ProcessedFiles,
         };
     }

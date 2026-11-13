@@ -18,10 +18,10 @@ Style="{StaticResource {x:Type Window}}" Icon="/Contador;component/Assets/Contad
 </Border>
 <Grid Grid.Column="1" Margin="32,28">
 <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-<Grid Margin="0,0,0,20"><TextBlock x:Name="PageTitle" Text="Tu próxima partida cuenta." FontSize="28" FontWeight="SemiBold"/><TextBlock Text="v1.2" HorizontalAlignment="Right" Foreground="{StaticResource Muted}"/></Grid>
+<Grid Margin="0,0,0,20"><TextBlock x:Name="PageTitle" Text="Tu próxima partida cuenta." FontSize="28" FontWeight="SemiBold"/><TextBlock Text="v1.2.7" HorizontalAlignment="Right" Foreground="{StaticResource Muted}"/></Grid>
 <Border Grid.Row="1" Background="{StaticResource Panel}" CornerRadius="10" Padding="16,13" Margin="0,0,0,22">
 <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-<StackPanel><TextBlock Text="{Binding MatchState}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource Gold}" Margin="0,0,0,8"/><TextBlock Text="{Binding Status}" FontWeight="SemiBold" Foreground="{Binding StatusColor}"/><TextBlock Text="{Binding StatusDetail}" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,4,12,0"/></StackPanel>
+<StackPanel><TextBlock Text="{Binding MatchState}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource Gold}" Margin="0,0,0,8"/><TextBlock Text="{Binding PeriodLabel}" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,0,0,8"/><TextBlock Text="{Binding Status}" FontWeight="SemiBold" Foreground="{Binding StatusColor}"/><TextBlock Text="{Binding StatusDetail}" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,4,12,0"/></StackPanel>
 <Button Grid.Column="1" Content="{Binding ScanLabel}" Click="ScanClick" IsEnabled="{Binding CanScan}" Margin="8,0,0,0" VerticalAlignment="Center"/>
 </Grid></Border>
 <Grid Grid.Row="2">
@@ -44,6 +44,15 @@ Style="{StaticResource {x:Type Window}}" Icon="/Contador;component/Assets/Contad
 <TextBlock Grid.Row="2" Text="{Binding MatchDetail}" Foreground="{StaticResource Muted}" Margin="0,16,0,0"/>
 </Grid>
 <ScrollViewer x:Name="SettingsPanel" Visibility="Collapsed" VerticalScrollBarVisibility="Auto"><StackPanel>
+<TextBlock Text="Fechas del contador" FontSize="20" FontWeight="SemiBold"/>
+<TextBlock Text="Se aplica al resumen, historial, informe y overlays. Las partidas antiguas se conservan." Foreground="{StaticResource Muted}" Margin="0,6,0,12"/>
+<WrapPanel>
+<StackPanel Margin="0,0,16,12"><Label Content="Desde (incluido)" Target="{Binding ElementName=PeriodFrom}" Foreground="{StaticResource Ink}" Padding="0,0,0,6"/><DatePicker x:Name="PeriodFrom" Width="160" Foreground="#101C2E" Background="#FFF4DF" SelectedDateFormat="Short" DateValidationError="PeriodDateError" AutomationProperties.Name="Fecha inicial del contador"/></StackPanel>
+<StackPanel Margin="0,0,0,12"><Label Content="Hasta (incluido)" Target="{Binding ElementName=PeriodThrough}" Foreground="{StaticResource Ink}" Padding="0,0,0,6"/><DatePicker x:Name="PeriodThrough" Width="160" Foreground="#101C2E" Background="#FFF4DF" SelectedDateFormat="Short" DateValidationError="PeriodDateError" AutomationProperties.Name="Fecha final del contador"/></StackPanel>
+</WrapPanel>
+<TextBlock Text="Deja una fecha vacía para no limitar ese extremo. Se usa la hora local de Windows." Foreground="{StaticResource Muted}" FontSize="12"/>
+<TextBlock x:Name="PeriodError" Foreground="#FFB09A" Margin="0,8,0,0" AutomationProperties.LiveSetting="Polite"/>
+<WrapPanel Margin="0,10,0,24"><Button Content="Aplicar fechas" Click="ApplyPeriodClick" Margin="0,0,10,10"/><Button Content="Desde 01/11/2026" Click="EventPeriodClick" Margin="0,0,10,10" ToolTip="Fecha inicial: 1 de noviembre de 2026. Sin fecha final."/><Button Content="Todo el historial" Click="ClearPeriodClick" Margin="0,0,0,10"/></WrapPanel>
 <TextBlock Text="Repeticiones" FontSize="20" FontWeight="SemiBold"/><TextBlock Text="Se leen sin modificar los archivos del juego." Foreground="{StaticResource Muted}" Margin="0,6,0,14"/>
 <TextBox x:Name="DemosPath" AutomationProperties.Name="Carpeta de repeticiones" IsReadOnly="True"/>
 <StackPanel Orientation="Horizontal" Margin="0,12,0,24"><Button Content="Elegir carpeta" Click="FolderClick" IsEnabled="{Binding CanEdit}"/><Button Content="Abrir carpeta" Click="OpenDemosClick"/></StackPanel>

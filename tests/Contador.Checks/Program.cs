@@ -206,6 +206,45 @@ try
     Check(ReplayFileStability.HasChanged(changing,changingKey),"Cambio con mismo tamano exige reintento y no confirma resultado parcial");
     File.Delete(changingPath);
     Check(ReplayFileStability.HasChanged(changing,changingKey),"Archivo desaparecido no se confirma como analizado");
+    // Calendar boundaries are local and inclusive; the original history remains untouched.
+    var november = new Config { Profile="A", MatchDateFrom=new DateTime(2026,11,1), MatchDateThrough=new DateTime(2026,11,30) };
+    DateTime UtcLocal(int month, int day, int hour=0, int minute=0, int second=0) =>
+        new DateTime(2026,month,day,hour,minute,second,DateTimeKind.Local).ToUniversalTime();
+    var periodData = new TrackerData { Matches = [
+        new() { SessionId="before", EpicId="A", ChestsOpened=10, MatchStartUtc=UtcLocal(10,31,23,59,59), ReplayFile="old.replay" },
+        new() { SessionId="start", EpicId="A", ChestsOpened=5, MatchStartUtc=UtcLocal(11,1), ReplayFile="start.replay" },
+        new() { SessionId="end", EpicId="A", ChestsOpened=7, MatchStartUtc=UtcLocal(11,30,23,59,59), ReplayFile="end.replay" },
+        new() { SessionId="after", EpicId="A", ChestsOpened=11, MatchStartUtc=UtcLocal(12,1), ReplayFile="future.replay" },
+        new() { SessionId="other", EpicId="B", ChestsOpened=99, MatchStartUtc=UtcLocal(11,10), ReplayFile="other.replay" },
+        new() { SessionId="fallback", EpicId="A", ChestsOpened=3, AnalyzedAtUtc=UtcLocal(11,10), ReplayFile="fallback.replay" }
+    ] };
+    var periodView=Profiles.View(periodData,november);
+    Check(periodView.Matches.Sum(m=>m.ChestsOpened)==15,"Fechas inclusivas con cuenta separada y respaldo por fecha de analisis");
+    Check(periodData.Matches.Count==6,"Filtrar no elimina historial");
+    Check(Profiles.List(periodData,november).Single(p=>p.Key=="A").Chests==15,"Selector muestra cifras del periodo");
+    var zone=TimeZoneInfo.CreateCustomTimeZone("Checks-UTC-6",TimeSpan.FromHours(-6),"Checks","Checks");
+    var boundary = new MatchRecord { MatchStartUtc=new DateTime(2026,11,1,5,59,59,DateTimeKind.Utc) };
+    Check(!MatchPeriod.Includes(boundary,november,zone),"No cuenta dia anterior por diferencia UTC");
+    boundary.MatchStartUtc=new DateTime(2026,11,1,6,0,0,DateTimeKind.Unspecified);
+    Check(MatchPeriod.Includes(boundary,november,zone),"Interpreta fecha UTC heredada sin Kind e incluye medianoche local");
+    Check(!MatchPeriod.IsValid(new DateTime(2026,11,2),new DateTime(2026,11,1)),"Rechaza rango invertido");
+    Check(MatchPeriod.IsValid(null,new DateTime(2026,11,1)),"Permite solo fecha final");
+    var periodStore=new Store(Path.Combine(folder,"period"));
+    periodStore.SaveConfig(november);
+    Check(periodStore.LoadConfig()?.MatchDateFrom==november.MatchDateFrom && periodStore.LoadConfig()?.MatchDateThrough==november.MatchDateThrough,"Fechas persisten al reiniciar");
+    ReportWriter.WriteAll(periodStore,november,periodData);
+    var periodCsv=File.ReadAllText(periodStore.CsvPath);
+    Check(periodCsv.Contains("start.replay") && !periodCsv.Contains("old.replay") && !periodCsv.Contains("other.replay") && !periodCsv.Contains("future.replay"),"CSV automatico usa cuenta y periodo");
+    Check(File.ReadAllText(periodStore.ReportPath).Contains("Del 01/11/2026 al 30/11/2026"),"Informe identifica el periodo aplicado");
+    Check(new SessionCounter(DateTime.MinValue).Overlay(periodView,false).Total=="15","Overlay usa cifras del periodo");
+    november.MatchDateThrough=null;
+    Check(Profiles.View(periodData,november).Matches.Sum(m=>m.ChestsOpened)==26,"Inicio abierto cuenta partidas futuras");
+    november.MatchDateFrom=null;
+    Check(Profiles.View(periodData,november).Matches.Sum(m=>m.ChestsOpened)==36,"Quitar filtro recupera todo el historial de la cuenta");
+    november.MatchDateThrough=new DateTime(2026,10,1);
+    Check(Profiles.List(periodData,november).Count==2 && Profiles.List(periodData,november).All(p=>p.Chests==0),"Periodo vacio conserva cuentas seleccionables con cero cofres");
+    Check(Profiles.View(periodData,november).Matches.Count==0,"Periodo sin partidas devuelve cero sin volver a todo el historial");
+    Check(JsonSerializer.Deserialize<Config>("{}")?.MatchDateFrom==null,"Configuracion anterior conserva todo el historial por defecto");
     Console.WriteLine($"{checks} comprobaciones correctas.");
 }
 finally { Directory.Delete(folder, recursive:true); }

@@ -24,7 +24,7 @@ public sealed class ProfilePickerController
 
     public void Refresh(TrackerData data, Config config)
     {
-        var next = Profiles.List(data).Select(p => new Choice(p.Key, Profiles.Describe(p))).ToList();
+        var next = Profiles.List(data, config).Select(p => new Choice(p.Key, Profiles.Describe(p))).ToList();
         updating = true;
         try
         {
