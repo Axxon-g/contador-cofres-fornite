@@ -7,7 +7,9 @@ if (-not ($sdkVersions -match '^10\.')) { throw 'Se necesita el SDK de .NET 10. 
 & dotnet run --project tests/Contador.Checks/Contador.Checks.csproj -c Release
 if ($LASTEXITCODE -ne 0) { throw 'No pasaron las comprobaciones del motor.' }
 & dotnet run --project tests/Contador.DesktopChecks/Contador.DesktopChecks.csproj -c Release
-if ($LASTEXITCODE -ne 0) { throw 'No pasaron las comprobaciones de cierre de la ventana.' }
+if ($LASTEXITCODE -ne 0) { throw 'No pasaron las comprobaciones de cierre y selección de cuentas.' }
+& dotnet run --project tests/Contador.DesktopChecks/Contador.DesktopChecks.csproj -c Release -- --map-ui-only
+if ($LASTEXITCODE -ne 0) { throw 'No pasaron las comprobaciones de la interfaz del mapa.' }
 [xml]$project = Get-Content -LiteralPath 'src/Contador/Contador.csproj' -Raw
 $publishDir = Join-Path 'dist' ([string]$project.Project.PropertyGroup.Version)
 & dotnet publish src/Contador/Contador.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o $publishDir

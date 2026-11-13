@@ -1,4 +1,22 @@
-# Contador 1.2.7 · Filtro de fechas
+# Contador 1.2.7 · Mapa interactivo, rutas e informe
+
+## Mapa interactivo propio
+
+- Nuevo apartado Mapa y rutas: zoom, arrastre, nueve capas, búsqueda, puntos seleccionables y ventana ampliada.
+- Mapa de 2048 × 2048 y 2.145 posibles apariciones comunitarias para 43.10, más 16 lugares. Imagen y catálogo integrados sin descargas durante el uso.
+- Rutas editables, paradas arrastrables, revisión manual y deshacer. El guardado del plan está separado del recuento de partidas.
+- Se conserva el informe nativo. Las posiciones publicadas no garantizan botín ni premios y no son una detección del juego.
+- Consulta `docs/MAPA-INTERACTIVO-1.2.7.md` para procedencia y límites.
+
+## Rutas sugeridas e informe nativo
+
+- Se sustituye el análisis espacial por cuatro propuestas editoriales con mapa orientativo, pasos, fuentes y fecha de revisión.
+- Los testimonios y las guías se identifican por separado. No se prometen premios ni se inventa un ranking de zonas con más recompensas.
+- Nuevo apartado Informe con totales, gráfico diario, tipos de cofre, origen y detalle de tesoros y últimas partidas, dentro de la app.
+- Cuenta y fechas compartidas con el HTML. Los tesoros estimados del equipo se pueden mostrar sin sumarlos a tus cifras.
+- El historial se conserva. Las guías y el mapa están integrados; solo abrir fuentes necesita Internet.
+
+## Fechas
 
 - Calendarios Desde y Hasta en Ajustes, con días completos incluidos.
 - Acceso rápido Desde 01/11/2026, sin fecha final para seguir contando nuevas partidas.

@@ -518,6 +518,11 @@ public sealed class Tracker
         }
 
         var hadData = _data.Matches.Count > 0;
+        if (hadData && File.Exists(_store.DataPath))
+        {
+            var backup = Path.Combine(_store.Folder, $"data.before-analysis-{ReplayAnalyzer.CurrentVersion}.json");
+            if (!File.Exists(backup)) File.Copy(_store.DataPath, backup);
+        }
         foreach (var key in _data.ProcessedFiles.Where(kv => kv.Value != "skipped").Select(kv => kv.Key).ToList())
         {
             _data.ProcessedFiles.Remove(key);

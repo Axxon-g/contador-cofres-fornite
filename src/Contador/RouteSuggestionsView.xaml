@@ -1,0 +1,149 @@
+<UserControl x:Class="Contador.RouteSuggestionsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Contador">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="VisibleWhen"/>
+        <Style TargetType="ListBox">
+            <Setter Property="Background" Value="{StaticResource Ground}"/>
+            <Setter Property="Foreground" Value="{StaticResource Ink}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Line}"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True"/>
+        </Style>
+        <Style TargetType="ListBoxItem">
+            <Setter Property="Foreground" Value="{StaticResource Ink}"/>
+            <Setter Property="Padding" Value="6,8"/>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#365779"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="{Binding Dataset}" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,0,0,10"/>
+        <WrapPanel Grid.Row="1" Margin="0,0,0,10">
+            <Button x:Name="LayersButton" Content="Ocultar capas" Click="ToggleLayers" Padding="10,7" Margin="0,0,6,6"/>
+            <Button Content="+" Click="ZoomIn" Padding="12,7" Margin="0,0,4,6" AutomationProperties.Name="Acercar mapa"/>
+            <Button Content="−" Click="ZoomOut" Padding="12,7" Margin="0,0,6,6" AutomationProperties.Name="Alejar mapa"/>
+            <TextBlock x:Name="ZoomLabel" Text="100 %" Width="55" VerticalAlignment="Center" Margin="0,0,6,6"/>
+            <Button Content="Ver isla" Click="FitMap" Padding="10,7" Margin="0,0,6,6"/>
+            <Button x:Name="ExpandButton" Content="Ampliar mapa" Click="ExpandMap" Padding="10,7" Margin="0,0,6,6"/>
+            <Button Content="Deshacer" Click="Undo" IsEnabled="{Binding CanUndo}" Padding="10,7" Margin="0,0,0,6"/>
+            <CheckBox Content="Editar ruta" IsChecked="{Binding EditRoute}" FontSize="13" Margin="10,0,4,6" VerticalAlignment="Center"
+                      ToolTip="En edición, pulsa para añadir paradas y arrástralas para moverlas. Esc sale de edición."/>
+        </WrapPanel>
+        <Grid Grid.Row="2" MinHeight="260">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Border x:Name="LayerPanel" Width="230" Background="{StaticResource Panel}" Padding="12" Margin="0,0,10,0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Margin="0,0,10,0">
+                        <TextBlock Text="Capas del mapa" FontSize="17" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding CountLabel}" FontSize="12" Foreground="{StaticResource Muted}" Margin="0,6,0,12"/>
+                        <Label Content="Buscar lugar o tipo" Target="{Binding ElementName=PointSearch}" Foreground="{StaticResource Ink}" Padding="0,0,0,6"/>
+                        <TextBox x:Name="PointSearch" Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}" Padding="8" AutomationProperties.Name="Buscar puntos del mapa"/>
+                        <Label Content="Ir a un lugar" Target="{Binding ElementName=PlacePicker}" Foreground="{StaticResource Ink}" Padding="0,12,0,6"/>
+                        <ComboBox x:Name="PlacePicker" ItemsSource="{Binding PlaceNames}" SelectionChanged="PlaceChanged"
+                                  Foreground="#101C2E" Background="#FFF4DF" Padding="7" AutomationProperties.Name="Centrar un lugar del mapa"/>
+                        <ItemsControl ItemsSource="{Binding Layers}" Margin="0,12,0,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding Visible}" Margin="0,5" FontSize="13" HorizontalContentAlignment="Stretch">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Rectangle Width="8" Height="8" Fill="{Binding Color}" Margin="0,0,6,0"/>
+                                            <TextBlock Text="{Binding Caption}" MaxWidth="154"/>
+                                        </StackPanel>
+                                    </CheckBox>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <CheckBox Content="Ocultar revisados" IsChecked="{Binding HideReviewed}" FontSize="13"/>
+                        <Button Content="Reiniciar revisión" Click="ResetReviews" Padding="8" Margin="0,0,0,16" ToolTip="Limpia las marcas manuales. Puedes deshacer esta acción."/>
+                        <Expander Header="Resultados y selección" IsExpanded="False" Foreground="{StaticResource Ink}" Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="{Binding EmptyMessage}" FontSize="12" Margin="0,8"/>
+                                <ListBox x:Name="PointResults" ItemsSource="{Binding FilteredPoints}" SelectedItem="{Binding SelectedPoint}"
+                                         DisplayMemberPath="ListLabel" Height="170" FontSize="12" SelectionChanged="PointChosen"
+                                         AutomationProperties.Name="Resultados filtrados del mapa"/>
+                            </StackPanel>
+                        </Expander>
+                        <TextBlock x:Name="SelectionHeading" Text="{Binding GroupLabel}" FontWeight="SemiBold"/>
+                        <ComboBox x:Name="NearbyPicker" ItemsSource="{Binding NearbyPoints}" SelectedItem="{Binding SelectedPoint}" DisplayMemberPath="ListLabel"
+                                  Visibility="{Binding HasSelection, Converter={StaticResource VisibleWhen}}" SelectionChanged="PointChosen"
+                                  Foreground="#101C2E" Background="#FFF4DF" Padding="7" Margin="0,8" AutomationProperties.Name="Elegir un punto dentro del grupo"/>
+                        <TextBlock Text="{Binding SelectedDetail}" FontSize="12" Foreground="{StaticResource Muted}" Margin="0,8,0,10"/>
+                        <StackPanel Visibility="{Binding HasSelection, Converter={StaticResource VisibleWhen}}">
+                            <WrapPanel>
+                                <Button Content="Revisado" Click="MarkChecked" Padding="8" Margin="0,0,4,6"/>
+                                <Button Content="Vacío" Click="MarkEmpty" Padding="8" Margin="0,0,0,6"/>
+                                <Button Content="Pendiente" Click="MarkPending" Padding="8" Margin="0,0,0,6"/>
+                            </WrapPanel>
+                            <Button Content="Añadir a mi ruta" Click="AddPointStop" Padding="8" Margin="0,0,0,16"/>
+                        </StackPanel>
+                        <TextBlock Text="Mi ruta" FontSize="17" FontWeight="SemiBold" Margin="0,12,0,0"/>
+                        <CheckBox Content="Mostrar ruta" IsChecked="{Binding ShowRoute}" FontSize="13"/>
+                        <TextBlock Text="Activa Editar ruta en la barra superior para añadir o mover paradas." FontSize="12" Foreground="{StaticResource Muted}" Margin="0,0,0,12"/>
+                        <ListBox x:Name="RouteStops" ItemsSource="{Binding RouteRows}" SelectedItem="{Binding SelectedStop}" DisplayMemberPath="Label"
+                                 Height="140" FontSize="12" SelectionChanged="StopChosen" AutomationProperties.Name="Paradas de mi ruta"/>
+                        <WrapPanel Margin="0,8,0,16">
+                            <Button Content="Quitar parada" Click="RemoveStop" IsEnabled="{Binding HasSelectedStop}" Padding="8" Margin="0,0,4,6"/>
+                            <Button Content="Vaciar ruta" Click="ClearRoute" IsEnabled="{Binding HasRoute}" Padding="8" Margin="0,0,0,6"/>
+                        </WrapPanel>
+                        <Label Content="Cargar ruta sugerida" Target="{Binding ElementName=RoutePicker}" Foreground="{StaticResource Ink}" Padding="0,0,0,6"/>
+                        <ComboBox x:Name="RoutePicker" ItemsSource="{Binding Guides}" SelectedItem="{Binding SelectedGuide}" DisplayMemberPath="Title"
+                                  Foreground="#101C2E" Background="#FFF4DF" Padding="7" SelectionChanged="GuideChanged" AutomationProperties.Name="Cargar una ruta sugerida"/>
+                        <Expander Header="Guía y fuentes" Foreground="{StaticResource Ink}" Margin="0,14,0,0">
+                            <StackPanel>
+                                <TextBlock Text="{Binding SelectedGuide.Evidence}" Foreground="{StaticResource Gold}" FontSize="12" Margin="0,10,0,8"/>
+                                <TextBlock Text="{Binding SelectedGuide.Summary}" FontSize="12"/>
+                                <TextBlock Text="{Binding SelectedGuide.Steps}" FontSize="12" Margin="0,12,0,0"/>
+                                <TextBlock Text="{Binding SelectedGuide.Caution}" FontSize="12" Margin="0,12"/>
+                                <ItemsControl ItemsSource="{Binding SelectedGuide.Sources}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock FontSize="12" Margin="0,0,0,12">
+                                                <Hyperlink NavigateUri="{Binding Url}" RequestNavigate="OpenSource" Foreground="{StaticResource Gold}">
+                                                    <Run Text="{Binding Title}"/>
+                                                </Hyperlink>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <TextBlock Text="{Binding Notice}" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,8"/>
+                                <TextBlock FontSize="12" Margin="0,8">
+                                    <Hyperlink NavigateUri="https://lifecrisis.life/loot" RequestNavigate="OpenSource" Foreground="{StaticResource Gold}">Crisis: fuente de ubicaciones</Hyperlink>
+                                </TextBlock>
+                                <TextBlock FontSize="12" Margin="0,8">
+                                    <Hyperlink NavigateUri="https://fortnite-api.com/" RequestNavigate="OpenSource" Foreground="{StaticResource Gold}">Fortnite-API: imagen del mapa</Hyperlink>
+                                </TextBlock>
+                            </StackPanel>
+                        </Expander>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+            <Border Grid.Column="1" BorderThickness="1" BorderBrush="{StaticResource Line}" Background="{StaticResource Ground}" ClipToBounds="True">
+                <Grid>
+                    <local:InteractiveMap x:Name="Map" Model="{Binding}" AutomationProperties.Name="Mapa interactivo: usa botones de zoom, flechas para mover, Inicio para ver la isla y la lista de resultados para seleccionar puntos"/>
+                    <TextBlock Text="{Binding EmptyMessage}" Visibility="{Binding NoPoints, Converter={StaticResource VisibleWhen}}"
+                               HorizontalAlignment="Center" VerticalAlignment="Top" MaxWidth="300" Margin="16" Padding="12"
+                               Background="{StaticResource Panel}" IsHitTestVisible="False"/>
+                </Grid>
+            </Border>
+        </Grid>
+        <StackPanel Grid.Row="3" Margin="0,10,0,0">
+            <TextBlock Text="Rueda: zoom · arrastra: mover · pulsa grupos para acercarte · ruta coral: paradas manuales, no un camino calculado"
+                       Foreground="{StaticResource Muted}" FontSize="12"/>
+            <TextBlock Text="{Binding SaveMessage}" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,4,0,0" AutomationProperties.LiveSetting="Polite"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

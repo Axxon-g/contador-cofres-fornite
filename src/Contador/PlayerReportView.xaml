@@ -1,0 +1,80 @@
+<UserControl x:Class="Contador.PlayerReportView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+            <Setter Property="ContentTemplate">
+                <Setter.Value><DataTemplate><TextBlock Text="{Binding}" TextWrapping="NoWrap"/></DataTemplate></Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="0,0,16,12">
+            <TextBlock Text="{Binding ProfileLabel}" FontSize="20" FontWeight="SemiBold"/>
+            <TextBlock Text="{Binding PeriodLabel}" Foreground="{StaticResource Muted}" Margin="0,6,0,0"/>
+            <TextBlock Text="{Binding Report.Updated}" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,6,0,12"/>
+            <Button Content="Abrir versión HTML" Click="OpenHtmlClick" HorizontalAlignment="Left" Margin="0,0,0,20"/>
+            <TextBlock Text="{Binding ReportEmptyMessage}" Foreground="{StaticResource Muted}" Margin="0,0,0,8"/>
+            <TextBlock Text="Cofres en total" Foreground="{StaticResource Muted}"/>
+            <TextBlock Text="{Binding Report.Total, StringFormat={}{0:N0}}" Foreground="{StaticResource Gold}" FontSize="42" FontWeight="SemiBold"/>
+            <TextBlock Text="{Binding Report.Session, StringFormat={}{0:N0} cofres desde que abriste la app}" Foreground="{StaticResource Muted}" Margin="0,4,0,16"/>
+            <WrapPanel Margin="0,0,0,24">
+                <StackPanel Width="150" Margin="0,0,12,12"><TextBlock Text="{Binding Report.Matches, StringFormat={}{0:N0}}" FontSize="28" FontWeight="SemiBold"/><TextBlock Text="Partidas analizadas" Foreground="{StaticResource Muted}"/></StackPanel>
+                <StackPanel Width="150" Margin="0,0,12,12"><TextBlock Text="{Binding Report.Average, StringFormat={}{0:0.0}}" FontSize="28" FontWeight="SemiBold"/><TextBlock Text="Cofres por partida" Foreground="{StaticResource Muted}"/></StackPanel>
+                <StackPanel Width="150" Margin="0,0,12,12"><TextBlock Text="{Binding Report.Best, StringFormat={}{0:N0}}" FontSize="28" FontWeight="SemiBold"/><TextBlock Text="Récord en una partida" Foreground="{StaticResource Muted}"/></StackPanel>
+                <StackPanel Width="150" Margin="0,0,12,12"><TextBlock Text="{Binding Report.Treasures, StringFormat={}{0:N0}}" FontSize="28" FontWeight="SemiBold"/><TextBlock Text="Tesoros propios" Foreground="{StaticResource Muted}"/></StackPanel>
+            </WrapPanel>
+            <TextBlock Text="{Binding Report.Ratio}" Foreground="{StaticResource Muted}" Margin="0,0,0,24"/>
+            <TextBlock Text="Cofres por día · últimos 30 días" FontSize="20" FontWeight="SemiBold"/>
+            <ItemsControl ItemsSource="{Binding Report.Days}" Height="150" Margin="0,12,0,8" AutomationProperties.Name="Gráfico de cofres por día; datos disponibles a continuación">
+                <ItemsControl.ItemsPanel><ItemsPanelTemplate><UniformGrid Rows="1"/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate><DataTemplate><Border VerticalAlignment="Bottom" Height="{Binding Height}" Background="{StaticResource Gold}" Margin="1,0" ToolTip="{Binding Description}" AutomationProperties.Name="{Binding Description}"/></DataTemplate></ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <TextBlock Text="{Binding Report.BestDay}" Foreground="{StaticResource Muted}" FontSize="12"/>
+            <Expander Header="Ver datos por día" Foreground="{StaticResource Ink}" Margin="0,12,0,24">
+                <DataGrid ItemsSource="{Binding Report.Days}" MaxHeight="240" AutomationProperties.Name="Cofres por día">
+                    <DataGrid.Columns><DataGridTextColumn Header="Fecha" Binding="{Binding Date}" Width="*"/><DataGridTextColumn Header="Cofres" Binding="{Binding Count}" Width="100"/></DataGrid.Columns>
+                </DataGrid>
+            </Expander>
+            <TextBlock Text="Por tipo de cofre" FontSize="20" FontWeight="SemiBold"/>
+            <TextBlock Text="{Binding Report.Coverage}" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,8,0,12"/>
+            <DataGrid ItemsSource="{Binding Report.Kinds}" MaxHeight="280" MinHeight="48" AutomationProperties.Name="Desglose por tipo de cofre">
+                <DataGrid.Columns><DataGridTextColumn Header="Tipo" Binding="{Binding Label}" Width="*"/><DataGridTextColumn Header="Cofres" Binding="{Binding Count}" Width="100"/></DataGrid.Columns>
+            </DataGrid>
+            <TextBlock Text="Otras interacciones · fuera del total" FontSize="17" FontWeight="SemiBold" Margin="0,20,0,10"/>
+            <DataGrid ItemsSource="{Binding Report.Other}" MaxHeight="200" MinHeight="48" AutomationProperties.Name="Interacciones que no suman cofres">
+                <DataGrid.Columns><DataGridTextColumn Header="Interacción" Binding="{Binding Label}" Width="*"/><DataGridTextColumn Header="Cantidad" Binding="{Binding Count}" Width="100"/></DataGrid.Columns>
+            </DataGrid>
+            <TextBlock Text="De dónde vienen tus tesoros" FontSize="20" FontWeight="SemiBold" Margin="0,28,0,12"/>
+            <DataGrid ItemsSource="{Binding Report.Sources}" MaxHeight="280" MinHeight="48" AutomationProperties.Name="Origen de los tesoros propios">
+                <DataGrid.Columns><DataGridTextColumn Header="Origen" Binding="{Binding Label}" Width="2*"/><DataGridTextColumn Header="Cantidad" Binding="{Binding Count}" Width="95"/><DataGridTextColumn Header="Fiabilidad" Binding="{Binding Note}" Width="2*"/></DataGrid.Columns>
+            </DataGrid>
+            <TextBlock Text="Tesoros encontrados" FontSize="20" FontWeight="SemiBold" Margin="0,28,0,8"/>
+            <CheckBox IsChecked="{Binding ShowTeamTreasures}" AutomationProperties.Name="Mostrar también los tesoros del equipo (estimación)">
+                <TextBlock Text="{Binding Report.TeamTreasures, StringFormat=Mostrar también los {0} del equipo (estimación)}"/>
+            </CheckBox>
+            <TextBlock Text="Los del equipo se muestran por separado y no se suman a tus tesoros ni a tu frecuencia." Foreground="{StaticResource Muted}" FontSize="12" Margin="0,0,0,12"/>
+            <DataGrid ItemsSource="{Binding ReportTreasures}" MaxHeight="340" MinHeight="48" AutomationProperties.Name="Detalle de los tesoros">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Partida" Binding="{Binding Date}" Width="150"/>
+                    <DataGridTextColumn Header="Tesoro" Binding="{Binding Name}" Width="220"/>
+                    <DataGridTextColumn Header="Momento" Binding="{Binding Moment}" Width="100"/>
+                    <DataGridTextColumn Header="Origen" Binding="{Binding Source}" Width="220"/>
+                    <DataGridTextColumn Header="Por" Binding="{Binding Who}" Width="170"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <TextBlock Text="Últimas 100 partidas" FontSize="20" FontWeight="SemiBold" Margin="0,28,0,12"/>
+            <DataGrid ItemsSource="{Binding Report.Latest}" MaxHeight="340" MinHeight="48" AutomationProperties.Name="Últimas partidas del informe">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Fecha" Binding="{Binding Date}" Width="150"/>
+                    <DataGridTextColumn Header="Modo" Binding="{Binding Mode}" Width="180"/>
+                    <DataGridTextColumn Header="Puesto" Binding="{Binding Placement}" Width="120"/>
+                    <DataGridTextColumn Header="Cofres" Binding="{Binding Chests}" Width="90"/>
+                    <DataGridTextColumn Header="Tesoros propios" Binding="{Binding Treasures}" Width="240"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <TextBlock Text="Informe local con las mismas reglas del HTML: cofres abiertos o destruidos por ti, cuenta y fechas de Ajustes. Las cajas de munición y comida no suman. Los orígenes probables y los hallazgos estimados del equipo conservan su indicación de fiabilidad."
+                       Foreground="{StaticResource Muted}" FontSize="12" Margin="0,20,0,0"/>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

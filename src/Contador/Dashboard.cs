@@ -32,6 +32,22 @@ public sealed class Dashboard : INotifyPropertyChanged
     public string EmptyMessage { get; set; } = "Todavía no hay partidas. Activa las repeticiones y juega una partida.";
     public string Footer { get; set; } = "Lectura local · Sin conexión a tu cuenta de Epic";
     public string PeriodLabel { get; set; } = "Período: todo el historial";
+    public PlayerReport Report { get; private set; } = new();
+    public string ReportEmptyMessage => Report.Matches == 0
+        ? "No hay partidas para esta cuenta y período. Elige otra cuenta o cambia las fechas en Ajustes." : "";
+    private bool showTeamTreasures;
+    public bool ShowTeamTreasures
+    {
+        get => showTeamTreasures;
+        set
+        {
+            showTeamTreasures = value;
+            Changed();
+            Changed(nameof(ReportTreasures));
+        }
+    }
+    public IEnumerable<ReportTreasure> ReportTreasures =>
+        Report.Finds.Where(find => ShowTeamTreasures || !find.Team);
     public string MatchState { get; set; } = "Esperando partida";
     public string SessionDetail { get; set; } = "0 partidas desde que abriste la app";
     public bool IsBusy { get; set; }
@@ -58,6 +74,7 @@ public sealed class Dashboard : INotifyPropertyChanged
     {
         PeriodLabel = "Período: " + MatchPeriod.Describe(config);
         var matches = Profiles.View(data, config).Matches;
+        Report = PlayerReport.Create(data, config, sessionCounter, DateTime.Now);
         Total = matches.Sum(m => (long)m.ChestsOpened).ToString("N0", L.Culture);
         var sessionMatches = sessionCounter.Matches(Profiles.View(data, config));
         Session = sessionMatches.Sum(m => (long)m.ChestsOpened).ToString("N0", L.Culture);

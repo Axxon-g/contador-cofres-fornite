@@ -5,6 +5,18 @@ using Contador.Engine;
 L.Set("es");
 int checks = 0;
 void Check(bool value, string message) { if (!value) throw new Exception(message); checks++; }
+if (args.Contains("--map-only"))
+{
+    InteractiveMapChecks.Run(Check);
+    Console.WriteLine($"{checks} comprobaciones del mapa interactivo correctas.");
+    return;
+}
+if (args.Contains("--report-only"))
+{
+    ReportChecks.Run(Check);
+    Console.WriteLine($"{checks} comprobaciones de informe y guías correctas.");
+    return;
+}
 var folder = Path.Combine(Path.GetTempPath(), "ContadorChecks-" + Guid.NewGuid());
 Directory.CreateDirectory(folder);
 try
@@ -47,6 +59,17 @@ try
     store.SaveData(d); store.SaveConfig(c);
     Check(store.LoadData().Matches.Count == 3, "Historial persiste");
     Check(store.LoadConfig()?.Profile == "A", "Preferencias persisten");
+    d.AnalyzerVersion = 15;
+    d.ProcessedFiles["fixture"] = "one";
+    store.SaveData(d);
+    var beforeRouteUpgrade = File.ReadAllText(store.DataPath);
+    var routeTracker = new Tracker(store, c, d) { WriteReports = false };
+    Check(routeTracker.UpgradeIfNeeded(), "Actualización espacial solicita releer sin borrar partidas");
+    Check(File.ReadAllText(Path.Combine(store.Folder, "data.before-analysis-16.json")) == beforeRouteUpgrade,
+        "Respalda exactamente el historial antes de la actualización espacial");
+    Check(d.Matches.Count == 3 && d.ProcessedFiles.Count == 0 && d.AnalyzerVersion == ReplayAnalyzer.CurrentVersion,
+        "Actualizar lector conserva partidas y solo reinicia la cola de archivos");
+    Check(!routeTracker.UpgradeIfNeeded(), "Reabrir no repite la actualización del lector");
     var countBefore = new FileInfo(finished).Length;
     ReplayHeaderProbe.IsLive(finished); ReplayHeaderProbe.KeyMissing(finished);
     Check(new FileInfo(finished).Length == countBefore, "La lectura conserva el archivo");
@@ -245,6 +268,8 @@ try
     Check(Profiles.List(periodData,november).Count==2 && Profiles.List(periodData,november).All(p=>p.Chests==0),"Periodo vacio conserva cuentas seleccionables con cero cofres");
     Check(Profiles.View(periodData,november).Matches.Count==0,"Periodo sin partidas devuelve cero sin volver a todo el historial");
     Check(JsonSerializer.Deserialize<Config>("{}")?.MatchDateFrom==null,"Configuracion anterior conserva todo el historial por defecto");
+    InteractiveMapChecks.Run(Check);
+    ReportChecks.Run(Check);
     Console.WriteLine($"{checks} comprobaciones correctas.");
 }
 finally { Directory.Delete(folder, recursive:true); }

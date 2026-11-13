@@ -34,6 +34,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         DataContext = vm;
+        ReportPanel.OpenHtmlRequested += async (_, _) => await OpenHtmlReportAsync();
         Console.SetOut(TextWriter.Null);
         L.Set("es");
         // Separate storage: never migrate or overwrite the original application's data.
@@ -209,18 +210,30 @@ public partial class MainWindow : Window
     }
     private void Navigate(string page)
     {
-        foreach (var (button, key) in new[] { (NavSummary, "summary"), (NavHistory, "history"), (NavSettings, "settings") })
+        foreach (var (button, key) in new[] { (NavSummary, "summary"), (NavHistory, "history"), (NavRoutes, "routes"), (NavReport, "report"), (NavSettings, "settings") })
         {
             button.Background = (System.Windows.Media.Brush)FindResource(page == key ? "Gold" : "Panel");
             button.Foreground = (System.Windows.Media.Brush)FindResource(page == key ? "Ground" : "Ink");
         }
         SummaryPanel.Visibility = page == "summary" ? Visibility.Visible : Visibility.Collapsed;
         HistoryPanel.Visibility = page == "history" ? Visibility.Visible : Visibility.Collapsed;
+        RoutesPanel.Visibility = page == "routes" ? Visibility.Visible : Visibility.Collapsed;
+        ReportPanel.Visibility = page == "report" ? Visibility.Visible : Visibility.Collapsed;
+        StatusPanel.Visibility = page is "routes" or "report" ? Visibility.Collapsed : Visibility.Visible;
         SettingsPanel.Visibility = page == "settings" ? Visibility.Visible : Visibility.Collapsed;
-        PageTitle.Text = page switch { "history" => "Cada partida, en detalle.", "settings" => "A tu manera.", _ => "Tu próxima partida cuenta." };
+        PageTitle.Text = page switch
+        {
+            "history" => "Cada partida, en detalle.",
+            "routes" => "Mapa y rutas.",
+            "report" => "Tu informe, aquí.",
+            "settings" => "A tu manera.",
+            _ => "Tu próxima partida cuenta."
+        };
     }
     private void SummaryClick(object sender, RoutedEventArgs e) => Navigate("summary");
     private void HistoryClick(object sender, RoutedEventArgs e) => Navigate("history");
+    private void RoutesClick(object sender, RoutedEventArgs e) => Navigate("routes");
+    private void ReportPageClick(object sender, RoutedEventArgs e) => Navigate("report");
     private void SettingsClick(object sender, RoutedEventArgs e) => Navigate("settings");
     private async void ScanClick(object sender, RoutedEventArgs e) => await ScanAsync();
     private void PauseClick(object sender, RoutedEventArgs e)
@@ -309,7 +322,7 @@ public partial class MainWindow : Window
     }
     private void OpenDemosClick(object sender, RoutedEventArgs e) => OpenPath(config.DemosFolder);
     private void OpenDataClick(object sender, RoutedEventArgs e) => OpenPath(store.Folder);
-    private async void ReportClick(object sender, RoutedEventArgs e)
+    private async Task OpenHtmlReportAsync()
     {
         if(closing) return;
         await gate.WaitAsync();

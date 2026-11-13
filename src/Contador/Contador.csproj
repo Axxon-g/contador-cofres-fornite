@@ -8,4 +8,7 @@
   </PropertyGroup>
   <ItemGroup><ProjectReference Include="../Contador.Engine/Contador.Engine.csproj"/></ItemGroup>
   <ItemGroup><Resource Include="Assets/pirate-shop-token.png"/><Resource Include="Assets/Contador.ico"/></ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets/island-43.10.base64" LogicalName="Contador.Map.Island4310"/>
+  </ItemGroup>
 </Project>

@@ -40,3 +40,14 @@ La prueba WPF utiliza un ComboBox real con dos cuentas de igual nombre y distint
 ## Período por fechas · 1.2.7
 
 Pasaron 77 comprobaciones del motor y las cuatro comprobaciones WPF. Las nuevas pruebas cubren inicio y fin inclusivos, conversión UTC a fecha local, UTC heredada sin Kind, fecha de análisis como respaldo, rango invertido, configuración anterior sin filtro, persistencia, cuenta separada, perfiles sin partidas, historial conservado y coherencia del CSV, informe y overlay. Los calendarios y el mensaje de error se revisaron visualmente con XAML renderizado a 1120×740 y 860×600; las capturas usan estado de demostración. No se ha validado el filtro con historiales de los usuarios que reportaron el problema.
+
+## Mapa interactivo e informe nativo · compilación 1.2.7
+
+- Publicación autocontenida Windows x64 completada, con mapa y catálogo integrados.
+- 40 comprobaciones del mapa aprobadas: catálogo, coordenadas, agrupación sin pérdida ni colisiones, límites de zoom, edición, deshacer y formato del plan.
+- 15 comprobaciones de controles WPF aprobadas.
+- Once vistas WPF renderizadas; la selección del README procede de esas capturas. El informe utiliza datos ficticios identificados.
+- Revisión final de dos ajustes: separación de grupos y etiqueta del total filtrado, ambos resueltos.
+- La suite general de almacenamiento y las pruebas anteriores de perfil quedaron bloqueadas por UnauthorizedAccess del entorno en esa ejecución; no se declaran aprobadas.
+- No se validaron todas las ubicaciones comunitarias en partidas reales. Son posibles apariciones de una instantánea 43.10, no detección de botín ni predicción.
+- La huella debe recalcularse tras cada compilación o firma. Usa el archivo Contador.exe.sha256 que acompaña al ejecutable, no una huella histórica del README.

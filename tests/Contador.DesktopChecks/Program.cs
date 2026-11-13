@@ -10,7 +10,7 @@ namespace Contador.DesktopChecks;
 public static class Program
 {
     [STAThread]
-    public static int Main()
+    public static int Main(string[] args)
     {
         var application = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
         Exception? failure = null;
@@ -19,6 +19,22 @@ public static class Program
         {
             try
             {
+                if (args.Contains("--map-ui-only"))
+                {
+                    await MapUiChecks.Run(application);
+                    application.Shutdown();
+                    return;
+                }
+                if (args.Contains("--views-preview"))
+                {
+                    ViewsPreview.Show(application);
+                    return;
+                }
+                if (args.Length == 2 && args[0] == "--render-views")
+                {
+                    ViewsPreview.Show(application, args[1]);
+                    return;
+                }
                 await Scenario(false, false);
                 await Scenario(true, false);
                 await Scenario(false, true);

@@ -1,7 +1,7 @@
 <div align="center">
   <img src="docs/images/banner.svg" alt="Contador — Tu botín, en cifras." width="960">
   <h1>Contador de cofres para Fortnite</h1>
-  <p>Tu historial de cofres, en una app de Windows.<br>Resumen, partidas y overlay; todo en un solo ejecutable.</p>
+  <p>Tu historial de cofres, en una app de Windows.<br>Partidas, mapa interactivo, rutas, informe y overlay en un solo ejecutable.</p>
   <p>
     <img src="https://img.shields.io/badge/Windows-10%20%2F%2011-1B2B23?style=flat-square" alt="Windows 10 y 11">
     <img src="https://img.shields.io/badge/Arquitectura-x64-1B2B23?style=flat-square" alt="Arquitectura x64">
@@ -18,7 +18,45 @@
 </div>
 
 > [!IMPORTANT]
-> Los cofres se cuentan **al terminar la partida**, cuando Fortnite finaliza la repetición. Debes tener activada la opción **Grabar repeticiones**. La app no muestra ubicaciones de cofres.
+> Los cofres se cuentan **al terminar la partida**, cuando Fortnite finaliza la repetición. Debes tener activada la opción **Grabar repeticiones**. Las rutas sugeridas son contenido editorial de la comunidad: no detectan cofres ni predicen premios.
+
+## Mapa interactivo e informe dentro de la app · 1.2.7
+
+<p align="center">
+  <img src="docs/images/mapa-interactivo.png" alt="Mapa interactivo nativo: isla, grupos de cofres, búsqueda y filtros por tipo de botín" width="960">
+  <br><sub>Vista renderizada de la interfaz real. El mapa utiliza una instantánea comunitaria de ubicaciones posibles.</sub>
+</p>
+
+**Mapa y rutas** es un mapa propio integrado en la aplicación, inspirado en la interacción de Fortnite.GG: rueda y botones para acercar, arrastre, capas, búsqueda, selección de puntos y una ventana ampliada. Funciona sin conexión con una imagen de 2048 × 2048 píxeles y un catálogo comunitario de **2.145 posibles apariciones**, más 16 lugares de referencia, para Treasure Hunters **43.10**.
+
+- **Nueve capas de botín:** 925 cofres, 40 raros, 69 enterrados, 879 cajas de munición, 141 carteles, 47 barriles de pesca, 28 cañones de botín, 8 santuarios y 8 bóvedas/búnkeres. Los grupos muestran cuántos registros contienen; al acercarte puedes seleccionar los puntos individuales, incluidos los coincidentes.
+- **Tu ruta:** activa Editar ruta para añadir paradas con un clic o moverlas arrastrando. También puedes añadir un punto seleccionado, quitar paradas, vaciar o deshacer cambios. Las líneas unen tus paradas; no calculan un camino transitable ni evitan la tormenta.
+- **Revisión manual:** marca puntos como revisados, vacíos o pendientes y oculta lo ya revisado. Reiniciar revisión y vaciar la ruta se pueden deshacer. Esto no modifica el recuento real de cofres.
+- **Controles:** usa +/−, las flechas y la tecla Inicio con el mapa enfocado. Ampliar mapa abre una ventana maximizada. Esc sale de edición; en la ventana ampliada, otro Esc la cierra.
+
+- **Evidencia visible:** se distingue un testimonio de hallazgo, una recomendación de jugadores y una guía de localizaciones. No existe un conjunto comparable que permita clasificar dónde se han obtenido más recompensas.
+- **Datos y procedencia:** posiciones publicadas por [Crisis](https://lifecrisis.life/loot), consultadas el 13/11/2026; imagen servida por [Fortnite-API](https://fortnite-api.com/). Es una copia fija integrada, con atribución, no una conexión al juego ni una copia del código o iconos de Fortnite.GG. No se ha verificado cada aparición dentro de una partida; faltan alturas, plantas y probabilidades por punto.
+- **Rutas sugeridas:** conserva The Chest–Arlong Park, Lantern Landing, norte de Plunder Port y Windmill Village–Loguetown. Puedes cargarlas como punto de partida y editarlas. Sus paradas editoriales se distinguen de los registros de apariciones.
+- **Guardado local:** ruta, capas y revisiones se guardan en un archivo de planificación separado dentro de la carpeta de datos. No cambia tu historial. Las actualizaciones del juego pueden dejar obsoleto este catálogo; consulta su versión y fecha. Abrir fuentes necesita Internet.
+- **Informe:** un nuevo apartado nativo muestra total, sesión, media, récord, gráfico de los últimos 30 días, tipos de cofre, otras interacciones, orígenes, tesoros propios y del equipo y últimas 100 partidas. Comparte la cuenta y las fechas de Ajustes. Los tesoros del equipo son estimaciones y no se suman a tus propios totales. El botón **Abrir versión HTML** conserva el informe externo.
+
+Las guías buscan organizar la búsqueda de cofres, **no prometen premios ni una probabilidad superior por lugar**. Los relatos de Reddit son experiencias individuales, no estadísticas verificadas. Consulta la [investigación y las fuentes](docs/RUTAS-1.2.7.md).
+
+### Explora, organiza y consulta
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/images/mapa-detalle.png" alt="Detalle del mapa al 800 por ciento con puntos seleccionables y una ruta manual"><br><strong>Acércate a cada zona.</strong><br>Selecciona puntos y distingue los registros agrupados.</td>
+    <td width="50%"><img src="docs/images/mapa-ruta.png" alt="Recorrido manual coral con paradas numeradas sobre el mapa"><br><strong>Prepara tu recorrido.</strong><br>Añade y mueve paradas; deshaz los cambios cuando lo necesites.</td>
+  </tr>
+</table>
+
+<p align="center">
+  <img src="docs/images/informe-nativo.png" alt="Informe dentro de Contador con totales, gráfico diario y estadísticas de demostración" width="960">
+  <br><sub>Informe nativo con datos ficticios de demostración. La barra superior pertenece a la herramienta de captura; no se incluye en la app.</sub>
+</p>
+
+**Para empezar:** abre **Mapa y rutas**, activa las capas que te interesan y acerca la isla. Para crear un recorrido, activa **Editar ruta** y pulsa donde quieras añadir una parada. Tus marcas son manuales y no cambian las cifras de partidas. Consulta los [controles, fuentes y límites del mapa](docs/MAPA-INTERACTIVO-1.2.7.md).
 
 <p align="center">
   <img src="docs/images/resumen.png" alt="Pantalla de resumen de Contador: estado de detección, total, sesión y últimas partidas" width="960">
@@ -101,6 +139,8 @@ Si la carpeta no se encuentra, entra en **Ajustes → Elegir carpeta**. La ubica
 |---|---|
 | **Resumen** | Consulta el total de tu cuenta, la sesión, la última partida, la media y tu récord. |
 | **Historial** | Busca por fecha o modo, ordena columnas y selecciona una partida para ver sus detalles. |
+| **Mapa y rutas** | Explora capas de ubicaciones posibles, prepara recorridos y guarda marcas manuales. |
+| **Informe** | Revisa estadísticas, gráficos y tesoros dentro de la app; abre el HTML si lo prefieres. |
 | **Exportar CSV** | Guarda las partidas del perfil y filtro visibles para abrirlas en una hoja de cálculo. |
 | **Perfiles** | Cambia entre las cuentas detectadas; sus estadísticas se mantienen separadas. |
 | **Overlay** | Muestra las cifras sobre el juego y ajusta su tamaño desde la app. |
@@ -261,6 +301,7 @@ Desde **Ajustes → Abrir datos** puedes acceder a `%APPDATA%\ContadorModern`.
 |---|---|
 | `data.json` | Historial de partidas. |
 | `config.json` | Preferencias y cuenta seleccionada. |
+| `mapa-crossbones-43.10-20261113.json` | Capas, ruta y revisiones manuales del mapa 43.10, separadas del historial. |
 | `Backups/` | Respaldos de la importación automática. |
 | `report.html` | Informe con los colores, moneda y tipografía del launcher. Se regenera automáticamente. |
 | `overlay.html` | HUD transparente para la fuente Navegador de OBS. |
@@ -287,9 +328,16 @@ Para desarrollar o ejecutar las comprobaciones:
 dotnet run --project src/Contador/Contador.csproj
 dotnet run --project tests/Contador.Checks/Contador.Checks.csproj -c Release
 dotnet run --project tests/Contador.DesktopChecks/Contador.DesktopChecks.csproj -c Release
+
+# Comprobaciones específicas de las nuevas funciones
+dotnet run --project tests/Contador.Checks/Contador.Checks.csproj -c Release -- --map-only
+dotnet run --project tests/Contador.Checks/Contador.Checks.csproj -c Release -- --report-only
+dotnet run --project tests/Contador.DesktopChecks/Contador.DesktopChecks.csproj -c Release -- --map-ui-only
 ```
 
-La versión 1.2.5 pasó 63 comprobaciones del motor y 3 pruebas de cierre WPF, incluidas pruebas de importación sobre una copia de historial real. Esto comprueba conservación y combinación de datos; no sustituye validar el lector contra nuevas versiones de Fortnite.
+La compilación del mapa 1.2.7 pasó **40 comprobaciones del mapa y 15 de controles WPF**, y se publicó como ejecutable autónomo Windows x64. La suite general de almacenamiento quedó bloqueada por permisos del entorno durante esa verificación; no se considera aprobada. Las comprobaciones y capturas no sustituyen validar el lector con nuevas versiones de Fortnite.
+
+Conserva `vendor/`: contiene el lector y sus dependencias de código necesarias para compilar. Para usar el programa publicado basta con `Contador.exe`; no distribuyas carpetas de AppData ni historiales personales.
 
 Consulta [cómo publicar el ejecutable en GitHub Releases](docs/PUBLICAR.md) y el [estado de verificación](VERIFICACION.md).
 

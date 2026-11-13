@@ -1,39 +1,37 @@
-# Publicar Contador.exe en GitHub
+# Publicar Contador 1.2.7 en GitHub
 
-El código del repositorio y el programa descargable se publican por separado. Usa **GitHub Releases** para distribuir el ejecutable. Los usuarios solo necesitan descargar Contador.exe.
+El repositorio contiene el código; GitHub Releases distribuye el programa. Los usuarios solo necesitan **Contador.exe**, sin VS Code, SDK ni scripts.
 
-## Antes de publicar
+## Preparar la compilación
 
-Sube los cambios del proyecto, incluidos README.md y la carpeta docs/ con sus imágenes. La versión 1.1 necesita también el código de importación y sus pruebas: no publiques solo el README si todavía no subiste esos cambios.
+1. Conserva `src`, `tests`, `vendor`, `global.json` y `NuGet.Config`. No elimines `vendor`: el lector se compila desde esa carpeta.
+2. Instala el SDK de .NET 10 para Windows x64.
+3. Desde PowerShell en la raíz, ejecuta ` .\build.bat `.
+4. Comprueba que las pruebas y la publicación terminan correctamente. No publiques una compilación si fallan las comprobaciones.
+5. El resultado queda en `dist\1.2.7\Contador.exe`, acompañado de `Contador.exe.sha256`. Cierra el contador antes de recompilar sobre ese archivo.
 
-El ejecutable ya compilado está en:
+El mapa y su catálogo están integrados. No adjuntes recursos sueltos, archivos PDB, carpetas de AppData, repeticiones ni historiales de prueba.
 
-```text
-C:\Users\axxob\OneDrive\Documentos\GitHub\contador\dist\1.2.5\Contador.exe
-```
+## Subir el código
 
-Si cambias el código, vuelve a compilar antes de adjuntar el archivo. Mantén el nombre **Contador.exe**: el enlace de descarga del README lo utiliza.
+Revisa los cambios antes de confirmarlos. Incluye los archivos nuevos de código, el catálogo del mapa, su recurso de imagen, las pruebas, README y `docs/images`. `dist/` se excluye del código: el ejecutable se adjunta en Releases.
 
-## Crear la primera Release
+## Publicar o actualizar la Release
 
-1. Abre [la página de nueva Release](https://github.com/Axxon-g/contador-cofres-fornite/releases/new).
-2. En **Choose a tag**, escribe **v1.2.5** y elige **Create new tag** si todavía no existe.
-3. En **Target**, selecciona la rama que contiene el código actualizado.
-4. Usa como título **Contador 1.2.5 — Recuento más rápido**.
-5. Copia el contenido de [RELEASE-v1.2.5.md](RELEASE-v1.2.5.md) en la descripción.
-6. En el área para adjuntar binarios, arrastra **dist/1.2.0/Contador.exe**. Espera a que termine la carga.
-7. Comprueba que aparece el archivo **Contador.exe**, selecciona **Set as latest release** y pulsa **Publish release**.
+1. Abre [Releases](https://github.com/Axxon-g/contador-cofres-fornite/releases).
+2. Si **v1.2.7 ya existe**, edítala. Si aún no existe, crea una Release con tag **v1.2.7** y la rama que contiene el código actualizado. No reutilices ni muevas un tag existente hacia otro commit sin revisar sus consecuencias.
+3. Título: **Contador 1.2.7 — Mapa interactivo, rutas e informe**.
+4. Copia las [notas de esta versión](RELEASE-v1.2.7.md) en la descripción.
+5. Adjunta **dist/1.2.7/Contador.exe** y **Contador.exe.sha256**. Si editas una Release, reemplaza los assets anteriores con esos nombres por los recién compilados.
+6. Espera a que termine la carga. Usa **Latest** para esta versión estable y publica o guarda los cambios.
+7. Prueba el [enlace del README](https://github.com/Axxon-g/contador-cofres-fornite/releases/latest/download/Contador.exe). Descarga el archivo y compara su SHA-256 con el publicado.
 
-Una vez publicada, verifica el [enlace directo de descarga](https://github.com/Axxon-g/contador-cofres-fornite/releases/latest/download/Contador.exe). Ese es el enlace utilizado por el botón del README. Antes de publicar la Release y adjuntar el ejecutable, el enlace puede mostrar un error 404.
+Los archivos Source code los genera GitHub automáticamente: no son la aplicación lista para abrir. El nombre **Contador.exe** debe mantenerse para que funcionen el botón y la insignia del README.
 
-GitHub añadirá también dos archivos llamados Source code. Los genera automáticamente y contienen el código, no la aplicación lista para usar.
+## Seguridad y actualización
 
-## Próximas versiones
+Cada compilación puede tener otra huella. El informe de VirusTotal de 1.2.5 no acredita el ejecutable nuevo. Si añades un análisis nuevo, enlaza el informe correspondiente a su SHA-256 exacto. No afirmes ausencia de virus ni aprobación de Epic.
 
-Actualiza la versión del proyecto y las notas, compila, crea un tag nuevo (por ejemplo v1.1.1) y adjunta el ejecutable actualizado con el mismo nombre. Marca la versión estable como latest: el botón del README seguirá apuntando al archivo de la versión más reciente.
+El ejecutable no tiene editor verificado salvo que lo firmes con un certificado válido. Consulta [FIRMA.md](FIRMA.md). Para actualizar, el usuario cierra la app y sustituye el ejecutable; el historial y el plan del mapa se conservan en su carpeta de datos independiente.
 
-No necesitas incluir historiales personales, archivos de AppData ni scripts de importación. Cada equipo genera sus propios datos; la importación ya está integrada en la app.
-
-## Referencia
-
-[Documentación oficial: administrar Releases](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository).
+[Referencia oficial de GitHub](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository).

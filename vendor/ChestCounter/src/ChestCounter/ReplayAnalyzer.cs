@@ -18,10 +18,10 @@ namespace ChestCounter;
 public sealed class ReplayAnalyzer : FortniteReplayReader.ReplayReader
 {
     /// <summary>Stale = state received with the channel itself (searched before it became relevant to the recorder).</summary>
-    private sealed record SearchEvent(float Time, string ActorKey, string Label, uint? SearcherPawn, bool Destroyed = false, bool Stale = false);
+    private sealed record SearchEvent(float Time, string ActorKey, string Label, uint? SearcherPawn, bool Destroyed = false, bool Stale = false, ChestPosition? Position = null);
     private sealed record TossEvent(float Time, string Item);
     private sealed record EquipEvent(float Time, string Item, uint Pawn);
-    private sealed record PrizeEvent(float Time, string PrizeId, uint? Pawn, string Container);
+    private sealed record PrizeEvent(float Time, string PrizeId, uint? Pawn, string Container, string? SourceKey = null);
 
     private static readonly Regex PrizeIdPattern = new(@"[A-Za-z][A-Za-z0-9_]*:[A-Za-z0-9_.\-]+", RegexOptions.Compiled);
 
@@ -81,6 +81,8 @@ public sealed class ReplayAnalyzer : FortniteReplayReader.ReplayReader
 
     private readonly Dictionary<uint, string> _channelKey = new();
     private readonly Dictionary<uint, string> _channelLabel = new();
+    private readonly Dictionary<uint, ChestPosition> _channelPositions = new();
+    private readonly Dictionary<uint, string> _actorKeys = new();
     private readonly Dictionary<uint, uint> _lastSearcher = new();
     private readonly HashSet<string> _searched = new();
     private readonly List<SearchEvent> _searches = new();
@@ -116,7 +118,7 @@ public sealed class ReplayAnalyzer : FortniteReplayReader.ReplayReader
     private readonly List<GrantEvent> _grants = new();
 
     /// <summary>Bump when the analysis changes so that existing replays are re-analyzed.</summary>
-    public const int CurrentVersion = 15;
+    public const int CurrentVersion = 16;
 
     private static readonly bool ProbeDebug = Environment.GetEnvironmentVariable("CHESTCOUNTER_DEBUG") == "4";
 
@@ -381,6 +383,13 @@ public sealed class ReplayAnalyzer : FortniteReplayReader.ReplayReader
             _channelKey[channelIndex] = $"guid:{channel?.ActorId}";
         }
         _channelLabel[channelIndex] = label;
+        if (channel?.ActorId is uint actorId) _actorKeys[actorId] = _channelKey[channelIndex];
+        _channelPositions.Remove(channelIndex);
+        if (channel?.Actor?.Location is { } location)
+        {
+            var position = new ChestPosition(location.X, location.Y, location.Z);
+            if (position.IsValid) _channelPositions[channelIndex] = position;
+        }
         _channelOpenAt[channelIndex] = Now;
         _channelSearched.Remove(channelIndex);
         _lastSearcher.Remove(channelIndex);
@@ -441,7 +450,8 @@ public sealed class ReplayAnalyzer : FortniteReplayReader.ReplayReader
                     {
                         _searched.Add(containerKey);
                         _lastOpener[containerKey] = openedBy;
-                        _searches.Add(new SearchEvent(Now, containerKey, containerLabel, openedBy, Stale: stale));
+                        _searches.Add(new SearchEvent(Now, containerKey, containerLabel, openedBy, Stale: stale,
+                            Position: _channelPositions.GetValueOrDefault(channelIndex)));
                     }
                     else if (Debug == "1")
                     {
@@ -456,7 +466,8 @@ public sealed class ReplayAnalyzer : FortniteReplayReader.ReplayReader
                     // more if it was refilled since its last opening.
                     _channelSearched[channelIndex] = true;
                     _lastOpener[containerKey] = destroyer;
-                    _searches.Add(new SearchEvent(Now, containerKey, containerLabel, destroyer, Destroyed: true, Stale: stale));
+                    _searches.Add(new SearchEvent(Now, containerKey, containerLabel, destroyer, Destroyed: true, Stale: stale,
+                        Position: _channelPositions.GetValueOrDefault(channelIndex)));
                 }
                 break;
 
@@ -476,7 +487,10 @@ public sealed class ReplayAnalyzer : FortniteReplayReader.ReplayReader
                 var prizeId = ReadPrizeId(prize.PrizeTemplateId);
                 if (prizeId != null && prize.bSuccess != false && _prizeChannelsSeen.Add(channelIndex))
                 {
-                    _prizes.Add(new PrizeEvent(Now, prizeId, prize.OpeningPawn ?? prize.Instigator, PathOf(prize.SourceContainer)));
+                    var sourceKey = prize.SourceContainer is uint source
+                        ? _actorKeys.GetValueOrDefault(source, PathOf(source)) : null;
+                    _prizes.Add(new PrizeEvent(Now, prizeId, prize.OpeningPawn ?? prize.Instigator,
+                        PathOf(prize.SourceContainer), sourceKey));
                 }
                 break;
 
@@ -594,7 +608,7 @@ public sealed class ReplayAnalyzer : FortniteReplayReader.ReplayReader
         var interactions = _searches
             .Where(s => s.SearcherPawn is uint p && targetPawns.Contains(p) && (!s.Stale || StableKey(s.ActorKey)))
             .OrderBy(s => s.Time)
-            .Select(s => (s.Time, Kind: ChestKinds.Classify(s.Label), s.Label, s.ActorKey, s.Destroyed))
+            .Select(s => (s.Time, Kind: ChestKinds.Classify(s.Label), s.Label, s.ActorKey, s.Destroyed, s.Position))
             .ToList();
 
         var chests = new List<ChestRecord>();
@@ -615,6 +629,8 @@ public sealed class ReplayAnalyzer : FortniteReplayReader.ReplayReader
             chests.Add(new ChestRecord
             {
                 TimeSeconds = MathF.Round(search.Time, 1),
+                Position = search.Position,
+                ContainerKey = search.ActorKey,
                 Kind = search.Kind,
                 Blueprint = search.Label,
                 Destroyed = search.Destroyed,
@@ -684,6 +700,7 @@ public sealed class ReplayAnalyzer : FortniteReplayReader.ReplayReader
                 RawItem = pz.PrizeId,
                 PrizeId = pz.PrizeId,
                 FromGoldenChest = true,
+                SourceContainerKey = pz.SourceKey,
                 TimeExact = true,
                 SourceDestroyed = interactions.Any(i => i.Destroyed && i.ActorKey == pz.Container),
                 ObtainedAtSeconds = MathF.Round(pz.Time, 1),

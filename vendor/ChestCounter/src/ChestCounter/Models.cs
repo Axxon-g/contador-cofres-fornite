@@ -3,8 +3,18 @@ using System.Text.Json.Serialization;
 
 namespace ChestCounter;
 
+public sealed record ChestPosition(double X, double Y, double Z)
+{
+    [JsonIgnore]
+    public bool IsValid => double.IsFinite(X) && double.IsFinite(Y) && double.IsFinite(Z)
+        && Math.Abs(X) <= 10_000_000 && Math.Abs(Y) <= 10_000_000
+        && Math.Abs(Z) <= 10_000_000;
+}
+
 public sealed class ChestRecord
 {
+    public ChestPosition? Position { get; set; }
+    public string? ContainerKey { get; set; }
     public float TimeSeconds { get; set; }
     public string Kind { get; set; } = "";
     public string Blueprint { get; set; } = "";
@@ -16,6 +26,7 @@ public sealed class ChestRecord
 
 public sealed class TreasureFind
 {
+    public string? SourceContainerKey { get; set; }
     /// <summary>Name to display (re-resolved at display time, in the current language).</summary>
     public string DisplayName => PrizeId != null ? TreasureNames.Friendly(PrizeId) : L.Name(Item);
 
