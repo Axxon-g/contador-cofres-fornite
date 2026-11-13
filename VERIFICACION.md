@@ -1,5 +1,19 @@
 # Verificación de Contador 1.2.1
 
+## HD activado por defecto · 1.2.7
+
+Por petición del usuario, Terreno HD inicia activado. Se mantienen el control para desactivarlo y el respaldo integrado. Las 18 comprobaciones WPF pasan con la nueva condición inicial y verifican desactivación y reactivación. Las pruebas y capturas aisladas bloquean la red para evitar descargas durante su ejecución. Esta modificación sustituye la condición inicial apagada documentada en las verificaciones históricas siguientes.
+
+## Inicio e instancia única · 1.2.7
+
+Ocho pruebas aisladas de mutex y señal de activación aprobadas: objeto existente sin propietario, comprobación repetida, liberación al salir, instancia realmente ocupada, activación de la principal, secundarias que no liberan el bloqueo ajeno y recuperación tras terminar el hilo propietario. Dieciocho pruebas del mapa aprobadas. El cierre y guardado general volvió a quedar bloqueado por permisos File.Move del entorno, por lo que no se declara aprobado. No se ejecutó la aplicación completa sobre el historial personal para esta prueba.
+
+El arranque comprueba propiedad efectiva del mutex, libera explícitamente su bloqueo al salir y controla los errores al crear la ventana para evitar permanecer abierto sin ventana. Un segundo inicio notifica a la instancia existente para restaurarla; también intenta restaurar la ventana de versiones anteriores. No termina procesos ajenos ni ignora un bloqueo que siga teniendo propietario.
+
+## Terreno HD opcional · 1.2.7
+
+48 comprobaciones del mapa, 18 de controles WPF y cuatro de caché con una pieza WebP real aprobadas. Construcción nativa correcta. La opción HD inicia apagada, dispone de atribución, zoom hasta 3200 %, carga por niveles y respaldo integrado. Capturas reales en el espacio de la tarea: outputs/mapa-hd/renders; la captura HD utiliza una sola pieza local y muestra cobertura incompleta. La revisión visual aprueba esta extensión opcional, sin certificar la disponibilidad del servidor externo. No se validó una sesión HD completa por Internet. Procedencia y límites en docs/MAPA-HD-1.2.7.md.
+
 - Compilación Windows x64 autónoma: ejecutable dist/1.2.5/Contador.exe.
 - 35 comprobaciones correctas con una copia del historial real: cabeceras, perfiles, persistencia, importación, respaldo, detección de partida, retirada del aviso al finalizar y exclusión de repeticiones abandonadas.
 - Sesión comprobada con historial anterior, importaciones, repeticiones antiguas y varias partidas nuevas. Última partida y sesión se calculan por separado.
@@ -51,3 +65,7 @@ Pasaron 77 comprobaciones del motor y las cuatro comprobaciones WPF. Las nuevas 
 - La suite general de almacenamiento y las pruebas anteriores de perfil quedaron bloqueadas por UnauthorizedAccess del entorno en esa ejecución; no se declaran aprobadas.
 - No se validaron todas las ubicaciones comunitarias en partidas reales. Son posibles apariciones de una instantánea 43.10, no detección de botín ni predicción.
 - La huella debe recalcularse tras cada compilación o firma. Usa el archivo Contador.exe.sha256 que acompaña al ejecutable, no una huella histórica del README.
+
+## Corrección de bóvedas · 1.2.7
+
+43 comprobaciones del mapa y 15 de controles WPF aprobadas. Doce capturas nativas generadas, incluida capa aislada de nueve bóvedas. Alineación visual contrastada con la referencia aportada y grupos independientes de cofres raros. Corregida recursión de notificaciones de selección detectada durante esta ejecución. No se certifica ubicación de entradas ni precisión de las demás capas en una partida real.

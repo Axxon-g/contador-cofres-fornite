@@ -50,11 +50,13 @@ public sealed class MapPlannerModel : INotifyPropertyChanged
     public GuideSource Official => RouteGuides.Official;
     public string Dataset => MapCatalog.Status;
     public string Source => MapCatalog.SourceUrl;
-    public string Notice => "Puntos publicados de la comunidad; pueden faltar en una partida. No hay datos de altura o planta ni detección del juego. Las marcas de revisión no suman cofres al contador.";
+    public string Notice => "Bóvedas: nueve referencias aproximadas de una imagen aportada, no entradas verificadas. Las demás capas conservan datos comunitarios sin validar punto por punto. No hay datos de altura o planta ni detección del juego. Las marcas no suman cofres al contador.";
     private readonly string? statePath;
     private bool canSave = true;
     private string search = "";
-    private bool hideReviewed, editRoute, showRoute = true;
+    private bool hideReviewed, editRoute;
+    private bool highDetailEnabled = true;
+    private bool showRoute = true;
     private RouteGuide? selectedGuide;
     private MapPoint? selectedPoint;
     private PlannerRouteRow? selectedStop;
@@ -116,6 +118,16 @@ public sealed class MapPlannerModel : INotifyPropertyChanged
         get => editRoute;
         set { editRoute = value; Notify(); }
     }
+    public bool HighDetailEnabled
+    {
+        get => highDetailEnabled;
+        set
+        {
+            if (highDetailEnabled == value) return;
+            highDetailEnabled = value;
+            Notify();
+        }
+    }
     public bool ShowRoute
     {
         get => showRoute;
@@ -135,12 +147,25 @@ public sealed class MapPlannerModel : INotifyPropertyChanged
     public MapPoint? SelectedPoint
     {
         get => selectedPoint;
-        set { selectedPoint = value; NotifyAll(); }
+        set
+        {
+            if (selectedPoint == value) return;
+            selectedPoint = value;
+            Notify();
+            Notify(nameof(SelectedDetail));
+            Notify(nameof(HasSelection));
+        }
     }
     public PlannerRouteRow? SelectedStop
     {
         get => selectedStop;
-        set { selectedStop = value; NotifyAll(); }
+        set
+        {
+            if (selectedStop == value) return;
+            selectedStop = value;
+            Notify();
+            Notify(nameof(HasSelectedStop));
+        }
     }
 
     public void SelectGroup(IReadOnlyList<MapPoint> points)

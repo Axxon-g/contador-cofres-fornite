@@ -50,6 +50,16 @@ Evidencia: capturas WPF actuales en outputs/mapa-interactivo/renders del espacio
 
 Verificación final: 40 comprobaciones del mapa y 15 de controles WPF aprobadas; publicación autocontenida win-x64 correcta. El ejecutable nuevo queda en outputs del espacio de trabajo: la copia a dist fue denegada por el entorno. No se sustituyó ni cerró el contador abierto.
 
+## Terreno HD opcional (1.2.7)
+
+Actualización solicitada por el usuario: HD inicia activado por defecto. El control permite apagarlo y reactivarlo, y se conserva el respaldo integrado. Dieciocho pruebas WPF aprobadas con esta nueva condición inicial. Esta petición sustituye el estado inicial desactivado descrito durante la revisión original siguiente; no cambia el sistema visual.
+
+Extensión ordinaria del mapa propio: conserva la composición, los controles WPF y el sistema visual existente. La casilla nativa «Terreno HD · Internet» inicia desactivada. Al activarla, el lienzo dibuja piezas WebP públicas de Fortnite.GG del mapa 43, de 256 × 256 píxeles, en niveles 3–7 elegidos según escala y DPI. La atribución al proveedor permanece visible; no se incrusta su sitio ni su interfaz. El zoom llega hasta 3200 %. El acercamiento separa grupos progresivamente; puntos coincidentes conservan su selector, sin inventar plantas o alturas.
+
+MapTiles.cs define la pirámide y el encuadre; MapTileCache.cs limita la carga a cuatro peticiones simultáneas, ocho segundos por petición, dos minutos antes de reintentar una pieza fallida, 96 piezas en memoria y 128 MB en disco. Desactivar HD o descargar el control cancela las peticiones. El estado visible explica carga, caché o respaldo. Cuando falta una pieza, la red o el decodificador WebP, el fondo integrado permanece disponible; puede coexistir temporalmente con piezas de mayor detalle. Solo se solicitan imágenes: no se envían credenciales, historial, repeticiones ni estadísticas.
+
+Evidencia: 48 comprobaciones del motor, 18 de WPF y cuatro de caché WebP aprobadas. Una pieza real 6/29/34 se verificó en una caché aislada; los renders en outputs/mapa-hd/renders del espacio de la tarea muestran ese alcance parcial. No se verificó la disponibilidad de todas las piezas ni una sesión HD completa desde el cliente. docs/MAPA-HD-1.2.7.md conserva estos límites. Disposición final: ship para la extensión opcional con respaldo local; excluye disponibilidad completa del proveedor. No corresponde detector web. No se cambian los tokens ni se repara la deriva anterior del sistema.
+
 ## Comportamiento del filtro de fechas
 
 Ajustes includes native DatePicker controls for inclusive local start/end dates, Apply, a 01/11/2026 open-end preset and Clear. Controls wrap at the minimum window width; inline errors describe invalid ranges. The shared status panel names the applied period on Resumen, Historial and Ajustes; Informe carries its own period, while editorial routes are independent of replay filters. History is filtered without deleting stored matches. All-date remains the default; filters persist and scope totals, profiles, CSV, report and overlays.

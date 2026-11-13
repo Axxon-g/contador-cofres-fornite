@@ -16,7 +16,7 @@ public sealed class MapCatalog
     public const string DatasetId = "crossbones-43.10-20261113";
     public const string SourceUrl = "https://lifecrisis.life/loot";
     public const string Version = "43.10";
-    public const string Status = "v43.10 · datos comunitarios del 13/11/2026 · posibles apariciones";
+    public const string Status = "v43.10 · referencia comunitaria · bóvedas corregidas con imagen, orientativas";
     public static IReadOnlyList<MapCategory> Categories { get; } = [
         new("chest", "Cofres", "#FFC857"),
         new("rare_chest", "Cofres raros", "#D7B6FF"),
@@ -26,7 +26,7 @@ public sealed class MapCatalog
         new("fishing_rod_barrel", "Barriles de pesca", "#8EBBFF"),
         new("loot_cannon", "Cañones de botín", "#8DDFEC"),
         new("sprite_shrine", "Santuarios", "#EDA8E4"),
-        new("vault", "Bóvedas / búnkeres", "#FFF4DF"),
+        new("vault", "Bóvedas (orientativas)", "#FFF4DF"),
         new("place", "Lugares", "#BDCEE3")
     ];
     private static readonly Lazy<MapCatalog> Instance = new(Load);
@@ -61,8 +61,25 @@ public sealed class MapCatalog
                 throw new InvalidDataException("Coordenada o categoría fuera de los límites del catálogo.");
             var kind = types[kindIndex];
             var category = Categories.Single(c => c.Key == kind);
-            points.Add(new MapPoint($"{DatasetId}:{index++}", kind, category.Name,
+            var id = $"{DatasetId}:{index++}";
+            // Keep IDs of other layers stable; the source's eight vault positions were contradicted.
+            if (kind == "vault") continue;
+            points.Add(new MapPoint(id, kind, category.Name,
                 placeIndex >= 0 ? names[placeIndex] : "Fuera de lugares con nombre", x, y));
+        }
+        using var vaultStream = typeof(MapCatalog).Assembly.GetManifestResourceStream("Contador.Map.VaultReferences4310")
+            ?? throw new InvalidDataException("Falta la referencia corregida de bóvedas.");
+        using var vaultJson = JsonDocument.Parse(vaultStream);
+        var reference = vaultJson.RootElement;
+        foreach (var row in reference.GetProperty("points").EnumerateArray())
+        {
+            var x = row.GetProperty("x").GetDouble() * reference.GetProperty("scaleX").GetDouble()
+                + reference.GetProperty("offsetX").GetDouble();
+            var y = row.GetProperty("y").GetDouble() * reference.GetProperty("scaleY").GetDouble()
+                + reference.GetProperty("offsetY").GetDouble();
+            if (!ValidPosition(x, y)) throw new InvalidDataException("Referencia de bóveda fuera del mapa.");
+            points.Add(new MapPoint($"vault-reference-20261113:{row.GetProperty("id").GetString()}",
+                "vault", "Bóveda · referencia visual aproximada", row.GetProperty("name").GetString()!, x, y));
         }
         foreach (var (name, position) in places)
         {

@@ -6,7 +6,7 @@
     <img src="https://img.shields.io/badge/Windows-10%20%2F%2011-1B2B23?style=flat-square" alt="Windows 10 y 11">
     <img src="https://img.shields.io/badge/Arquitectura-x64-1B2B23?style=flat-square" alt="Arquitectura x64">
     <a href="https://github.com/Axxon-g/contador-cofres-fornite/releases"><img src="https://img.shields.io/github/downloads/Axxon-g/contador-cofres-fornite/Contador.exe?style=flat-square&amp;label=Descargas&amp;color=FFC857&amp;labelColor=6E2636&amp;displayAssetName=false" alt="Descargas acumuladas de Contador.exe en todas las versiones" title="Descargas del ejecutable, no personas únicas. Se actualiza automáticamente con caché."></a>
-    <img src="https://img.shields.io/badge/Versi%C3%B3n-1.2.7-F1CA76?style=flat-square&amp;labelColor=1B2B23" alt="Versión 1.2.7">
+    <img src="https://img.shields.io/badge/Versi%C3%B3n-1.3-F1CA76?style=flat-square&amp;labelColor=1B2B23" alt="Versión 1.3">
     <a href="LICENSE"><img src="https://img.shields.io/badge/Licencia-MIT-1B2B23?style=flat-square" alt="Licencia MIT"></a>
   </p>
   <p>
@@ -20,19 +20,39 @@
 > [!IMPORTANT]
 > Los cofres se cuentan **al terminar la partida**, cuando Fortnite finaliza la repetición. Debes tener activada la opción **Grabar repeticiones**. Las rutas sugeridas son contenido editorial de la comunidad: no detectan cofres ni predicen premios.
 
-## Mapa interactivo e informe dentro de la app · 1.2.7
+## Contador 1.3 · Explora el mapa, prepara tu ruta y consulta tu botín
+
+La actualización 1.3 reúne el mapa interactivo con terreno HD, rutas editables e informe nativo. El contador conserva el recuento por cuenta, el historial y los overlays para jugar o transmitir.
+
+| Novedad | Qué puedes hacer |
+|---|---|
+| **Terreno HD por defecto** | Ver piezas de mayor resolución al acercar, con caché local y respaldo integrado. |
+| **Zoom hasta 3200 %** | Explorar zonas y separar grupos de ubicaciones. |
+| **Rutas editables** | Añadir y mover paradas, marcar puntos revisados y deshacer cambios. |
+| **Informe nativo** | Consultar cifras, gráficos y tesoros sin salir de la app. |
+| **Cuentas y fechas** | Revisar las estadísticas del perfil y período elegidos. |
+| **Inicio corregido** | Recuperar bloqueos abandonados y solicitar la ventana al abrir una segunda instancia. |
+
+Consulta las [notas de Contador 1.3](docs/RELEASE-v1.3.0.md).
+
+> [!NOTE]
+> Este README prepara la publicación 1.3. El botón de descarga apunta a la última Release publicada, que puede seguir siendo anterior. El ejecutable local actual aún está versionado como 1.2.7; antes de publicar 1.3 hay que actualizar su versión y recompilarlo.
+
+### Terreno HD al acercar
+
+**Terreno HD · Internet** viene activado por defecto para cargar piezas de mayor resolución de Fortnite.GG dentro del mapa propio. El zoom llega hasta **3200 %** y la caché local reutiliza lo descargado. Puedes desactivarlo desde la barra del mapa; si una pieza falla, permanece el mapa integrado. Es un servicio externo opcional, sin clave ni inicio de sesión, cuya disponibilidad puede variar. Mejorar la imagen no verifica ni actualiza las posiciones comunitarias. Consulta [fuentes, privacidad y límites del modo HD](docs/MAPA-HD-1.2.7.md).
 
 <p align="center">
   <img src="docs/images/mapa-interactivo.png" alt="Mapa interactivo nativo: isla, grupos de cofres, búsqueda y filtros por tipo de botín" width="960">
   <br><sub>Vista renderizada de la interfaz real. El mapa utiliza una instantánea comunitaria de ubicaciones posibles.</sub>
 </p>
 
-**Mapa y rutas** es un mapa propio integrado en la aplicación, inspirado en la interacción de Fortnite.GG: rueda y botones para acercar, arrastre, capas, búsqueda, selección de puntos y una ventana ampliada. Funciona sin conexión con una imagen de 2048 × 2048 píxeles y un catálogo comunitario de **2.145 posibles apariciones**, más 16 lugares de referencia, para Treasure Hunters **43.10**.
+**Mapa y rutas** es un mapa propio integrado en la aplicación, inspirado en la interacción de Fortnite.GG: rueda y botones para acercar, arrastre, capas, búsqueda, selección de puntos y una ventana ampliada. Funciona sin conexión con una imagen de 2048 × 2048 píxeles y un catálogo comunitario de **2.146 referencias de botín**, más 16 lugares de referencia, para Treasure Hunters **43.10**.
 
-- **Nueve capas de botín:** 925 cofres, 40 raros, 69 enterrados, 879 cajas de munición, 141 carteles, 47 barriles de pesca, 28 cañones de botín, 8 santuarios y 8 bóvedas/búnkeres. Los grupos muestran cuántos registros contienen; al acercarte puedes seleccionar los puntos individuales, incluidos los coincidentes.
+- **Nueve capas de botín:** 925 cofres, 40 raros, 69 enterrados, 879 cajas de munición, 141 carteles, 47 barriles de pesca, 28 cañones de botín, 8 santuarios y 9 bóvedas orientativas. Las bóvedas se corrigieron a partir de una imagen aportada y son posiciones aproximadas; conservan su ancla aunque actives otras capas. Los grupos muestran cuántos registros contienen; al acercarte puedes seleccionar los puntos individuales, incluidos los coincidentes.
 - **Tu ruta:** activa Editar ruta para añadir paradas con un clic o moverlas arrastrando. También puedes añadir un punto seleccionado, quitar paradas, vaciar o deshacer cambios. Las líneas unen tus paradas; no calculan un camino transitable ni evitan la tormenta.
 - **Revisión manual:** marca puntos como revisados, vacíos o pendientes y oculta lo ya revisado. Reiniciar revisión y vaciar la ruta se pueden deshacer. Esto no modifica el recuento real de cofres.
-- **Controles:** usa +/−, las flechas y la tecla Inicio con el mapa enfocado. Ampliar mapa abre una ventana maximizada. Esc sale de edición; en la ventana ampliada, otro Esc la cierra.
+- **Controles:** usa +/− o la rueda hasta 3200 %, las flechas y la tecla Inicio con el mapa enfocado. Ampliar mapa abre una ventana maximizada. Esc sale de edición; en la ventana ampliada, otro Esc la cierra. Los puntos coincidentes se distinguen en el selector de puntos próximos.
 
 - **Evidencia visible:** se distingue un testimonio de hallazgo, una recomendación de jugadores y una guía de localizaciones. No existe un conjunto comparable que permita clasificar dónde se han obtenido más recompensas.
 - **Datos y procedencia:** posiciones publicadas por [Crisis](https://lifecrisis.life/loot), consultadas el 13/11/2026; imagen servida por [Fortnite-API](https://fortnite-api.com/). Es una copia fija integrada, con atribución, no una conexión al juego ni una copia del código o iconos de Fortnite.GG. No se ha verificado cada aparición dentro de una partida; faltan alturas, plantas y probabilidades por punto.
@@ -43,6 +63,12 @@
 Las guías buscan organizar la búsqueda de cofres, **no prometen premios ni una probabilidad superior por lugar**. Los relatos de Reddit son experiencias individuales, no estadísticas verificadas. Consulta la [investigación y las fuentes](docs/RUTAS-1.2.7.md).
 
 ### Explora, organiza y consulta
+
+**Corrección de bóvedas:** se sustituyeron las ocho posiciones anteriores por nueve referencias visuales aproximadas, contrastadas con la imagen aportada. No representan entradas verificadas ni recalibran las demás capas.
+
+<p align="center">
+  <img src="docs/images/bovedas-corregidas.png" alt="Capa aislada de nueve bóvedas orientativas corregidas según la imagen de referencia" width="960">
+</p>
 
 <table>
   <tr>
@@ -320,7 +346,7 @@ Instala el [SDK de .NET 10 para Windows x64](https://dotnet.microsoft.com/downlo
 .\build.bat
 ```
 
-El ejecutable autónomo se genera en `dist\1.2.7\Contador.exe`. La primera compilación necesita conexión para restaurar dependencias.
+El script utiliza la versión de `src/Contador/Contador.csproj` para elegir la carpeta de salida. Al preparar la versión `1.3.0`, el destino será `dist\1.3.0\Contador.exe`. La configuración actual sigue siendo `1.2.7`; cambiar el README no cambia el ejecutable. La primera compilación necesita conexión para restaurar dependencias.
 
 Para desarrollar o ejecutar las comprobaciones:
 
@@ -333,9 +359,10 @@ dotnet run --project tests/Contador.DesktopChecks/Contador.DesktopChecks.csproj 
 dotnet run --project tests/Contador.Checks/Contador.Checks.csproj -c Release -- --map-only
 dotnet run --project tests/Contador.Checks/Contador.Checks.csproj -c Release -- --report-only
 dotnet run --project tests/Contador.DesktopChecks/Contador.DesktopChecks.csproj -c Release -- --map-ui-only
+dotnet run --project tests/Contador.DesktopChecks/Contador.DesktopChecks.csproj -c Release -- --instance-only
 ```
 
-La compilación del mapa 1.2.7 pasó **40 comprobaciones del mapa y 15 de controles WPF**, y se publicó como ejecutable autónomo Windows x64. La suite general de almacenamiento quedó bloqueada por permisos del entorno durante esa verificación; no se considera aprobada. Las comprobaciones y capturas no sustituyen validar el lector con nuevas versiones de Fortnite.
+Durante la preparación de estas funciones pasaron **48 comprobaciones del mapa**, **18 de interfaz**, **4 de caché HD** y **8 de instancia única**, en sus respectivas ejecuciones. La suite general de almacenamiento quedó bloqueada por permisos del entorno; no se considera aprobada. Antes de publicar la compilación 1.3 deben ejecutarse sus comprobaciones. Las capturas y pruebas no sustituyen validar el lector con nuevas versiones de Fortnite ni acreditan una sesión HD completa por Internet.
 
 Conserva `vendor/`: contiene el lector y sus dependencias de código necesarias para compilar. Para usar el programa publicado basta con `Contador.exe`; no distribuyas carpetas de AppData ni historiales personales.
 

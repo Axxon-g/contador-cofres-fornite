@@ -72,7 +72,7 @@ public partial class RouteSuggestionsView : UserControl
     {
         if (sender is Control control && (control.IsKeyboardFocusWithin || control.IsMouseOver)
             && e.AddedItems.OfType<MapPoint>().FirstOrDefault() is { } point)
-            Map.FocusPoint(point.X, point.Y, 5);
+            Map.FocusPoint(point.X, point.Y, Math.Max(5, Map.Viewport.Zoom));
     }
     private void StopChosen(object sender, SelectionChangedEventArgs e)
     {

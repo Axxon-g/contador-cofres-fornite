@@ -30,6 +30,9 @@
         </Grid.RowDefinitions>
         <TextBlock Text="{Binding Dataset}" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,0,0,10"/>
         <WrapPanel Grid.Row="1" Margin="0,0,0,10">
+            <CheckBox Content="Terreno HD · Internet" IsChecked="{Binding HighDetailEnabled}"
+                      Foreground="{StaticResource Ink}" VerticalAlignment="Center" Margin="0,0,12,6"
+                      ToolTip="Carga piezas de Fortnite.GG y las guarda en caché. Activado por defecto; puedes desactivarlo."/>
             <Button x:Name="LayersButton" Content="Ocultar capas" Click="ToggleLayers" Padding="10,7" Margin="0,0,6,6"/>
             <Button Content="+" Click="ZoomIn" Padding="12,7" Margin="0,0,4,6" AutomationProperties.Name="Acercar mapa"/>
             <Button Content="−" Click="ZoomOut" Padding="12,7" Margin="0,0,6,6" AutomationProperties.Name="Alejar mapa"/>
@@ -141,8 +144,14 @@
             </Border>
         </Grid>
         <StackPanel Grid.Row="3" Margin="0,10,0,0">
+            <TextBlock FontSize="12" Foreground="{StaticResource Muted}">
+                Terreno HD: <Hyperlink NavigateUri="https://fortnite.gg/" RequestNavigate="OpenSource"
+                    Foreground="{StaticResource Gold}">Fortnite.GG</Hyperlink> · proveedor externo opcional
+            </TextBlock>
             <TextBlock Text="Rueda: zoom · arrastra: mover · pulsa grupos para acercarte · ruta coral: paradas manuales, no un camino calculado"
                        Foreground="{StaticResource Muted}" FontSize="12"/>
+            <TextBlock Text="{Binding DetailStatus, ElementName=Map}" TextWrapping="Wrap"
+                       Foreground="{StaticResource Muted}" FontSize="12" Margin="0,4,0,0"/>
             <TextBlock Text="{Binding SaveMessage}" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,4,0,0" AutomationProperties.LiveSetting="Polite"/>
         </StackPanel>
     </Grid>

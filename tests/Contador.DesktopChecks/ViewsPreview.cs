@@ -63,6 +63,7 @@ internal static class ViewsPreview
         var host = new ContentControl();
         root.Children.Add(host);
         var routes = new RouteSuggestionsView(false);
+        if (captureFolder != null) routes.MapControl.TileNetworkAllowed = false;
         var report = new PlayerReportView { DataContext = vm };
         host.Content = routes;
         var window = new Window
@@ -117,6 +118,25 @@ internal static class ViewsPreview
                 }
                 await Save("rutas-desktop", 1000, routes);
                 await Save("rutas-minimo", 640, routes);
+                var tileFixture = Environment.GetEnvironmentVariable("CONTADOR_MAP_TILE_FIXTURE");
+                if (!string.IsNullOrWhiteSpace(tileFixture) && Directory.Exists(tileFixture))
+                {
+                    routes.MapControl.TileCacheFolder = tileFixture;
+                    routes.MapControl.TileNetworkAllowed = false;
+                    routes.Planner.HighDetailEnabled = false;
+                    routes.MapControl.FocusPoint(944, 1104, 32);
+                    await Save("mapa-integrado-detalle", 1000, routes);
+                    routes.Planner.HighDetailEnabled = true;
+                    await Task.Delay(600);
+                    await Save("mapa-hd-cache", 1000, routes);
+                    await Save("mapa-hd-minimo", 640, routes);
+                    routes.Planner.HighDetailEnabled = false;
+                    routes.MapControl.Fit();
+                }
+                foreach (var layer in routes.Planner.Layers) layer.Visible = layer.Key == "vault";
+                await Save("bovedas-corregidas", 1000, routes);
+                foreach (var layer in routes.Planner.Layers)
+                    layer.Visible = layer.Key is "chest" or "rare_chest" or "buried_chest" or "place";
                 routes.Planner.SelectedGuide = RouteGuides.All[0];
                 await Save("mapa-ruta", 1000, routes);
                 var point = MapCatalog.Current.Points.First(p => p.Kind == "buried_chest");
@@ -139,7 +159,7 @@ internal static class ViewsPreview
                 await Save("informe-detalle-minimo", 640, report, 1000);
                 vm.Refresh(new TrackerData(), config, session);
                 await Save("informe-vacio", 640, report);
-                Console.WriteLine("11 vistas WPF renderizadas sin acceso al historial del usuario.");
+                Console.WriteLine("12 vistas WPF renderizadas sin acceso al historial del usuario.");
                 window.Close();
             };
         }

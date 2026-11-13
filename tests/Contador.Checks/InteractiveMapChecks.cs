@@ -6,7 +6,7 @@ internal static class InteractiveMapChecks
     public static void Run(Action<bool, string> check)
     {
         var catalog = MapCatalog.Current;
-        check(catalog.SpawnCount == 2145, "Catálogo conserva los 2145 registros publicados");
+        check(catalog.SpawnCount == 2146, "Catálogo conserva otras capas y sustituye ocho bóvedas por nueve referencias");
         check(catalog.Places.Count == 16, "Lugares de referencia separados del botín");
         check(catalog.Points.Select(p => p.Id).Distinct().Count() == catalog.Points.Count, "Identificadores únicos incluso en posiciones repetidas");
         check(catalog.Points.All(p => MapCatalog.ValidPosition(p.X, p.Y)), "Coordenadas dentro del PNG de 2048 píxeles");
@@ -14,7 +14,7 @@ internal static class InteractiveMapChecks
         {
             ["chest"] = 925, ["rare_chest"] = 40, ["buried_chest"] = 69,
             ["ammo_box"] = 879, ["wanted_poster"] = 141, ["fishing_rod_barrel"] = 47,
-            ["loot_cannon"] = 28, ["sprite_shrine"] = 8, ["vault"] = 8
+            ["loot_cannon"] = 28, ["sprite_shrine"] = 8, ["vault"] = 9
         };
         foreach (var (kind, count) in expected)
             check(catalog.Points.Count(p => p.Kind == kind) == count, $"Cantidad publicada de {kind}");
@@ -39,20 +39,51 @@ internal static class InteractiveMapChecks
         check(Math.Abs(anchor.X - afterZoom.X) < .0001 && Math.Abs(anchor.Y - afterZoom.Y) < .0001,
             "Zoom mantiene la coordenada bajo el cursor");
         viewport.ZoomAt(100, 300, 300);
-        check(viewport.Zoom == 8, "Límite superior de zoom");
+        check(viewport.Zoom == 32, "Límite superior de zoom detallado");
         viewport.Pan(-1_000_000, -1_000_000);
         var edge = viewport.ToMap(600, 600);
         check(edge.X <= 1667.0001 && edge.Y <= 1728.0001, "Arrastre respeta los límites visibles de la isla");
         viewport.ZoomAt(double.NaN, 300, 300);
-        check(viewport.Zoom == 8, "Factor inválido no corrompe el zoom");
+        check(viewport.Zoom == 32, "Factor inválido no corrompe el zoom");
         viewport.Fit();
         check(viewport.Zoom == 1 && viewport.CenterX == 1078, "Ver isla restaura el encuadre");
+        var overviewTiles = MapTiles.Visible(viewport);
+        viewport.Focus(912, 1067, 32);
+        var detailTiles = MapTiles.Visible(viewport);
+        check(detailTiles.All(t => t.Level == 7 && t.IsValid), "Zoom detallado solicita piezas 32K válidas");
+        check(detailTiles.Count <= 25 && overviewTiles.All(t => t.Level < 7),
+            "Solo solicita las piezas visibles del nivel necesario");
+        var tileForPlace = detailTiles.Single(t => 912 >= t.MapX && 912 < t.MapX + t.MapSize
+            && 1067 >= t.MapY && 1067 < t.MapY + t.MapSize);
+        var tileCorner = viewport.ToScreen(tileForPlace.MapX, tileForPlace.MapY);
+        var placeScreen = viewport.ToScreen(912, 1067);
+        check(placeScreen.X >= tileCorner.X && placeScreen.Y >= tileCorner.Y
+            && placeScreen.X < tileCorner.X + tileForPlace.MapSize * viewport.Scale
+            && placeScreen.Y < tileCorner.Y + tileForPlace.MapSize * viewport.Scale,
+            "Tesela y marcador comparten la misma transformación del mapa");
+        check(!new MapTile(8, 0, 0).IsValid && !new MapTile(7, -1, 0).IsValid
+            && !new MapTile(7, 128, 0).IsValid, "Rechaza niveles e índices fuera de la isla");
+        check(MapTiles.Visible(viewport, 2).All(t => t.Level == 7), "DPI alto respeta el nivel máximo");
+        viewport.Fit();
         var clusters = MapClustering.Build(catalog.Points.Where(p => p.Kind != "place"), viewport);
-        check(clusters.Sum(g => g.Points.Count) == 2145, "Agrupación conserva todos los registros visibles");
-        check(clusters.SelectMany((a, i) => clusters.Skip(i + 1).Select(b =>
+        check(clusters.Sum(g => g.Points.Count) == 2146, "Agrupación conserva todos los registros visibles");
+        check(catalog.Points.Where(p => p.Kind == "vault").All(p =>
+            p.Id.StartsWith("vault-reference-") && p.Name.Contains("aproximada")),
+            "Bóvedas tienen procedencia y precisión distintas, sin reutilizar marcas antiguas");
+        check(catalog.Points.Where(p => p.Kind == "vault").All(v =>
+            catalog.Points.Any(p => p.Kind == "rare_chest"
+                && Math.Sqrt(Math.Pow(p.X - v.X, 2) + Math.Pow(p.Y - v.Y, 2)) < 16)),
+            "Nueve referencias visuales se contrastan con grupos independientes de cofres raros");
+        var groupedLoot = clusters.Where(c => c.Points.All(p => p.Kind != "vault")).ToList();
+        check(groupedLoot.SelectMany((a, i) => groupedLoot.Skip(i + 1).Select(b =>
             Math.Pow(a.ScreenX - b.ScreenX, 2) + Math.Pow(a.ScreenY - b.ScreenY, 2)
                 >= Math.Pow((a.Points.Count > 1 ? 14 : 10) + (b.Points.Count > 1 ? 14 : 10) + 3, 2)))
             .All(separated => separated), "Grupos vecinos no superponen sus marcadores");
+        check(clusters.Where(c => c.Points.Any(p => p.Kind == "vault")).All(c =>
+            c.Points.Count == 1
+            && Math.Abs(c.ScreenX - viewport.ToScreen(c.Points[0].X, c.Points[0].Y).X) < .0001
+            && Math.Abs(c.ScreenY - viewport.ToScreen(c.Points[0].X, c.Points[0].Y).Y) < .0001),
+            "Las bóvedas conservan su ancla al activar otras capas");
         var repeated = Enumerable.Range(0, 3).Select(i => first with { Id = "repeat-" + i }).ToArray();
         viewport.Focus(first.X, first.Y, 8);
         check(MapClustering.Build(repeated, viewport).Sum(g => g.Points.Count) == 3,

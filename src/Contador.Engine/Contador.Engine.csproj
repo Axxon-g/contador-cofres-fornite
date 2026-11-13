@@ -2,6 +2,7 @@
 <PropertyGroup><TargetFramework>net10.0-windows</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><AllowUnsafeBlocks>true</AllowUnsafeBlocks><EnableWindowsTargeting>true</EnableWindowsTargeting></PropertyGroup>
 <ItemGroup>
 <EmbeddedResource Include="MapSpawns.json" LogicalName="Contador.Map.Spawns4310"/>
+<EmbeddedResource Include="VaultReferences.json" LogicalName="Contador.Map.VaultReferences4310"/>
 <Compile Include="../../vendor/ChestCounter/src/ChestCounter/*.cs" Exclude="../../vendor/ChestCounter/src/ChestCounter/Program.cs"/>
 <ProjectReference Include="../../vendor/ChestCounter/lib/FortniteReplayReader/FortniteReplayReader.csproj"/>
 <EmbeddedResource Include="../../vendor/ChestCounter/RELEASE_NOTES.md" LogicalName="ReleaseNotes.md"/>

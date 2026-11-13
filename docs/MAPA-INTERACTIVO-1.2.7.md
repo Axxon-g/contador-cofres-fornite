@@ -24,3 +24,13 @@ Las marcas Revisado/Vacío/Pendiente son planificación manual. Se guardan con l
 - `dotnet run --project tests/Contador.Checks -- --map-only`: catálogo, categorías, versiones, coordenadas, transformación inversa, zoom al cursor, límites, agrupación sin perder registros, edición, deshacer y formato JSON.
 - `dotnet run --project tests/Contador.DesktopChecks -- --map-ui-only`: controles reales WPF en una ventana aislada, sin escritura en el historial del usuario.
 - `dotnet run --project tests/Contador.DesktopChecks -- --render-views <carpeta>`: vistas de mapa completo, reducido, ruta, zoom y filtro vacío, además del informe con datos ficticios. No enfoca la ventana ni interactúa con una partida.
+
+## Corrección de bóvedas · 13/11/2026
+
+La imagen de referencia aportada por el usuario muestra nueve bóvedas. Contradice las ocho posiciones `vault` del proveedor: se excluyen esos ocho registros al cargar, sin alterar el JSON original ni desplazar las demás capas. Se añaden nueve referencias visuales aproximadas desde `VaultReferences.json`; el total mostrado pasa a 2.146. La imagen no identifica su autor o URL original, por lo que no se presenta como fuente oficial ni se distribuye como recurso de la app.
+
+Alineación de terreno entre referencia de 511×600 y PNG integrado de 2048×2048: X = 2,1225·x + 539,5; Y = 2,1475·y + 502,5. Ajuste por comparación de color sobre 4.857 muestras terrestres, con pérdida robusta para etiquetas e iconos. El error de la digitalización y el tamaño de los candados impiden afirmar una entrada exacta. No son coordenadas del juego. Cada referencia coincide a menos de 16 píxeles del PNG con un grupo del catálogo independiente de cofres raros; esto contrasta la alineación, no acredita la entrada de la bóveda.
+
+Las bóvedas ya no se agrupan con otros tipos ni se mueven al centro de un grupo mixto. Sus nuevos identificadores no reutilizan revisiones de las ocho posiciones descartadas. Los identificadores de otras capas, las rutas manuales y el historial se conservan. Una ruta creada previamente por el usuario no se recalibra automáticamente.
+
+Las demás ubicaciones siguen siendo comunitarias sin validar punto por punto. Esta corrección no certifica su precisión. Captura actual de la capa aislada: `docs/images/bovedas-corregidas.png`.

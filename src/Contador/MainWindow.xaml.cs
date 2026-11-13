@@ -25,6 +25,7 @@ public partial class MainWindow : Window
     private readonly DispatcherTimer presenceTimer = new() { Interval = TimeSpan.FromSeconds(2) };
     private bool checkingPresence, recording;
     private bool closing;
+    public bool IsClosing => closing;
     private bool watcherStarted;
     private volatile OverlayView? lastOverlay;
     private string importNotice = "";

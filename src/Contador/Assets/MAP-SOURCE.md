@@ -7,3 +7,5 @@ El catálogo público de Crisis declara versión 43.10 y actualización 12/11/20
 `InteractiveMap` dibuja posiciones en el mismo marco de píxeles de ese PNG, con zoom, arrastre, agrupación y marcadores vectoriales propios. Las paradas editoriales usan los lugares del catálogo; las intermedias no comprobadas se indican como orientativas. Los números coral son paradas de la ruta manual; los números de los grupos de botín son cantidades de registros. La línea manual no es navegación ni predicción de premios. No hay peticiones de red para mostrar el mapa.
 
 La imagen histórica aportada por el usuario, `treasure-hunters-map.base64` (375 × 375), permanece como archivo de trabajo anterior y ya no se integra en el ejecutable ni se usa como fondo para estas coordenadas.
+
+Corrección visual posterior: `VaultReferences.json` sustituye únicamente los ocho registros vault de este proveedor por nueve anclas aproximadas digitalizadas de la imagen aportada por el usuario (511×600). La transformación y sus límites están documentados en docs/MAPA-INTERACTIVO-1.2.7.md. No altera ni certifica las otras categorías. El JSON original se conserva para auditar la sustitución.

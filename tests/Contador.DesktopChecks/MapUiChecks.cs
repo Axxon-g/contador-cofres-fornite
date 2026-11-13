@@ -14,6 +14,7 @@ internal static class MapUiChecks
     {
         ViewsPreview.LoadStyles(app);
         var view = new RouteSuggestionsView(false);
+        view.MapControl.TileNetworkAllowed = false;
         var window = new Window
         {
             Content = view, Width = 1000, Height = 800, Left = -20000, Top = -20000,
@@ -32,6 +33,14 @@ internal static class MapUiChecks
         {
             await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
             Check(view.Planner.FilteredPoints.Count == 1050, "Capas iniciales: cofres, raros, enterrados y lugares");
+            var hdToggle = Descendants<CheckBox>(view)
+                .Single(box => Equals(box.Content, "Terreno HD · Internet"));
+            Check(view.Planner.HighDetailEnabled && hdToggle.IsChecked == true, "HD inicia activado en el modelo y el control");
+            hdToggle.IsChecked = false;
+            Check(!view.Planner.HighDetailEnabled, "El control HD permite detener las descargas");
+            hdToggle.IsChecked = true;
+            Check(view.Planner.HighDetailEnabled, "El control HD permite reactivar la carga");
+            hdToggle.IsChecked = false;
             Click("+");
             Check(view.MapControl.Viewport.Zoom > 1, "Botón acercar conectado al mapa");
             Click("Ver isla");

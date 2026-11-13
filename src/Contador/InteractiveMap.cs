@@ -23,6 +23,17 @@ public sealed class InteractiveMap : FrameworkElement
     private bool dragging;
     private int dragStop = -1;
     private MapPosition? stopPreview;
+    private MapTileCache? tileCache;
+    public string? TileCacheFolder { get; set; }
+    public bool TileNetworkAllowed { get; set; } = true;
+    public static readonly DependencyProperty DetailStatusProperty = DependencyProperty.Register(
+        nameof(DetailStatus), typeof(string), typeof(InteractiveMap),
+        new PropertyMetadata("Mapa integrado · activa Terreno HD para cargar más detalle por Internet."));
+    public string DetailStatus
+    {
+        get => (string)GetValue(DetailStatusProperty);
+        private set => SetValue(DetailStatusProperty, value);
+    }
 
     public static readonly DependencyProperty ModelProperty = DependencyProperty.Register(
         nameof(Model), typeof(MapPlannerModel), typeof(InteractiveMap),
@@ -39,6 +50,7 @@ public sealed class InteractiveMap : FrameworkElement
         ClipToBounds = true;
         Cursor = Cursors.Hand;
         SizeChanged += (_, _) => { Viewport.Resize(ActualWidth, ActualHeight); RefreshView(); };
+        Unloaded += (_, _) => { tileCache?.Dispose(); tileCache = null; };
     }
 
     private static Brush Brush(string value)
@@ -76,6 +88,12 @@ public sealed class InteractiveMap : FrameworkElement
     private void ModelUpdated(object? sender, PropertyChangedEventArgs e)
     {
         Cursor = Model?.EditRoute == true ? Cursors.Cross : Cursors.Hand;
+        if (Model?.HighDetailEnabled != true)
+        {
+            tileCache?.Dispose();
+            tileCache = null;
+            DetailStatus = "Mapa integrado · HD desactivado · sin nuevas descargas.";
+        }
         InvalidateVisual();
     }
     public void Fit() { Viewport.Fit(); RefreshView(); }
@@ -90,6 +108,7 @@ public sealed class InteractiveMap : FrameworkElement
         dc.DrawRectangle(Ground, null, new Rect(RenderSize));
         var origin = Viewport.ToScreen(0, 0);
         dc.DrawImage(Island.Value, new Rect(origin.X, origin.Y, 2048 * Viewport.Scale, 2048 * Viewport.Scale));
+        if (model.HighDetailEnabled) DrawDetail(dc);
         foreach (var place in model.FilteredPoints.Where(p => p.Kind == "place"))
         {
             var pos = Viewport.ToScreen(place.X, place.Y);
@@ -143,6 +162,33 @@ public sealed class InteractiveMap : FrameworkElement
         }
         if (IsKeyboardFocused)
             dc.DrawRectangle(null, new Pen(Ink, 2), new Rect(1, 1, Math.Max(0, ActualWidth - 2), Math.Max(0, ActualHeight - 2)));
+    }
+
+    private void DrawDetail(DrawingContext dc)
+    {
+        tileCache ??= new MapTileCache(() =>
+        {
+            if (!Dispatcher.HasShutdownStarted)
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    if (tileCache == null) return;
+                    DetailStatus = tileCache.Status;
+                    InvalidateVisual();
+                }));
+        }, TileCacheFolder, TileNetworkAllowed);
+        var visible = MapTiles.Visible(Viewport, VisualTreeHelper.GetDpi(this).DpiScaleX);
+        var wanted = visible.Concat(visible.SelectMany(tile => Enumerable.Range(3, tile.Level - 3)
+            .Select(level => new MapTile(level, tile.X >> (tile.Level - level), tile.Y >> (tile.Level - level)))))
+            .Distinct().OrderBy(tile => tile.Level).ToArray();
+        tileCache.Request(wanted);
+        DetailStatus = tileCache.Status;
+        foreach (var tile in wanted)
+        {
+            if (tileCache.Get(tile) is not { } image) continue;
+            var topLeft = Viewport.ToScreen(tile.MapX, tile.MapY);
+            var size = tile.MapSize * Viewport.Scale;
+            dc.DrawImage(image, new Rect(topLeft.X, topLeft.Y, size + .25, size + .25));
+        }
     }
 
     private FormattedText Text(string value, double size, Brush color) => new(value,
@@ -251,8 +297,9 @@ public sealed class InteractiveMap : FrameworkElement
             else if (Hit(point) is { } group)
             {
                 Model?.SelectGroup(group.Points);
-                if (group.Points.Count > 1 && Viewport.Zoom < 8)
-                    Viewport.Focus(group.Points.Average(p => p.X), group.Points.Average(p => p.Y), Math.Min(8, Viewport.Zoom * 2));
+                if (group.Points.Count > 1 && Viewport.Zoom < MapViewport.MaxZoom)
+                    Viewport.Focus(group.Points.Average(p => p.X), group.Points.Average(p => p.Y),
+                        Math.Min(MapViewport.MaxZoom, Viewport.Zoom * 2));
                 else if (group.Points[0].Kind == "place")
                     Viewport.Focus(group.Points[0].X, group.Points[0].Y, Math.Max(4, Viewport.Zoom));
             }

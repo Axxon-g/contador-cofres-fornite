@@ -1,5 +1,12 @@
 # Contador 1.2.7 · Mapa interactivo, rutas e informe
 
+## Terreno HD opcional
+
+- Nueva casilla Terreno HD · Internet: piezas de mayor resolución de Fortnite.GG dentro del mapa propio, con atribución visible y caché local.
+- Zoom hasta 3200 % para separar los grupos al acercarse; los puntos coincidentes conservan su selector.
+- HD activado por defecto, con opción de desactivarlo. Las piezas ausentes o fallidas conservan el mapa integrado y muestran su estado.
+- Sin claves ni cuentas. El proveedor puede limitar o retirar el servicio; no se certificó una sesión completa de descargas. Más detalle no verifica las ubicaciones comunitarias.
+
 ## Mapa interactivo propio
 
 - Nuevo apartado Mapa y rutas: zoom, arrastre, nueve capas, búsqueda, puntos seleccionables y ventana ampliada.
@@ -29,3 +36,7 @@ Cierra la aplicación y reemplaza Contador.exe. Tu historial se conserva. Despu�
 El filtro usa la fecha local de inicio de la partida; si falta en un registro antiguo, usa su fecha de análisis. No se eliminan partidas y no se recuperan las que no estaban guardadas.
 
 Esta nueva compilación tiene otro SHA-256: el informe anterior de VirusTotal no corresponde a este archivo. El ejecutable continúa sin firma digital de editor verificado.
+
+## Corrección de bóvedas de esta compilación
+
+Se descartan ocho posiciones de bóvedas del proveedor que no corresponden a la referencia visual aportada. Se muestran nueve posiciones aproximadas, contrastadas con el terreno y grupos de cofres raros. Las bóvedas mantienen su ancla al activar otras capas. No se han verificado sus entradas en una partida, ni se certifican las demás capas. Se corrige también un bucle de notificaciones al seleccionar puntos y paradas.

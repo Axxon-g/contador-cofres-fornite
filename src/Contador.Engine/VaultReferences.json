@@ -1,0 +1,19 @@
+{
+  "referenceWidth": 511,
+  "referenceHeight": 600,
+  "scaleX": 2.1225,
+  "offsetX": 539.5,
+  "scaleY": 2.1475,
+  "offsetY": 502.5,
+  "points": [
+    { "id": "rubber-south", "name": "Sur de Rubber Resort", "x": 89, "y": 126 },
+    { "id": "fortune-fort", "name": "Fortune's Fort", "x": 359, "y": 152 },
+    { "id": "loot-lagoon", "name": "Loot Lagoon", "x": 261, "y": 188 },
+    { "id": "lantern-landing", "name": "Lantern Landing", "x": 140, "y": 264 },
+    { "id": "cursed-west", "name": "Oeste de Cursed Cavern", "x": 239, "y": 318 },
+    { "id": "rocky", "name": "The $.$. Rocky", "x": 409, "y": 345 },
+    { "id": "windmill", "name": "Windmill Village", "x": 49, "y": 429 },
+    { "id": "loguetown", "name": "Loguetown", "x": 217, "y": 436 },
+    { "id": "busy-bay", "name": "Busy Bay", "x": 397, "y": 501 }
+  ]
+}

@@ -19,6 +19,18 @@ public static class Program
         {
             try
             {
+                if (args.Contains("--instance-only"))
+                {
+                    InstanceChecks.Run();
+                    application.Shutdown();
+                    return;
+                }
+                if (args.Length == 2 && args[0] == "--tile-cache-only")
+                {
+                    await MapTileChecks.Run(args[1]);
+                    application.Shutdown();
+                    return;
+                }
                 if (args.Contains("--map-ui-only"))
                 {
                     await MapUiChecks.Run(application);

@@ -3,6 +3,7 @@ namespace Contador.Engine;
 /// <summary>All input/output uses source-image pixels; no world-coordinate calibration.</summary>
 public sealed class MapViewport
 {
+    public const double MaxZoom = 32;
     public double Width { get; private set; } = 600;
     public double Height { get; private set; } = 600;
     public double Zoom { get; private set; } = 1;
@@ -34,7 +35,7 @@ public sealed class MapViewport
     {
         if (!double.IsFinite(factor) || factor <= 0) return;
         var anchor = ToMap(x, y);
-        Zoom = Math.Clamp(Zoom * factor, 1, 8);
+        Zoom = Math.Clamp(Zoom * factor, 1, MaxZoom);
         CenterX = anchor.X - (x - Width / 2) / Scale;
         CenterY = anchor.Y - (y - Height / 2) / Scale;
         Clamp();
@@ -45,7 +46,7 @@ public sealed class MapViewport
         if (!MapCatalog.ValidPosition(x, y) || !double.IsFinite(zoom)) return;
         CenterX = x;
         CenterY = y;
-        Zoom = Math.Clamp(zoom, 1, 8);
+        Zoom = Math.Clamp(zoom, 1, MaxZoom);
         Clamp();
     }
 
@@ -72,9 +73,10 @@ public static class MapClustering
     public static IReadOnlyList<MapCluster> Build(IEnumerable<MapPoint> points, MapViewport viewport)
     {
         var cell = viewport.Zoom >= 7.9 ? 16 : 32;
-        var clusters = points.Select(point => (Point: point, Screen: viewport.ToScreen(point.X, point.Y)))
+        var visible = points.Select(point => (Point: point, Screen: viewport.ToScreen(point.X, point.Y)))
             .Where(p => p.Screen.X >= -24 && p.Screen.X <= viewport.Width + 24
-                && p.Screen.Y >= -24 && p.Screen.Y <= viewport.Height + 24)
+                && p.Screen.Y >= -24 && p.Screen.Y <= viewport.Height + 24).ToList();
+        var clusters = visible.Where(p => p.Point.Kind != "vault")
             .GroupBy(p => ((int)Math.Floor(p.Screen.X / cell), (int)Math.Floor(p.Screen.Y / cell)))
             .Select(group => new MapCluster(group.Average(p => p.Screen.X), group.Average(p => p.Screen.Y),
                 group.Select(p => p.Point).ToArray())).ToList();
@@ -106,6 +108,9 @@ public static class MapClustering
                 if (merged) break;
             }
         } while (merged);
+        // Vault references are individual anchors, never moved to a mixed-loot centroid.
+        clusters.AddRange(visible.Where(p => p.Point.Kind == "vault")
+            .Select(p => new MapCluster(p.Screen.X, p.Screen.Y, [p.Point])));
         return clusters;
     }
 }
