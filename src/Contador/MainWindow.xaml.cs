@@ -31,9 +31,10 @@ public partial class MainWindow : Window
     public Action? BackgroundRequested { get; set; }
     public void RequestExit() => closeController.RequestExit();
     private bool watcherStarted;
-    private volatile OverlayView? lastOverlay;
+    private readonly OverlayPublisher overlayPublisher;
     private string importNotice = "";
     private bool reportWritten;
+    private bool scanning;
 
     public MainWindow()
     {
@@ -59,9 +60,16 @@ public partial class MainWindow : Window
         sessionCounter.ExcludeHistory(data);
         ReportWriter.SessionFilter = sessionCounter.Includes;
         ReportWriter.ReportBrandImage = () => "data:image/png;base64," + Convert.ToBase64String(TokenIcon.Frame(128));
-        lastOverlay = sessionCounter.Overlay(Profiles.View(data,config),false);
-        ReportWriter.OverlayWriter = (target, _) => ObsHud.Write(target,lastOverlay!);
+        overlayPublisher = new OverlayPublisher(
+            sessionCounter.Overlay(Profiles.View(data, config), false),
+            model =>
+            {
+                if (watcherStarted) NativeOverlay.Update(model);
+                ReportWriter.WriteOverlay(store, model);
+            });
+        ReportWriter.OverlayWriter = (target, _) => ObsHud.Write(target, overlayPublisher.Current);
         tracker = new Tracker(store, config, data) { WriteReports=false, CompactAfterAnalysis=false };
+        tracker.AnalysisStarting = () => Dispatcher.Invoke(ShowAnalysisStatus);
         DemosPath.Text = config.DemosFolder;
         OverlayCheck.IsChecked = config.ShowOverlay;
         OverlayScale.Value = config.OverlaySize;
@@ -102,15 +110,23 @@ public partial class MainWindow : Window
             () => { if (BackgroundRequested != null) BackgroundRequested(); else Hide(); });
     }
 
-    private async Task ScanAsync()
+    private void ShowAnalysisStatus()
     {
-        if (closing || vm.IsBusy || vm.Paused || !await gate.WaitAsync(0)) return;
+        if (closing) return;
+        vm.IsBusy = true;
+        vm.Status = "Analizando repeticiones";
+        vm.StatusDetail = "Puedes consultar el historial mientras termina el análisis.";
+        vm.NotifyAll();
+    }
+
+    private async Task ScanAsync(bool userRequested = false)
+    {
+        if (closing || scanning || vm.IsBusy || vm.Paused || !await gate.WaitAsync(0)) return;
+        scanning = true;
+        var oldStatus = (vm.Status, vm.StatusDetail, vm.StatusColor, vm.Footer);
         try
         {
-            vm.IsBusy = true;
-            vm.Status = "Analizando repeticiones";
-            vm.StatusDetail = "Puedes consultar el historial mientras termina el análisis.";
-            vm.NotifyAll();
+            if (userRequested) ShowAnalysisStatus();
             var scan = await Task.Run(() =>
             {
                 var before = data.Matches.Count;
@@ -127,16 +143,19 @@ public partial class MainWindow : Window
                 : recording ? "Partida en curso"
                 : errors > 0 ? "Hay repeticiones que no se pudieron leer"
                 : "Listo para tu próxima partida";
-            vm.StatusColor = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString(exists && errors == 0 ? "#A9D5A5" : "#F1CA76")!;
+            var color = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(
+                exists && errors == 0 ? "#A9D5A5" : "#F1CA76");
+            if (vm.StatusColor is not System.Windows.Media.SolidColorBrush current || current.Color != color)
+                vm.StatusColor = new System.Windows.Media.SolidColorBrush(color);
             vm.StatusDetail = !exists ? "Activa Grabar repeticiones en Fortnite o elige la carpeta correcta en Ajustes."
                 : errors > 0 ? $"{errors} archivos con error. Consulta el registro en Ajustes; el lector puede necesitar una actualización."
                 : recording ? "Los cofres se sumarán cuando Fortnite finalice la repetición."
                 : "Detección cada segundo. Los cofres se actualizan al finalizar la repetición.";
-            vm.Footer = count > 0 ? $"{count} partida(s) añadida(s) · Última revisión {DateTime.Now:HH:mm:ss}"
-                : $"Última revisión {DateTime.Now:HH:mm:ss} · Historial guardado localmente";
+            if (scan.Changed || userRequested || !reportWritten)
+                vm.Footer = count > 0 ? $"{count} partida(s) añadida(s) · Última revisión {DateTime.Now:HH:mm:ss}"
+                    : $"Última revisión {DateTime.Now:HH:mm:ss} · Historial guardado localmente";
             if (importNotice.Length > 0) vm.Footer = importNotice;
             UpdateOverlay();
-            vm.NotifyAll();
             if(scan.Changed || !reportWritten)
             {
                 await Task.Run(()=>ReportWriter.WriteAll(store,config,data));
@@ -145,7 +164,14 @@ public partial class MainWindow : Window
             if (vm.Paused) { vm.Status = "Detección en pausa"; vm.StatusDetail = "El análisis anterior terminó. Reanuda la detección para revisar las siguientes repeticiones."; }
         }
         catch (Exception ex) { ShowError(ex); }
-        finally { vm.IsBusy = false; gate.Release(); vm.NotifyAll(); }
+        finally
+        {
+            var wasBusy = vm.IsBusy;
+            vm.IsBusy = false;
+            scanning = false;
+            gate.Release();
+            if (wasBusy || oldStatus != (vm.Status, vm.StatusDetail, vm.StatusColor, vm.Footer)) vm.NotifyAll();
+        }
     }
 
     private void Refresh()
@@ -180,15 +206,13 @@ public partial class MainWindow : Window
                 locked => Dispatcher.BeginInvoke(new Action(async () => await SaveAsync(() => config.OverlayLocked = locked))));
             watcherStarted = true;
         }
-        UpdateOverlay();
+        UpdateOverlay(force: true);
     }
-    private void UpdateOverlay()
+    private void UpdateOverlay(bool force = false)
     {
         // Keep the session count consistent with the dashboard, including imports.
         var model = sessionCounter.Overlay(Profiles.View(data, config), recording);
-        lastOverlay = model;
-        if (watcherStarted) NativeOverlay.Update(model);
-        ReportWriter.WriteOverlay(store, model);
+        overlayPublisher.Publish(model, force);
     }
     private async Task CheckPresenceAsync()
     {
@@ -199,19 +223,16 @@ public partial class MainWindow : Window
             var folder = config.DemosFolder;
             recording = await Task.Run(() => MatchPresence.IsRecording(folder, DateTime.UtcNow));
             if (closing) return;
-            vm.MatchState = recording ? "EN PARTIDA · Cofres al finalizar" : "Esperando partida";
-            vm.NotifyAll();
+            var state = recording ? "EN PARTIDA · Cofres al finalizar" : "Esperando partida";
+            if (vm.MatchState != state)
+            {
+                vm.MatchState = state;
+                vm.Changed(nameof(Dashboard.MatchState));
+            }
             // The lightweight presence probe stays responsive while a replay is being decoded.
             // Data snapshots for overlay totals are only built outside the scanner's mutation window.
-            if (!vm.IsBusy) UpdateOverlay();
-            else if (lastOverlay is { } previous)
-            {
-                var model = previous with { CurrentLive=recording, Current=recording ? "…" : previous.Last,
-                    Badge=recording ? "EN PARTIDA" : null };
-                lastOverlay=model;
-                if(watcherStarted) NativeOverlay.Update(model);
-                ReportWriter.WriteOverlay(store,model);
-            }
+            if (!scanning && !vm.IsBusy) UpdateOverlay();
+            else overlayPublisher.UpdatePresence(recording);
         }
         finally { checkingPresence = false; }
     }
@@ -242,7 +263,12 @@ public partial class MainWindow : Window
     private void RoutesClick(object sender, RoutedEventArgs e) => Navigate("routes");
     private void ReportPageClick(object sender, RoutedEventArgs e) => Navigate("report");
     private void SettingsClick(object sender, RoutedEventArgs e) => Navigate("settings");
-    private async void ScanClick(object sender, RoutedEventArgs e) => await ScanAsync();
+    private async void ScanClick(object sender, RoutedEventArgs e) => await ScanAsync(userRequested: true);
+    private async void TeamStatsClick(object sender, RoutedEventArgs e)
+    {
+        var enabled = (sender as CheckBox)?.IsChecked == true;
+        await SaveAsync(() => config.ShowTeamStats = enabled);
+    }
     private void PauseClick(object sender, RoutedEventArgs e)
     {
         vm.Paused = !vm.Paused;
@@ -351,9 +377,11 @@ public partial class MainWindow : Window
         try
         {
             // Escape formula prefixes as well as CSV separators in player-controlled values.
-            static string Cell(string s) => "\"" + ((s.Length > 0 && "=+-@\t\r".Contains(s[0])) ? "'" + s : s).Replace("\"", "\"\"") + "\"";
             var lines = new List<string> { "Fecha,Modo,Cofres,Tesoros,Posicion" };
-            lines.AddRange(vm.History.Select(r => string.Join(",", Cell(r.Date), Cell(r.Mode), r.Chests.ToString(), r.Treasures.ToString(), Cell(r.Placement))));
+            lines.AddRange(vm.History.Select(r => string.Join(",", new object?[]
+            {
+                r.Date, r.Mode, r.Chests, r.Treasures, r.Placement
+            }.Select(CsvText.Cell))));
             File.WriteAllLines(dialog.FileName, lines, new UTF8Encoding(true));
             vm.Footer = $"Exportación guardada: {dialog.FileName}"; vm.NotifyAll();
         }

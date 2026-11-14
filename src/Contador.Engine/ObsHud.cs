@@ -10,14 +10,16 @@ public static class ObsHud
     private static readonly Lazy<string> Coin = new(() => "data:image/png;base64," + Convert.ToBase64String(TokenIcon.Frame(64)));
 
     private static string Payload(OverlayView v) => JsonSerializer.Serialize(new
-    { total=v.Total, last=v.Last ?? "—", session=v.Session, treasures=v.Treasures, inMatch=v.CurrentLive });
+    { total=v.Total, last=v.Last ?? "—", teamLast=v.LastTeamChests ?? "—", session=v.Session, treasures=v.Treasures, inMatch=v.CurrentLive });
 
     public static void Write(Store store, OverlayView view)
     {
         lock (Sync)
         {
             // Browser script tags can load local files in OBS without a server or fetch/file CORS.
-            Atomic(Path.Combine(store.Folder,"overlay-data.js"), "window.renderOverlay(" + Payload(view) + ");");
+            var dataPath = Path.Combine(store.Folder, "overlay-data.js");
+            var payload = "window.renderOverlay(" + Payload(view) + ");";
+            if (!File.Exists(dataPath) || File.ReadAllText(dataPath) != payload) Atomic(dataPath, payload);
             var html = Render(view);
             if (!File.Exists(store.OverlayPath) || File.ReadAllText(store.OverlayPath) != html)
                 Atomic(store.OverlayPath,html);
@@ -51,17 +53,20 @@ public static class ObsHud
           <div class="total"><img class="coin" src="{{Coin.Value}}" alt=""><span id="total" class="number outline"></span></div>
           <div class="row"><span class="dot" aria-hidden="true"></span><span id="state" class="label outline"></span><span id="state-value" class="outline"></span></div>
           <div class="row outline"><span class="label">Última partida<span class="sep">  •  </span></span><span id="last"></span></div>
+          <div class="row outline" title="Mínimo detectado en la última partida: tus cofres más los de compañeros visibles en la repetición. Puede faltar información."><span class="label">Equipo (última)<span class="sep">  •  </span></span><span id="teamLast"></span></div>
           <div class="row outline"><span class="label">Esta sesión<span class="sep">  •  </span></span><span id="session"></span></div>
           <div class="row outline"><span class="label">Tesoros<span class="sep">  •  </span></span><span id="treasures" class="treasure"></span></div>
         </main>
         <script>
         window.renderOverlay=function(d){
-          for(const key of ['total','last','session','treasures'])document.getElementById(key).textContent=d[key];
-          document.body.classList.toggle('playing',d.inMatch);
-          document.getElementById('state').textContent=d.inMatch?'En partida':'Estado  •  ';
-          document.getElementById('state-value').textContent=d.inMatch?'':'Esperando';
+          function setText(key,value){const node=document.getElementById(key);value=String(value);
+            if(node.textContent!==value)node.textContent=value;}
+          for(const key of ['total','last','teamLast','session','treasures'])setText(key,d[key]);
+          if(document.body.classList.contains('playing')!==d.inMatch)document.body.classList.toggle('playing',d.inMatch);
+          setText('state',d.inMatch?'En partida':'Estado  •  ');
+          setText('state-value',d.inMatch?'':'Esperando');
         };
-        window.renderOverlay({{Payload(view)}});
+        window.renderOverlay({{Payload(new OverlayView("—", null, "", false, null, [], "—", "—"))}});
         let loading=false;
         function refresh(){if(loading)return;loading=true;const s=document.createElement('script');
           s.src='overlay-data.js?t='+Date.now();s.onload=s.onerror=()=>{s.remove();loading=false};document.head.appendChild(s)}

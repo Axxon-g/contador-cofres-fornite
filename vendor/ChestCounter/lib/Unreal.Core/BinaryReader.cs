@@ -42,26 +42,14 @@ public class BinaryReader : FArchive
     /// <seealso cref="System.IO.BinaryReader"/>
     public BinaryReader(Stream input)
     {
-        if (input.CanSeek)
-        {
-            var length = (int)input.Length;
-            var bytes = GC.AllocateUninitializedArray<byte>(length);
-            input.ReadExactly(bytes);
-            Bytes = bytes;
-            _length = length;
-        }
-        else
-        {
-            using var ms = new MemoryStream();
-            input.CopyTo(ms);
-            Bytes = ms.ToArray();
-            _length = Bytes.Length;
-        }
+        Bytes = ReplayLimits.ReadInput(input);
+        _length = Bytes.Length;
         _position = 0;
     }
 
     public BinaryReader(ReadOnlyMemory<byte> input)
     {
+        if (input.Length > ReplayLimits.MaxInputBytes) throw new InvalidDataException("Replay input is too large.");
         Bytes = input;
         _length = Bytes.Length;
         _position = 0;
@@ -69,6 +57,7 @@ public class BinaryReader : FArchive
 
     public BinaryReader(ReadOnlySpan<byte> input)
     {
+        if (input.Length > ReplayLimits.MaxInputBytes) throw new InvalidDataException("Replay input is too large.");
         Bytes = input.ToArray();
         _length = Bytes.Length;
         _position = 0;
@@ -84,6 +73,8 @@ public class BinaryReader : FArchive
     public override T[] ReadArray<T>(Func<T> func1)
     {
         var count = ReadUInt32();
+        if (count > _length - _position) throw new InvalidDataException("Array count exceeds remaining input.");
+        ReplayLimits.Reserve(count, Math.Max(64, Unsafe.SizeOf<T>()));
         var arr = new T[count];
         for (var i = 0; i < count; i++)
         {
@@ -253,6 +244,8 @@ public class BinaryReader : FArchive
     public override (T, U)[] ReadTupleArray<T, U>(Func<T> func1, Func<U> func2)
     {
         var count = ReadUInt32();
+        if (count > (_length - _position) / 2) throw new InvalidDataException("Tuple count exceeds remaining input.");
+        ReplayLimits.Reserve(count, Math.Max(64, Unsafe.SizeOf<(T, U)>()));
         var arr = new (T, U)[count];
         for (var i = 0; i < count; i++)
         {

@@ -518,7 +518,8 @@ public class NetFieldParser
             return null;
         }
 
-        var arr = Array.CreateInstance(elementType, arrayIndexes);
+        var capacity = ReplayLimits.Reserve(arrayIndexes);
+        var arr = Array.CreateInstance(elementType, capacity);
 
         while (true)
         {

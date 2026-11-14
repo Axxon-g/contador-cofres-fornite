@@ -14,18 +14,30 @@ if ($LASTEXITCODE -ne 0) { throw 'No pasaron las comprobaciones de la interfaz d
 if ($LASTEXITCODE -ne 0) { throw 'No pasaron las comprobaciones de instancia única.' }
 & dotnet run --project tests/Contador.DesktopChecks/Contador.DesktopChecks.csproj -c Release -- --tray-only
 if ($LASTEXITCODE -ne 0) { throw 'No pasaron las comprobaciones de segundo plano y bandeja.' }
+& dotnet run --project tests/Contador.DesktopChecks/Contador.DesktopChecks.csproj -c Release -- --team-only
+if ($LASTEXITCODE -ne 0) { throw 'No pasaron las comprobaciones de equipo.' }
 [xml]$project = Get-Content -LiteralPath 'src/Contador/Contador.csproj' -Raw
-$publishDir = Join-Path 'dist' ([string]$project.Project.PropertyGroup.Version)
-& dotnet publish src/Contador/Contador.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o $publishDir
+$version = [string]$project.Project.PropertyGroup.Version
+if ($version -notmatch '^\d+\.\d+\.\d+$') { throw 'Version de salida no valida.' }
+$distRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot 'dist'))
+$publishDir = [IO.Path]::GetFullPath((Join-Path $distRoot $version))
+if (-not $publishDir.StartsWith($distRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
+    throw 'La salida debe estar dentro de dist.'
+}
+$stagingDir = Join-Path $PSScriptRoot 'src/Contador/obj/publish-app'
+& dotnet publish src/Contador/Contador.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o $stagingDir
 if ($LASTEXITCODE -ne 0) { throw 'No se pudo compilar Contador.' }
-$executable = Join-Path $publishDir 'Contador.exe'
+$executable = Join-Path $stagingDir 'Contador.exe'
 if ($SigningCertificateThumbprint) {
     if (-not $TimestampServer) { throw 'Indica -TimestampServer con la URL proporcionada por tu entidad de firma.' }
     & "$PSScriptRoot/tools/Sign-Release.ps1" -Executable $executable -CertificateThumbprint $SigningCertificateThumbprint -TimestampServer $TimestampServer
 } else {
     Write-Warning 'Ejecutable sin firma digital: Windows puede mostrar editor desconocido y SmartScreen.'
 }
-$hash = (Get-FileHash -LiteralPath $executable -Algorithm SHA256).Hash.ToLowerInvariant()
-"$hash  Contador.exe" | Set-Content -LiteralPath (Join-Path $publishDir 'Contador.exe.sha256') -Encoding ascii
+New-Item -ItemType Directory -Force -Path $publishDir | Out-Null
+Copy-Item -LiteralPath $executable -Destination (Join-Path $publishDir 'Contador.exe') -Force -ErrorAction Stop
+Get-ChildItem -LiteralPath $publishDir -File | Where-Object Name -ne 'Contador.exe' | ForEach-Object {
+    Remove-Item -LiteralPath $_.FullName -ErrorAction Stop
+}
 Write-Host "Aplicacion disponible en $publishDir\Contador.exe"
 

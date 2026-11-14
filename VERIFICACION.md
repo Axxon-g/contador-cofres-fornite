@@ -1,3 +1,14 @@
+# Verificación de 1.3.2 · 14/11/2026
+
+- Motor: 225 comprobaciones aprobadas, incluyendo seguridad de lectura, CSV, equipo y publicación estable del overlay.
+- Escritorio: 4 de cierre/cuentas, 3 de equipo, 18 de mapa, 8 de instancia única y 8 de segundo plano aprobadas.
+- Compilación Release del motor y escritorio sin errores. Persiste una advertencia de nulabilidad heredada en ReplayAnalyzer al pasar un logger opcional.
+- Se excluyen de la compilación el actualizador, el lanzador de espera, la consola nativa y la bandeja heredados; sus fuentes originales se conservan en vendor.
+- El conteo grupal continúa siendo experimental y parcial. Las pruebas no acreditan exactitud completa, ausencia de vulnerabilidades ni compatibilidad futura con Fortnite.
+
+Los registros anteriores se conservan a continuación como historial de verificación.
+
+---
 # Verificación de Contador
 
 ## Segundo plano y bandeja · 1.3.1

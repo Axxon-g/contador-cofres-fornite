@@ -118,7 +118,7 @@ public sealed class ReplayAnalyzer : FortniteReplayReader.ReplayReader
     private readonly List<GrantEvent> _grants = new();
 
     /// <summary>Bump when the analysis changes so that existing replays are re-analyzed.</summary>
-    public const int CurrentVersion = 16;
+    public const int CurrentVersion = 17;
 
     private static readonly bool ProbeDebug = Environment.GetEnvironmentVariable("CHESTCOUNTER_DEBUG") == "4";
 
@@ -726,6 +726,12 @@ public sealed class ReplayAnalyzer : FortniteReplayReader.ReplayReader
             }
         }
         var hasTeam = target?.TeamIndex is int ti && players.Any(p => p.TeamIndex == ti && p.Id != target.Id);
+        // Search events are already deduplicated by the container tracker. Initial replicated states
+        // of distant containers are not evidence of a teammate opening them during our observation.
+        int? teammateChests = target?.TeamIndex != null
+            ? _searches.Count(s => s.SearcherPawn is uint pawn && teammatePawns.ContainsKey(pawn)
+                && !targetPawns.Contains(pawn) && !s.Stale && ChestKinds.IsChest(ChestKinds.Classify(s.Label)))
+            : null;
         var teamFinds = new List<TreasureFind>();
         foreach (var pz in _prizes.Where(p => p.Pawn is uint pawn && teammatePawns.ContainsKey(pawn)))
         {
@@ -883,6 +889,7 @@ public sealed class ReplayAnalyzer : FortniteReplayReader.ReplayReader
             IsReplayOwner = isRecorder,
             Eliminations = isRecorder ? (int?)replay.Stats?.Eliminations : null,
             ChestsOpened = chests.Count,
+            TeammateChestsOpened = teammateChests,
             AmmoBoxesOpened = others.GetValueOrDefault(ChestKinds.AmmoBox),
             OtherContainersOpened = others.Where(kv => kv.Key != ChestKinds.AmmoBox).Sum(kv => kv.Value),
             OtherInteractions = others,

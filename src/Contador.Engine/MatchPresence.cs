@@ -35,8 +35,11 @@ public sealed class SessionCounter(DateTime startedUtc)
         var matches = Matches(view);
         var count = matches.Sum(m => m.ChestsOpened);
         var model = OverlayModel.Build(view, null, recording);
+        var last = view.Matches.OrderByDescending(m => m.MatchStartUtc ?? m.AnalyzedAtUtc).FirstOrDefault();
+        var teamTotal = TeamAccounting.LastTeamTotal(last);
         return model with
         {
+            LastTeamChests = teamTotal.HasValue ? "≥ " + teamTotal.Value.ToString("N0", L.Culture) : null,
             Session = L.N(count),
             Rows = model.Rows.Select(r => r.Label == "Sesión"
                 ? r with { Value = L.N(count) + " cofres", Detail = matches.Count + " partidas desde que abriste la app" } : r).ToList()

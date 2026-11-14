@@ -1,5 +1,8 @@
 <Window x:Class="Contador.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:Contador"
 Style="{StaticResource {x:Type Window}}" Icon="/Contador;component/Assets/Contador.ico" Title="Contador · Fortnite" Width="1120" Height="780" MinWidth="860" MinHeight="640" WindowStartupLocation="CenterScreen">
+<Window.Resources>
+    <BooleanToVisibilityConverter x:Key="TeamVisible"/>
+</Window.Resources>
 <Grid>
 <Grid.ColumnDefinitions><ColumnDefinition Width="200"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
 <Border Background="#6E2636" Padding="22,30">
@@ -30,9 +33,32 @@ Style="{StaticResource {x:Type Window}}" Icon="/Contador;component/Assets/Contad
 <ScrollViewer x:Name="SummaryPanel" VerticalScrollBarVisibility="Auto">
 <StackPanel>
 <Grid Margin="0,0,0,24"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-<StackPanel><TextBlock Text="Cofres abiertos" FontSize="17" Foreground="{StaticResource Muted}"/><TextBlock Text="{Binding Total}" FontSize="76" FontWeight="SemiBold" Foreground="{StaticResource Gold}" Margin="0,0,0,0"/><TextBlock Text="{Binding ProfileLabel}" Foreground="{StaticResource Muted}"/></StackPanel>
+<StackPanel><TextBlock Text="Cofres abiertos" FontSize="17" Foreground="{StaticResource Muted}"/><TextBlock Text="{Binding Total}" FontSize="76" FontWeight="SemiBold" Foreground="{StaticResource Gold}" Margin="0,0,0,0"/><TextBlock Text="{Binding ProfileLabel}" Foreground="{StaticResource Muted}"/>
+<TextBlock Text="{Binding OwnChestRewards}" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,10,0,0"/>
+</StackPanel>
 <StackPanel Grid.Column="1" Margin="20,8,0,0"><TextBlock Text="Cofres de esta sesión" FontSize="17"/><TextBlock Text="{Binding Session}" FontSize="42" FontWeight="SemiBold" Margin="0,3,0,8"/><TextBlock Text="{Binding SessionDetail}" FontSize="12" Foreground="{StaticResource Muted}" Margin="0,0,0,10"/><TextBlock Text="{Binding LastMatch}" Foreground="{StaticResource Muted}"/><TextBlock Text="{Binding Stats}" Foreground="{StaticResource Muted}" Margin="0,9,0,0"/></StackPanel>
 </Grid>
+<CheckBox Content="Mostrar datos del equipo" IsChecked="{Binding ShowTeamStats}"
+          Click="TeamStatsClick" IsEnabled="{Binding CanEdit}" Margin="0,0,0,16"
+          AutomationProperties.Name="Mostrar cofres y recompensas del equipo"
+          ToolTip="Añade un desglose del equipo sin cambiar tus contadores personales. Se conserva al cerrar la app."/>
+<StackPanel x:Name="TeamSummaryPanel" Visibility="{Binding ShowTeamStats, Converter={StaticResource TeamVisible}}" Margin="0,0,0,24">
+    <TextBlock Text="Equipo · registro parcial" FontSize="20" FontWeight="SemiBold"/>
+    <TextBlock Text="El conteo grupal puede no ser 100 % preciso. Las repeticiones pueden omitir aperturas de compañeros y el origen de algunas recompensas es estimado. Tus cifras personales no cambian."
+               Foreground="{StaticResource Gold}" FontSize="12" TextWrapping="Wrap" Margin="0,8,0,4"/>
+    <WrapPanel Margin="0,12,0,8">
+        <TextBlock Text="{Binding TeamChestTotal}" FontSize="28" FontWeight="SemiBold" Foreground="{StaticResource Gold}" Margin="0,0,10,0"/>
+        <TextBlock Text="mínimo registrado · tus cofres + compañeros detectados" Foreground="{StaticResource Muted}" TextWrapping="Wrap"/>
+    </WrapPanel>
+    <TextBlock Text="{Binding TeamChestSplit}" Margin="0,0,0,8"/>
+    <TextBlock Text="{Binding TeamCoverage}" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,0,0,16" TextWrapping="Wrap"/>
+    <TextBlock Text="Recompensas atribuidas a compañeros" FontWeight="SemiBold"/>
+    <TextBlock Text="{Binding TeammateRewards}" Margin="0,6,0,14"/>
+    <TextBlock Text="{Binding OwnChestRewards}" FontWeight="SemiBold"/>
+    <TextBlock Text="{Binding OtherOwnRewards}" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,6,0,0" TextWrapping="Wrap"/>
+    <TextBlock Text="Las atribuciones estimadas no son recompensas verificadas. No se suman al registro propio. En el overlay, ≥ indica el mínimo registrado del equipo en la última partida."
+               Foreground="{StaticResource Muted}" FontSize="12" Margin="0,12,0,0" TextWrapping="Wrap"/>
+</StackPanel>
 <Border Height="1" Background="{StaticResource Line}"/>
 <Grid Margin="0,22,0,16"><TextBlock Text="Últimas partidas" FontSize="20" FontWeight="SemiBold"/><Button Content="Ver historial" Click="HistoryClick" HorizontalAlignment="Right" Padding="14,7" Margin="0"/></Grid>
 <TextBlock Text="{Binding EmptyMessage}" Foreground="{StaticResource Muted}" Margin="0,0,0,12"/>

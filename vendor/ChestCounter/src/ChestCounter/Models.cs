@@ -51,6 +51,9 @@ public sealed class TreasureFind
     public bool SourceIsChest { get; set; } = true;
     /// <summary>True when the source is known for sure (golden chest), false when it is the last interaction before use.</summary>
     public bool SourceCertain { get; set; }
+    /// <summary>Legacy SourceCertain also covers temporal attribution; a golden-chest event is direct origin evidence.</summary>
+    [JsonIgnore]
+    public bool OriginDirectlyObserved => FromGoldenChest && SourceCertain;
     /// <summary>For estimated sources: other (non-chest) interactions between the source and the first use.</summary>
     public List<string> AlsoPossible { get; set; } = new();
     /// <summary>Team treasure: name of the teammate whose chest gave it ("" when the teammate was out of sight).</summary>
@@ -76,6 +79,8 @@ public sealed class MatchRecord
     public int? TotalPlayers { get; set; }
     public int? Eliminations { get; set; }
     public int ChestsOpened { get; set; }
+    /// <summary>Observed teammate chest interactions only. Null means legacy data or an unidentified team.</summary>
+    public int? TeammateChestsOpened { get; set; }
     public int AmmoBoxesOpened { get; set; }
     public int OtherContainersOpened { get; set; }
     /// <summary>Non-chest interactions by kind (loot cannons, ammo boxes, food boxes...).</summary>
@@ -107,6 +112,7 @@ public sealed class Config
     public string UpdateMode { get; set; } = "prompt";
     public bool OpenReportOnStart { get; set; } = true;
     public bool ShowOverlay { get; set; } = true;
+    public bool ShowTeamStats { get; set; }
 
     /// <summary>Minimizing the window sends the counter to the notification area (system tray) instead of the taskbar.</summary>
     public bool MinimizeToTray { get; set; } = true;

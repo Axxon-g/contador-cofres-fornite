@@ -6,7 +6,7 @@
     <img src="https://img.shields.io/badge/Windows-10%20%2F%2011-1B2B23?style=flat-square" alt="Windows 10 y 11">
     <img src="https://img.shields.io/badge/Arquitectura-x64-1B2B23?style=flat-square" alt="Arquitectura x64">
     <a href="https://github.com/Axxon-g/contador-cofres-fornite/releases"><img src="https://img.shields.io/github/downloads/Axxon-g/contador-cofres-fornite/Contador.exe?style=flat-square&amp;label=Descargas&amp;color=FFC857&amp;labelColor=6E2636&amp;displayAssetName=false" alt="Descargas acumuladas de Contador.exe en todas las versiones" title="Descargas del ejecutable, no personas únicas. Se actualiza automáticamente con caché."></a>
-    <img src="https://img.shields.io/badge/Versi%C3%B3n-1.3.1-F1CA76?style=flat-square&amp;labelColor=1B2B23" alt="Versión 1.3.1">
+    <img src="https://img.shields.io/badge/Versi%C3%B3n-1.3.2-F1CA76?style=flat-square&amp;labelColor=1B2B23" alt="Versión 1.3.2">
     <a href="LICENSE"><img src="https://img.shields.io/badge/Licencia-MIT-1B2B23?style=flat-square" alt="Licencia MIT"></a>
   </p>
   <p>
@@ -20,7 +20,33 @@
 > [!IMPORTANT]
 > Los cofres se cuentan **al terminar la partida**, cuando Fortnite finaliza la repetición. Debes tener activada la opción **Grabar repeticiones**. Las rutas sugeridas son contenido editorial de la comunidad: no detectan cofres ni predicen premios.
 
-## Contador 1.3.1 · Sigue contando en segundo plano
+## Contador 1.3.2 · Equipo experimental y actualizaciones más estables
+
+El contador personal conserva su funcionamiento. Ahora puedes activar **Mostrar datos del equipo** en Resumen para consultar las aperturas de compañeros que aparecen en tus repeticiones.
+
+> [!WARNING]
+> **Función experimental, desactivada por defecto.** El conteo grupal puede no ser 100 % preciso: las repeticiones pueden omitir aperturas lejanas y el origen de algunas recompensas es estimado. No es un total verificado del equipo ni debe usarse para clasificaciones.
+
+| Dato | Cómo interpretarlo |
+|---|---|
+| **Tus cofres y recompensas** | Siguen separados; activar el equipo no modifica tus cifras personales. |
+| **Equipo · registro parcial** | Suma tus cofres del período y las aperturas detectadas de compañeros. **≥** significa mínimo registrado. |
+| **Cobertura** | Indica cuántas partidas tienen datos del equipo y en cuántas faltan. Incluso las que tienen datos pueden estar incompletas. |
+| **Recompensas atribuidas** | Distingue origen observado y estimado. Una interacción cercana no demuestra quién originó una recompensa. |
+| **Equipo (última), en el overlay** | Mínimo detectado en la última partida; **—** cuando no hay datos suficientes. |
+
+El aviso permanece dentro de la sección del equipo, sin ventanas emergentes. Las repeticiones antiguas disponibles se vuelven a analizar cuando corresponde; si el archivo ya no existe, no se pueden recuperar sus datos del equipo.
+
+<p align="center">
+  <img src="docs/images/equipo-experimental.png" alt="Vista de prueba del apartado Equipo con aviso permanente de precisión y cifras separadas" width="600">
+  <br><sub>Vista de prueba con datos ficticios para mostrar la función experimental.</sub>
+</p>
+
+Esta versión también evita repintados y escrituras del overlay cuando las cifras no cambian, refuerza los límites de lectura de repeticiones y protege las exportaciones CSV frente a fórmulas. El ejecutable excluye el actualizador y el lanzador de espera heredados que esta interfaz no utiliza.
+
+Consulta las [notas de la versión 1.3.2](docs/RELEASE-v1.3.2.md) y la [arquitectura del proyecto](docs/ARQUITECTURA.md).
+
+## Segundo plano · Disponible desde 1.3.1
 
 Al pulsar la **X** de la ventana, ahora puedes elegir:
 
@@ -63,7 +89,7 @@ La actualización 1.3 reúne el mapa interactivo con terreno HD, rutas editables
 Consulta las [notas de Contador 1.3](docs/RELEASE-v1.3.0.md).
 
 > [!NOTE]
-> El botón de descarga apunta a la última Release publicada, que puede seguir siendo anterior hasta que se publique la 1.3.1. El ejecutable de esta versión se genera en `dist\1.3.1\Contador.exe`.
+> El botón de descarga apunta a la última Release publicada, que puede seguir siendo anterior hasta que se publique la 1.3.2. El ejecutable de esta versión se genera en `dist\1.3.2\Contador.exe`.
 
 ### Terreno HD al acercar
 
@@ -373,7 +399,7 @@ Instala el [SDK de .NET 10 para Windows x64](https://dotnet.microsoft.com/downlo
 .\build.bat
 ```
 
-El script utiliza la versión de `src/Contador/Contador.csproj` para elegir la carpeta de salida. La versión es `1.3.1` y el destino es `dist\1.3.1\Contador.exe`; la interfaz muestra **v1.3.1** a partir de esa misma versión. La primera compilación necesita conexión para restaurar dependencias.
+El script utiliza la versión de `src/Contador/Contador.csproj` para elegir la carpeta de salida. La versión es `1.3.2` y el destino es `dist\1.3.2\Contador.exe`; la interfaz muestra **v1.3.2** a partir de esa misma versión. La primera compilación necesita conexión para restaurar dependencias.
 
 Para desarrollar o ejecutar las comprobaciones:
 
@@ -390,7 +416,7 @@ dotnet run --project tests/Contador.DesktopChecks/Contador.DesktopChecks.csproj 
 dotnet run --project tests/Contador.DesktopChecks/Contador.DesktopChecks.csproj -c Release -- --tray-only
 ```
 
-En la compilación 1.3.1 pasaron **8 comprobaciones de segundo plano**, **3 de cierre**, **8 de instancia única** y **18 de interfaz**. Las capturas aportadas muestran la bandeja funcionando en el equipo del usuario. Durante el desarrollo del mapa también pasaron 48 comprobaciones del mapa y 4 de caché HD en sus respectivas ejecuciones. La suite general de almacenamiento quedó bloqueada por permisos del entorno; no se considera aprobada. Estas pruebas no sustituyen validar el lector con nuevas versiones de Fortnite ni acreditan una sesión HD completa por Internet.
+En la versión 1.3.2 pasaron **225 comprobaciones del motor**, **4 de cierre y cuentas**, **3 del equipo**, **18 de interfaz del mapa**, **8 de instancia única** y **8 de segundo plano**. La suite del motor incluye comprobaciones de límites de lectura, CSV y actualizaciones sin parpadeos. Estas pruebas no garantizan un recuento grupal completo ni sustituyen validar nuevas versiones de Fortnite; tampoco acreditan una sesión HD completa por Internet.
 
 Conserva `vendor/`: contiene el lector y sus dependencias de código necesarias para compilar. Para usar el programa publicado basta con `Contador.exe`; no distribuyas carpetas de AppData ni historiales personales.
 

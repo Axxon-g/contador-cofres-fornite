@@ -27,8 +27,8 @@ public class ReplayReader : Unreal.Core.ReplayReader<FortniteReplay>
 
     public FortniteReplay ReadReplay(string fileName)
     {
-        var bytes = File.ReadAllBytes(fileName);
-        using var archive = new Unreal.Core.BinaryReader(bytes);
+        using var input = File.OpenRead(fileName);
+        using var archive = new Unreal.Core.BinaryReader(input);
 
         Builder = new FortniteReplayBuilder();
         ReadReplay(archive);
@@ -363,6 +363,9 @@ public class ReplayReader : Unreal.Core.ReplayReader<FortniteReplay>
 
         var decompressedSize = archive.ReadInt32();
         var compressedSize = archive.ReadInt32();
+        if (decompressedSize < 0 || decompressedSize > ReplayLimits.MaxChunkBytes
+            || compressedSize < 0 || compressedSize > ReplayLimits.MaxChunkBytes)
+            throw new InvalidDataException("Replay compression chunk exceeds its size limit.");
         var compressedBuffer = archive.ReadBytes(compressedSize);
 
         _logger?.LogDebug("Decompressed archive from {compressedSize} to {decompressedSize}.", compressedSize, decompressedSize);

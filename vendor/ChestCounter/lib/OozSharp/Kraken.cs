@@ -1,4 +1,4 @@
-﻿/*
+/*
 === Kraken Decompressor for Windows ===
 Converted to C# for Fortnite by SL-x-TnT, original source code available at https://github.com/powzix/ooz.
 
@@ -33,6 +33,8 @@ public unsafe class Kraken
     /// <returns>Decompressed byte[]</returns>
     public ReadOnlyMemory<byte> Decompress(ReadOnlySpan<byte> compressedInput, int uncompressedSize)
     {
+        if (uncompressedSize < 0 || uncompressedSize > 64 * 1024 * 1024)
+            throw new DecoderException("Invalid or oversized decompressed chunk.");
         using var decoder = new KrakenDecoder();
 
         var decompressedBuffer = new byte[uncompressedSize];
@@ -54,6 +56,10 @@ public unsafe class Kraken
                     throw new DecoderException($"Failed DecodeStep method");
                 }
 
+                if (decoder.SourceUsed <= 0 || decoder.SourceUsed > sourceLength
+                    || decoder.DestinationUsed <= 0 || decoder.DestinationUsed > remainingBytes)
+                    throw new DecoderException("Decompression did not make bounded progress.");
+
                 sourceStart += decoder.SourceUsed;
                 sourceLength -= decoder.SourceUsed;
 
@@ -71,6 +77,7 @@ public unsafe class Kraken
         var sourceEnd = source + sourceBytesleft;
         if ((destinationOffset & 0x3FFFF) == 0)
         {
+            if (sourceBytesleft < 2) throw new DecoderException("Truncated compression header.");
             decoder.Header = new KrakenHeader(source);
 
             source += 2;
@@ -89,7 +96,7 @@ public unsafe class Kraken
             }
 
             //throw new NotImplementedException($"memmove(dst_start + offset, src, dst_bytes_left);");
-            Buffer.MemoryCopy(source, destination + destinationOffset, sourceBytesleft, sourceBytesleft);
+            Buffer.MemoryCopy(source, destination + destinationOffset, remainingDestinationBytes, destinationBytesLeft);
 
             decoder.SourceUsed = (int)((source - sourceIn) + destinationBytesLeft);
             decoder.DestinationUsed = destinationBytesLeft;
@@ -102,6 +109,11 @@ public unsafe class Kraken
 
         if (isKrakenDecoder)
         {
+            if (sourceEnd - source < 3) throw new DecoderException("Truncated quantum header.");
+            var header = (source[0] << 16) | (source[1] << 8) | source[2];
+            var headerLength = (header & 0x3FFFF) == 0x3FFFF
+                ? 4 : decoder.Header.UseChecksums ? 6 : 3;
+            if (sourceEnd - source < headerLength) throw new DecoderException("Truncated quantum header.");
             quantumHeader = new KrakenQuantumHeader(source, decoder.Header.UseChecksums, out var bytesRead);
             source += bytesRead;
         }
@@ -118,10 +130,7 @@ public unsafe class Kraken
         // Too few bytes in buffer to make any progress?
         if (sourceEnd - source < quantumHeader.CompressedSize)
         {
-            decoder.SourceUsed = 0;
-            decoder.DestinationUsed = 0;
-
-            return true;
+            throw new DecoderException("Truncated compressed quantum.");
         }
 
         if (quantumHeader.CompressedSize > remainingDestinationBytes)
@@ -142,8 +151,8 @@ public unsafe class Kraken
             }
             else
             {
-                var val = quantumHeader.Checksum;
-                Buffer.MemoryCopy(&val, destination + destinationOffset, destinationBytesLeft, destinationBytesLeft);
+                new Span<byte>(destination + destinationOffset, destinationBytesLeft)
+                    .Fill((byte)quantumHeader.Checksum);
             }
 
             decoder.SourceUsed = (int)(source - sourceIn);
@@ -304,9 +313,9 @@ public unsafe class Kraken
 
                 if (sourceUsed < destinationCount)
                 {
-                    var tempUsage = 2 * destinationCount + 32;
-
-                    tempUsage = tempUsage > 0x40000 ? 0x40000 : tempUsage;
+                    var tempUsage = checked(sizeof(MermaidLzTable) + 2 * destinationCount + 64);
+                    if (tempUsage > tempSize)
+                        throw new DecoderException("Insufficient decompression scratch space.");
 
                     //Mermaid_ReadLzTable
                     if (!MermaidReadLzTable(mode,
@@ -367,6 +376,7 @@ public unsafe class Kraken
 
         if (offset == 0)
         {
+            if (destinationSize < 8) throw new DecoderException("Initial literal prefix exceeds output.");
             Util.Copy64(destination, source);
 
             destination += 8;
@@ -582,13 +592,13 @@ public unsafe class Kraken
             if (iteration == 0)
             {
                 lz->Offset32Stream = lz->Offset32Stream1;
-                lz->Offset32StreamEnd = lz->Offset32Stream1 + lz->Offset32Stream1Size * 4;
+                lz->Offset32StreamEnd = lz->Offset32Stream1 + lz->Offset32Stream1Size;
                 lz->CmdStreamEnd = lz->CmdStream + lz->CmdStream2Offsets;
             }
             else
             {
                 lz->Offset32Stream = lz->Offset32Stream2;
-                lz->Offset32StreamEnd = lz->Offset32Stream2 + lz->Offset32Stream2Size * 4;
+                lz->Offset32StreamEnd = lz->Offset32Stream2 + lz->Offset32Stream2Size;
                 lz->CmdStreamEnd = lz->CmdStream + lz->CmdStream2OffsetsEnd;
 
                 lz->CmdStream += lz->CmdStream2Offsets;
@@ -620,234 +630,114 @@ public unsafe class Kraken
         return true;
     }
 
-    private byte* MermaidMode1(byte* destination, int destinationSize, byte* destinationEndPtr, byte* destinationStart, byte* sourceEnd, MermaidLzTable* lz, int* savedDist, int startOff)
+    private static void CopyLiterals(ref byte* destination, ref byte* literals, int length,
+        byte* destinationEnd, byte* literalsEnd)
     {
+        if (length < 0 || destination > destinationEnd || literals > literalsEnd
+            || length > destinationEnd - destination || length > literalsEnd - literals)
+            throw new DecoderException("Literal copy exceeds its input or output.");
+        if (length > 0) Buffer.MemoryCopy(literals, destination, destinationEnd - destination, length);
+        destination += length;
+        literals += length;
+    }
+
+    private static void CopyMatch(ref byte* destination, byte* match, int length,
+        byte* destinationStart, byte* destinationEnd)
+    {
+        if (length < 0 || destination > destinationEnd || length > destinationEnd - destination
+            || match < destinationStart || match >= destination)
+            throw new DecoderException("Match copy exceeds produced output.");
+        // Forward LZ copying repeats the produced pattern when source and output overlap.
+        var distance = destination - match;
+        while (length > 0)
+        {
+            var count = (int)Math.Min(distance, length);
+            Buffer.MemoryCopy(match, destination, destinationEnd - destination, count);
+            destination += count;
+            match += count;
+            length -= count;
+        }
+    }
+
+    private static int ReadRunLength(ref byte* lengths, byte* sourceEnd, int basis)
+    {
+        if (lengths >= sourceEnd) throw new DecoderException("Missing run length.");
+        var length = (int)*lengths++;
+        if (length > 251)
+        {
+            if (sourceEnd - lengths < 2) throw new DecoderException("Truncated run length.");
+            length += (lengths[0] | lengths[1] << 8) * 4;
+            lengths += 2;
+        }
+        return length + basis;
+    }
+
+    private byte* MermaidMode1(byte* destination, int destinationSize, byte* destinationEndPtr,
+        byte* destinationStart, byte* sourceEnd, MermaidLzTable* lz, int* savedDist, int startOff)
+    {
+        if (destinationSize < startOff || destinationSize > destinationEndPtr - destination)
+            throw new DecoderException("Invalid output block size.");
         var destinationEnd = destination + destinationSize;
+        var destinationBegin = destination;
         var cmdStream = lz->CmdStream;
         var cmdStreamEnd = lz->CmdStreamEnd;
         var lengthStream = lz->LengthStream;
         var litStream = lz->LitStream;
-        var litStreamEnd = lz->LitStreamEnd;
         var off16Stream = lz->Offset16Stream;
-        var off16StreamEnd = lz->Offset16StreamEnd;
         var off32Stream = lz->Offset32Stream;
-        var off32StreamEnd = lz->Offset32StreamEnd;
         var recentOffs = *savedDist;
-        byte* match;
-        int length;
-        var destinationBegin = destination;
-
         destination += startOff;
-
-        var test = cmdStreamEnd - cmdStream;
 
         while (cmdStream < cmdStreamEnd)
         {
-            uint flag = *cmdStream++;
-
+            var flag = *cmdStream++;
             if (flag >= 24)
             {
-                uint newDist = *off16Stream;
-                var useDistance = (flag >> 7) - 1;
-                var litLen = flag & 7;
-
-                Util.Copy64(destination, litStream);
-
-                destination += litLen;
-                litStream += litLen;
-
-                recentOffs ^= (int)(useDistance & (uint)(recentOffs ^ -newDist));
-
-                off16Stream = (ushort*)((byte*)off16Stream + (useDistance & 2));
-                match = destination + recentOffs;
-
-                Util.Copy64(destination, match);
-                Util.Copy64(destination + 8, match + 8);
-
-                destination += (flag >> 3) & 0xF;
-
-            }
-            else if (flag > 2)
-            {
-                length = (int)(flag + 5);
-
-                if (off32Stream == off32StreamEnd)
+                if ((flag & 0x80) == 0)
                 {
-                    throw new DecoderException($"MermaidMode1: off32Stream == off32StreamEnd");
+                    if (off16Stream >= lz->Offset16StreamEnd)
+                        throw new DecoderException("Missing 16-bit match offset.");
+                    recentOffs = -*off16Stream++;
                 }
-
-                match = destinationBegin - *off32Stream++;
-                recentOffs = (int)(match - destination);
-
-                if (destinationEnd - destination < length)
-                {
-                    throw new DecoderException($"MermaidMode1: destinationEnd - destination < length");
-                }
-
-                Util.Copy64(destination, match);
-                Util.Copy64(destination + 8, match + 8);
-                Util.Copy64(destination + 16, match + 16);
-                Util.Copy64(destination + 24, match + 24);
-
-                destination += length;
+                CopyLiterals(ref destination, ref litStream, flag & 7,
+                    destinationEnd, lz->LitStreamEnd);
+                CopyMatch(ref destination, destination + recentOffs, (flag >> 3) & 15,
+                    destinationStart, destinationEnd);
             }
             else if (flag == 0)
             {
-                if (sourceEnd - lengthStream == 0)
-                {
-                    throw new DecoderException($"MermaidMode1: Not enough source bytes remaining. Have {sourceEnd - lengthStream}");
-                }
-
-                length = *lengthStream;
-
-                if (length > 251)
-                {
-                    if (sourceEnd - lengthStream < 3)
-                    {
-                        throw new DecoderException($"MermaidMode1: Not enough source bytes remaining. Have {sourceEnd - lengthStream}. Need 3");
-                    }
-
-                    length += *(ushort*)(lengthStream + 1) * 4;
-                    lengthStream += 2;
-                }
-
-                lengthStream += 1;
-
-                length += 64;
-
-                if (destinationEnd - destination < length || litStreamEnd - litStream < length)
-                {
-                    throw new DecoderException($"MermaidMode1: destinationEnd - destination < length || litStreamEnd - litStream < length");
-                }
-
-                do
-                {
-                    Util.Copy64(destination, litStream);
-                    Util.Copy64(destination + 8, litStream + 8);
-
-                    destination += 16;
-                    litStream += 16;
-                    length -= 16;
-                } while (length > 0);
-
-                destination += length;
-                litStream += length;
-            }
-            else if (flag == 1)
-            {
-                if (sourceEnd - lengthStream == 0)
-                {
-                    throw new DecoderException($"MermaidMode1: Not enough source bytes remaining. Have {sourceEnd - lengthStream}");
-                }
-
-                length = *lengthStream;
-
-                if (length > 251)
-                {
-                    if (sourceEnd - lengthStream < 3)
-                    {
-                        throw new DecoderException($"MermaidMode1: Not enough source bytes remaining. Have {sourceEnd - lengthStream}. Need 3");
-                    }
-
-                    length += *(ushort*)(lengthStream + 1) * 4;
-                    lengthStream += 2;
-                }
-
-                lengthStream += 1;
-                length += 91;
-
-                if (off16Stream == off16StreamEnd)
-                {
-                    throw new DecoderException($"MermaidMode1: off16Stream == off16StreamEnd");
-                }
-
-                match = destination - *off16Stream++;
-                recentOffs = (int)(match - destination);
-
-                do
-                {
-                    Util.Copy64(destination, match);
-                    Util.Copy64(destination + 8, match + 8);
-
-                    destination += 16;
-                    match += 16;
-                    length -= 16;
-                } while (length > 0);
-
-                destination += length;
+                var length = ReadRunLength(ref lengthStream, sourceEnd, 64);
+                CopyLiterals(ref destination, ref litStream, length, destinationEnd, lz->LitStreamEnd);
             }
             else
             {
-                if (sourceEnd - lengthStream == 0)
+                int length;
+                byte* match;
+                if (flag == 1)
                 {
-                    throw new DecoderException($"MermaidMode1: sourceEnd - lengthStream == 0");
+                    length = ReadRunLength(ref lengthStream, sourceEnd, 91);
+                    if (off16Stream >= lz->Offset16StreamEnd)
+                        throw new DecoderException("Missing 16-bit match offset.");
+                    match = destination - *off16Stream++;
                 }
-
-                length = *lengthStream;
-
-                if (length > 251)
+                else
                 {
-                    if (sourceEnd - lengthStream < 3)
-                    {
-                        throw new DecoderException($"MermaidMode1: Not enough source bytes remaining. Have {sourceEnd - lengthStream}. Need 3");
-                    }
-
-                    length += *(ushort*)(lengthStream + 1) * 4;
-                    lengthStream += 2;
+                    length = flag == 2 ? ReadRunLength(ref lengthStream, sourceEnd, 29) : flag + 5;
+                    if (off32Stream >= lz->Offset32StreamEnd)
+                        throw new DecoderException("Missing 32-bit match offset.");
+                    match = destinationBegin - *off32Stream++;
                 }
-
-                lengthStream += 1;
-                length += 29;
-
-                if (off32Stream == off32StreamEnd)
-                {
-                    throw new DecoderException($"MermaidMode1: off32Stream == off32StreamEnd");
-                }
-
-                match = destinationBegin - *off32Stream++;
-                recentOffs = (int)(match - destination);
-
-                do
-                {
-                    Util.Copy64(destination, match);
-                    Util.Copy64(destination + 8, match + 8);
-
-                    destination += 16;
-                    match += 16;
-                    length -= 16;
-                } while (length > 0);
-
-                destination += length;
+                recentOffs = checked((int)(match - destination));
+                CopyMatch(ref destination, match, length, destinationStart, destinationEnd);
             }
         }
-
-        length = (int)(destinationEnd - destination);
-
-        if (length >= 8)
-        {
-            do
-            {
-                Util.Copy64(destination, litStream);
-
-                destination += 8;
-                litStream += 8;
-                length -= 8;
-            } while (length >= 8);
-        }
-
-        if (length > 0)
-        {
-            do
-            {
-                *destination++ = *litStream++;
-            } while (--length > 0);
-        }
-
+        CopyLiterals(ref destination, ref litStream, checked((int)(destinationEnd - destination)),
+            destinationEnd, lz->LitStreamEnd);
         *savedDist = recentOffs;
         lz->LengthStream = lengthStream;
         lz->Offset16Stream = off16Stream;
+        lz->Offset32Stream = off32Stream;
         lz->LitStream = litStream;
-
         return lengthStream;
     }
 

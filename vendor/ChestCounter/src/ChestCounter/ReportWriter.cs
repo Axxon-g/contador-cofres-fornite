@@ -51,7 +51,7 @@ public static class Pretty
             return L.T("moment et source inconnus", "time and source unknown", "momento y origen desconocidos");
         }
         var when = f.TimeExact ? $"{L.T("à", "at", "a los")} {Clock(t)}" : $"{L.T("vers", "around", "hacia los")} {Clock(t)}";
-        return f.SourceCertain ? $"{when} · {f.SourceLabel}" : $"{when} · {f.SourceLabel} ({Likely})";
+        return f.OriginDirectlyObserved ? $"{when} · {f.SourceLabel}" : $"{when} · {f.SourceLabel} ({Likely})";
     }
 
     public static string Likely => L.T("probable", "likely", "probable");
@@ -356,9 +356,9 @@ public static class ReportWriter
         {
             var count = L.Count(unusual.Count, "trésor obtenu", "trésors obtenus", "treasure", "treasures", "tesoro obtenido", "tesoros obtenidos");
             sb.Append($"<div class=\"flag\">{FlagIcon}<span>" + L.T(
-                $"<b>{count} autrement qu'avec un coffre.</b> Fiabilité faible : il s'agit très probablement d'une erreur dans la façon dont les replays sont analysés.",
-                $"<b>{count} obtained other than from a chest.</b> Low reliability: most likely a mistake in the way the replays are analyzed.",
-                $"<b>{count} de otra forma que con un cofre.</b> Fiabilidad baja: muy probablemente un error en la forma de analizar las repeticiones.") + "</span></div>");
+                $"<b>{count} attribués à d'autres interactions.</b> L'origine reste incertaine : l'interaction la plus proche ne prouve pas la provenance. Ces récompenses restent dans le total enregistré.",
+                $"<b>{count} attributed to other interactions.</b> Origin is uncertain: the nearest interaction does not prove where a reward came from. These rewards remain in the recorded total.",
+                $"<b>{count} atribuidos a otras interacciones.</b> Origen sin verificar: la interacción más cercana no prueba su procedencia. Estas recompensas se conservan en el total registrado.") + "</span></div>");
         }
         sb.Append("</section></div>");
 
@@ -385,7 +385,7 @@ public static class ReportWriter
                 }
                 else
                 {
-                    source = H(f.SourceLabel) + (f.SourceCertain ? "" : $" <span class=\"items\">({Pretty.Likely})</span>");
+                    source = H(f.SourceLabel) + (f.OriginDirectlyObserved ? "" : $" <span class=\"items\">({Pretty.Likely})</span>");
                 }
                 var who = !team ? L.T("toi", "you", "tú")
                     : TeamIcon + (string.IsNullOrEmpty(f.Teammate) ? L.T("un coéquipier", "a teammate", "un compañero") : H(f.Teammate));
@@ -498,10 +498,10 @@ public static class ReportWriter
         foreach (var m in data.Matches.OrderBy(When))
         {
             var t = string.Join(" + ", m.TreasureFinds.Select(f => f.DisplayName));
-            sb.AppendLine(string.Join(";",
+            sb.AppendLine(string.Join(";", new object?[] {
                 When(m).ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture),
                 Pretty.Playlist(m.Playlist), m.PlayerName, m.Placement, m.TotalPlayers,
-                m.ChestsOpened, m.AmmoBoxesOpened, t, m.ReplayFile));
+                m.ChestsOpened, m.AmmoBoxesOpened, t, m.ReplayFile }.Select(CsvText.Cell)));
         }
         return sb.ToString();
     }

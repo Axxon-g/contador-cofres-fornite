@@ -1,10 +1,33 @@
 <Project Sdk="Microsoft.NET.Sdk">
-<PropertyGroup><TargetFramework>net10.0-windows</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><AllowUnsafeBlocks>true</AllowUnsafeBlocks><EnableWindowsTargeting>true</EnableWindowsTargeting></PropertyGroup>
-<ItemGroup>
-<EmbeddedResource Include="MapSpawns.json" LogicalName="Contador.Map.Spawns4310"/>
-<EmbeddedResource Include="VaultReferences.json" LogicalName="Contador.Map.VaultReferences4310"/>
-<Compile Include="../../vendor/ChestCounter/src/ChestCounter/*.cs" Exclude="../../vendor/ChestCounter/src/ChestCounter/Program.cs"/>
-<ProjectReference Include="../../vendor/ChestCounter/lib/FortniteReplayReader/FortniteReplayReader.csproj"/>
-<EmbeddedResource Include="../../vendor/ChestCounter/RELEASE_NOTES.md" LogicalName="ReleaseNotes.md"/>
-<EmbeddedResource Include="../Contador/Assets/Contador.ico" LogicalName="Contador.Token.ico"/>
-</ItemGroup></Project>
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MapSpawns.json" LogicalName="Contador.Map.Spawns4310" />
+    <EmbeddedResource Include="VaultReferences.json" LogicalName="Contador.Map.VaultReferences4310" />
+    <EmbeddedResource Include="../Contador/Assets/Contador.ico" LogicalName="Contador.Token.ico" />
+    <ProjectReference Include="../../vendor/ChestCounter/lib/FortniteReplayReader/FortniteReplayReader.csproj" />
+  </ItemGroup>
+  <!-- Explicit boundary: the inherited CLI, updater and standby launcher are not part of the desktop app. -->
+  <ItemGroup>
+    <Compile Include="../../vendor/ChestCounter/src/ChestCounter/AppInfo.cs" />
+    <Compile Include="../../vendor/ChestCounter/src/ChestCounter/ConsoleUi.cs" />
+    <Compile Include="../../vendor/ChestCounter/src/ChestCounter/CsvText.cs" />
+    <Compile Include="../../vendor/ChestCounter/src/ChestCounter/ErrorLog.cs" />
+    <Compile Include="../../vendor/ChestCounter/src/ChestCounter/Lang.cs" />
+    <Compile Include="../../vendor/ChestCounter/src/ChestCounter/MatchPeriod.cs" />
+    <Compile Include="../../vendor/ChestCounter/src/ChestCounter/Models.cs" />
+    <Compile Include="../../vendor/ChestCounter/src/ChestCounter/NativeOverlay.cs" />
+    <Compile Include="../../vendor/ChestCounter/src/ChestCounter/OverlayModel.cs" />
+    <Compile Include="../../vendor/ChestCounter/src/ChestCounter/Png.cs" />
+    <Compile Include="../../vendor/ChestCounter/src/ChestCounter/Profiles.cs" />
+    <Compile Include="../../vendor/ChestCounter/src/ChestCounter/ReplayAnalyzer.cs" />
+    <Compile Include="../../vendor/ChestCounter/src/ChestCounter/ReplayFileStability.cs" />
+    <Compile Include="../../vendor/ChestCounter/src/ChestCounter/ReportWriter.cs" />
+    <Compile Include="../../vendor/ChestCounter/src/ChestCounter/Tracker.cs" />
+  </ItemGroup>
+</Project>

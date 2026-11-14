@@ -28,6 +28,8 @@ public sealed class Tracker
     private readonly ReplayFileStability _stability = new();
     public bool WriteReports { get; set; } = true;
     public bool CompactAfterAnalysis { get; set; } = true;
+    /// <summary>Raised only when replay analysis will actually run, not on idle directory polling.</summary>
+    public Action? AnalysisStarting { get; set; }
 
     public Tracker(Store store, Config config, TrackerData data)
     {
@@ -116,6 +118,7 @@ public sealed class Tracker
             return 0;
         }
 
+        AnalysisStarting?.Invoke();
         var batch = ready.Count >= 2;
         var profilesBefore = Profiles.List(_data).Count;
         var bar = batch ? new ProgressBar(L.T("Analyse des replays", "Analyzing replays", "Analizando repeticiones"), ready.Count) : null;
@@ -372,8 +375,7 @@ public sealed class Tracker
         byte[] bytes;
         using (var fs = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
         {
-            bytes = new byte[fs.Length];
-            fs.ReadExactly(bytes);
+            bytes = Unreal.Core.ReplayLimits.ReadInput(fs);
         }
 
         MatchRecord? result = null;

@@ -84,7 +84,7 @@ public static class HistoryImporter
         var ids = new HashSet<string>(StringComparer.Ordinal);
         foreach (var m in data.Matches)
             if (m == null || string.IsNullOrWhiteSpace(m.SessionId) || !ids.Add(m.SessionId)
-                || m.ChestsOpened < 0 || m.Chests == null || m.TreasureFinds == null || m.TeamTreasureFinds == null)
+                || m.ChestsOpened < 0 || m.TeammateChestsOpened < 0 || m.Chests == null || m.TreasureFinds == null || m.TeamTreasureFinds == null)
                 throw new InvalidDataException("El historial contiene partidas incompletas o duplicadas.");
     }
 }

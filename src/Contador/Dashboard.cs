@@ -32,6 +32,27 @@ public sealed class Dashboard : INotifyPropertyChanged
     public string EmptyMessage { get; set; } = "Todavía no hay partidas. Activa las repeticiones y juega una partida.";
     public string Footer { get; set; } = "Lectura local · Sin conexión a tu cuenta de Epic";
     public string PeriodLabel { get; set; } = "Período: todo el historial";
+    public bool ShowTeamStats { get; set; }
+    public TeamAccounting TeamInfo { get; private set; } = new();
+    public string TeamChestTotal => TeamInfo.CoveredMatches == 0 ? "—" : "≥ " + TeamInfo.TeamChests.ToString("N0", L.Culture);
+    public string TeamChestSplit => TeamInfo.CoveredMatches == 0
+        ? "Todavía no hay recuentos de compañeros para este período."
+        : $"Tuyos en todo el período: {TeamInfo.OwnChests:N0} · Compañeros detectados: {TeamInfo.TeammateChests:N0}";
+    public string TeamCoverage => $"Mismo período que el contador personal: {TeamInfo.Matches} partidas. "
+        + $"Sólo {TeamInfo.CoveredMatches} tienen datos de compañeros; faltan {TeamInfo.Matches - TeamInfo.CoveredMatches}. "
+        + "Es una suma mínima de registros, no el total real del equipo. Incluso en las partidas con datos puede faltar lo que ocurre lejos. "
+        + (TeamInfo.CoveredMatches < TeamInfo.Matches
+            ? "Si falta el archivo de repetición, no se puede recuperar ese dato del equipo." : "");
+    public string OwnChestRewards => $"{TeamInfo.OwnRecordedRewards:N0} recompensas registradas: "
+        + $"{TeamInfo.OwnChestRewards + TeamInfo.OwnProbableChestRewards:N0} atribuidas a cofres";
+    public string OtherOwnRewards => $"Origen directo observado en cofres: {TeamInfo.OwnChestRewards:N0}. "
+        + $"Atribución estimada a cofres: {TeamInfo.OwnProbableChestRewards:N0}. "
+        + $"Otras interacciones o sin origen: {TeamInfo.OwnOtherRewards:N0}. "
+        + "La proximidad a una apertura no confirma que la recompensa proceda de ese cofre.";
+    public string TeammateRewards => $"{TeamInfo.TeammateRewards:N0} "
+        + "con origen directo observado"
+        + $" · {TeamInfo.EstimatedTeammateRewards:N0} "
+        + (TeamInfo.EstimatedTeammateRewards == 1 ? "estimada" : "estimadas");
     public PlayerReport Report { get; private set; } = new();
     public string ReportEmptyMessage => Report.Matches == 0
         ? "No hay partidas para esta cuenta y período. Elige otra cuenta o cambia las fechas en Ajustes." : "";
@@ -74,6 +95,8 @@ public sealed class Dashboard : INotifyPropertyChanged
     {
         PeriodLabel = "Período: " + MatchPeriod.Describe(config);
         var matches = Profiles.View(data, config).Matches;
+        ShowTeamStats = config.ShowTeamStats;
+        TeamInfo = TeamAccounting.Create(matches);
         Report = PlayerReport.Create(data, config, sessionCounter, DateTime.Now);
         Total = matches.Sum(m => (long)m.ChestsOpened).ToString("N0", L.Culture);
         var sessionMatches = sessionCounter.Matches(Profiles.View(data, config));
@@ -83,7 +106,7 @@ public sealed class Dashboard : INotifyPropertyChanged
         var ordered = matches.OrderByDescending(m => m.MatchStartUtc ?? m.AnalyzedAtUtc).ToList();
         LastMatch = ordered.Count > 0 ? $"Última partida: {ordered[0].ChestsOpened} cofres" : "Última partida: todavía no hay datos.";
         var avg = matches.Count == 0 ? 0 : matches.Average(m => m.ChestsOpened);
-        Stats = $"{matches.Count} partidas · {matches.Sum(m => m.TreasureFinds.Count)} tesoros\nMedia {avg:0.0} · Récord {matches.Select(m => m.ChestsOpened).DefaultIfEmpty(0).Max()} cofres";
+        Stats = $"{matches.Count} partidas · {matches.Sum(m => m.TreasureFinds.Count)} recompensas registradas\nMedia {avg:0.0} · Récord {matches.Select(m => m.ChestsOpened).DefaultIfEmpty(0).Max()} cofres";
         rows = ordered.Select(MatchRow.From).ToList();
         Recent.Clear(); foreach (var row in rows.Take(4)) Recent.Add(row);
         EmptyMessage = matches.Count == 0 ? "No hay partidas para esta cuenta en el período elegido. Cambia las fechas en Ajustes o juega una partida con las repeticiones activadas." : "";

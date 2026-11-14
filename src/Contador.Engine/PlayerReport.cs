@@ -84,7 +84,7 @@ public sealed record PlayerReport
             Sources = own.GroupBy(f => f.SourceLabel)
                 .OrderByDescending(g => g.Count()).Select(g => new ReportCount(g.Key, g.LongCount(),
                     g.Any(f => !f.SourceIsChest) ? "Fiabilidad baja: origen distinto de un cofre"
-                    : g.Any(f => !f.SourceCertain) ? "Incluye origen probable" : "Origen confirmado")).ToList(),
+                    : g.Any(f => !f.OriginDirectlyObserved) ? "Origen atribuido; no verificado" : "Origen observado directamente")).ToList(),
             Finds = finds,
             Latest = matches.Take(100).Select(m => new ReportMatch(
                 When(m), Pretty.Playlist(m.Playlist), Pretty.Placement(m), m.ChestsOpened,
@@ -100,6 +100,6 @@ public sealed record PlayerReport
         find.ObtainedAtSeconds is float seconds
             ? (find.TimeExact ? "" : "Hacia ") + Pretty.Clock(seconds) : "Desconocido",
         team && string.IsNullOrEmpty(find.Teammate) ? "Cofre fuera de tu vista (estimación)"
-            : find.SourceLabel + (!find.SourceIsChest ? " · fiabilidad baja" : !find.SourceCertain ? " · probable" : ""),
+            : find.SourceLabel + (!find.SourceIsChest ? " · fiabilidad baja" : !find.OriginDirectlyObserved ? " · atribución estimada" : ""),
         team ? (string.IsNullOrEmpty(find.Teammate) ? "Compañero" : find.Teammate) + " (estimación)" : "Tú", team);
 }

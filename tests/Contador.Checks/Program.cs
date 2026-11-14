@@ -5,6 +5,26 @@ using Contador.Engine;
 L.Set("es");
 int checks = 0;
 void Check(bool value, string message) { if (!value) throw new Exception(message); checks++; }
+if (args.Contains("--team-only"))
+{
+    TeamChecks.Run(Check);
+    Console.WriteLine($"{checks} comprobaciones de equipo correctas.");
+    return;
+}
+if (args.Contains("--security-only"))
+{
+    SecurityChecks.Run(Check);
+    Console.WriteLine($"{checks} comprobaciones de seguridad correctas.");
+    return;
+}
+if (args.Length == 2 && args[0] == "--replay-control")
+{
+    using var input = File.OpenRead(args[1]);
+    var record = new ReplayAnalyzer().Analyze(input, Path.GetFileName(args[1]), "");
+    Console.WriteLine($"Control de compatibilidad: {record.ChestsOpened} cofres, {record.TreasureFinds.Count} tesoros.");
+    Console.WriteLine($"Equipo: {record.TeammateChestsOpened?.ToString() ?? "sin datos"} cofres de compañeros detectados; {record.TeamTreasureFinds.Count} recompensas compartidas.");
+    return;
+}
 if (args.Contains("--map-only"))
 {
     InteractiveMapChecks.Run(Check);
@@ -65,7 +85,7 @@ try
     var beforeRouteUpgrade = File.ReadAllText(store.DataPath);
     var routeTracker = new Tracker(store, c, d) { WriteReports = false };
     Check(routeTracker.UpgradeIfNeeded(), "Actualización espacial solicita releer sin borrar partidas");
-    Check(File.ReadAllText(Path.Combine(store.Folder, "data.before-analysis-16.json")) == beforeRouteUpgrade,
+    Check(File.ReadAllText(Path.Combine(store.Folder, $"data.before-analysis-{ReplayAnalyzer.CurrentVersion}.json")) == beforeRouteUpgrade,
         "Respalda exactamente el historial antes de la actualización espacial");
     Check(d.Matches.Count == 3 && d.ProcessedFiles.Count == 0 && d.AnalyzerVersion == ReplayAnalyzer.CurrentVersion,
         "Actualizar lector conserva partidas y solo reinicia la cola de archivos");
@@ -163,7 +183,10 @@ try
         NativeOverlay.Start(-20000,-20000,true,(_,_)=>{},_=>{});
         foreach(var active in new[] {false,true})
         {
-            NativeOverlay.Update(new OverlayView("2290",active?"…":"17","última partida",active,active?"EN PARTIDA":null,[],"22","83","17"));
+            NativeOverlay.Update(new OverlayView("2290",active?"…":"17","última partida",active,active?"EN PARTIDA":null,[],"22","83","17")
+            {
+                LastTeamChests = "≥ 49"
+            });
             Thread.Sleep(400);
             Check(NativeOverlay.Snapshot(Path.Combine(args[1],active?"overlay-en-partida.png":"overlay-espera.png")),"Captura overlay");
         }
@@ -192,7 +215,7 @@ try
         ReportWriter.OverlayWriter=(target,_)=>ObsHud.Write(target,hudView with {CurrentLive=true});
         ReportWriter.WriteAll(obsStore,new Config(),new TrackerData());
         var afterReport=File.ReadAllText(obsStore.OverlayPath);
-        Check(afterReport.Contains("class=\"hud\"") && afterReport.Contains("\"inMatch\":true"),"Generar informe no restaura tarjeta ni borra estado de partida");
+        Check(afterReport.Contains("class=\"hud\"") && File.ReadAllText(dataFile).Contains("\"inMatch\":true"),"Generar informe no restaura tarjeta ni borra estado de partida");
     }
     finally { ReportWriter.OverlayWriter=null; }
     if(args.Length==2 && args[0]=="--obs-preview")
@@ -270,6 +293,9 @@ try
     Check(JsonSerializer.Deserialize<Config>("{}")?.MatchDateFrom==null,"Configuracion anterior conserva todo el historial por defecto");
     InteractiveMapChecks.Run(Check);
     ReportChecks.Run(Check);
+    SecurityChecks.Run(Check);
+    TeamChecks.Run(Check);
+    QuietRefreshChecks.Run(Check);
     Console.WriteLine($"{checks} comprobaciones correctas.");
 }
 finally { Directory.Delete(folder, recursive:true); }

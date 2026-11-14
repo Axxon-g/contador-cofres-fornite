@@ -107,6 +107,7 @@ public abstract class ReplayReader<T> where T : Replay, new()
     /// </summary>
     public virtual T ReadReplay(FArchive archive)
     {
+        using var allocationBudget = ReplayLimits.Begin();
         Replay = new T();
 
         ReadReplayInfo(archive);
@@ -732,7 +733,7 @@ public abstract class ReplayReader<T> where T : Replay, new()
             PathNameIndex = archive.ReadIntPacked(),
             NetFieldExportsLength = archive.ReadIntPacked(),
         };
-        group.NetFieldExports = new NetFieldExport[group.NetFieldExportsLength];
+        group.NetFieldExports = new NetFieldExport[ReplayLimits.Reserve(group.NetFieldExportsLength)];
 
         for (var i = 0; i < group.NetFieldExportsLength; i++)
         {
@@ -801,7 +802,7 @@ public abstract class ReplayReader<T> where T : Replay, new()
                         PathName = pathName,
                         PathNameIndex = pathNameIndex,
                         NetFieldExportsLength = numExports,
-                        NetFieldExports = new NetFieldExport[numExports]
+                        NetFieldExports = new NetFieldExport[ReplayLimits.Reserve(numExports)]
                     };
                     _netGuidCache.AddToExportGroupMap(pathName, group);
                 }
@@ -810,7 +811,7 @@ public abstract class ReplayReader<T> where T : Replay, new()
                     // Allow our exports to dynamically grow as more are encountered
                     var oldExports = group.NetFieldExports;
 
-                    group.NetFieldExports = new NetFieldExport[numExports];
+                    group.NetFieldExports = new NetFieldExport[ReplayLimits.Reserve(numExports)];
                     group.NetFieldExportsLength = numExports;
 
                     Array.Copy(oldExports, group.NetFieldExports, oldExports.Length);
@@ -950,7 +951,7 @@ public abstract class ReplayReader<T> where T : Replay, new()
                         PathName = pathName,
                         PathNameIndex = pathNameIndex,
                         NetFieldExportsLength = numExports,
-                        NetFieldExports = new NetFieldExport[numExports]
+                        NetFieldExports = new NetFieldExport[ReplayLimits.Reserve(numExports)]
                     };
                     _netGuidCache.AddToExportGroupMap(pathName, group);
                 }

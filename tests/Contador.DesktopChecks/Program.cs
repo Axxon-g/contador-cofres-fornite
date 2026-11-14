@@ -19,6 +19,12 @@ public static class Program
         {
             try
             {
+                if (args.Contains("--team-only") || (args.Length == 2 && args[0] == "--team-render"))
+                {
+                    await TeamViewChecks.Run(application, args.Length == 2 ? args[1] : null);
+                    application.Shutdown();
+                    return;
+                }
                 if (args.Contains("--tray-only"))
                 {
                     await TrayChecks.Run(application);
