@@ -1,4 +1,12 @@
-# Verificación de Contador 1.2.1
+# Verificación de Contador
+
+## Segundo plano y bandeja · 1.3.1
+
+- Ocho comprobaciones del flujo de segundo plano: cancelar, ocultar sin guardar ni detener, dispatcher activo mientras está oculto, restauración, ocultación deshabilitada si no hay icono y salida explícita sin repetir la pregunta ni el guardado.
+- Tres comprobaciones de cierre: inmediato, análisis pendiente y error de guardado.
+- Las pruebas nativas de registro de icono fueron bloqueadas por Win32 5 en el entorno de ejecución. Las capturas reales aportadas por el usuario muestran la moneda, el menú Abrir Contador/Salir y la elección al cerrar funcionando en su escritorio. No se ha simulado reiniciar su Explorador ni cerrar la sesión de Windows.
+- Se conserva el bloqueo de instancia única y no se activa el inicio automático con Windows.
+- Los resultados de estas pruebas no acreditan la suite general de almacenamiento, previamente bloqueada por permisos del entorno.
 
 ## Versión del ejecutable · 1.3.0
 

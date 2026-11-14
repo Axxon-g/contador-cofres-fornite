@@ -26,6 +26,10 @@ public partial class MainWindow : Window
     private bool checkingPresence, recording;
     private bool closing;
     public bool IsClosing => closing;
+    private readonly WindowCloseController closeController;
+    public Func<WindowCloseChoice>? CloseChoiceRequested { get; set; }
+    public Action? BackgroundRequested { get; set; }
+    public void RequestExit() => closeController.RequestExit();
     private bool watcherStarted;
     private volatile OverlayView? lastOverlay;
     private string importNotice = "";
@@ -92,8 +96,10 @@ public partial class MainWindow : Window
         };
         timer.Tick += async (_, _) => await ScanAsync();
         presenceTimer.Tick += async (_, _) => await CheckPresenceAsync();
-        _ = new WindowCloseController(this, SaveBeforeCloseAsync, BeginClose,
-            ex => MessageBox.Show(this, ex.Message, "No se pudieron guardar los datos"));
+        closeController = new WindowCloseController(this, SaveBeforeCloseAsync, BeginClose,
+            ex => MessageBox.Show(this, ex.Message, "No se pudieron guardar los datos"),
+            () => CloseChoiceRequested?.Invoke() ?? WindowCloseChoice.Exit,
+            () => { if (BackgroundRequested != null) BackgroundRequested(); else Hide(); });
     }
 
     private async Task ScanAsync()

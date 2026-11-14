@@ -6,7 +6,7 @@
     <img src="https://img.shields.io/badge/Windows-10%20%2F%2011-1B2B23?style=flat-square" alt="Windows 10 y 11">
     <img src="https://img.shields.io/badge/Arquitectura-x64-1B2B23?style=flat-square" alt="Arquitectura x64">
     <a href="https://github.com/Axxon-g/contador-cofres-fornite/releases"><img src="https://img.shields.io/github/downloads/Axxon-g/contador-cofres-fornite/Contador.exe?style=flat-square&amp;label=Descargas&amp;color=FFC857&amp;labelColor=6E2636&amp;displayAssetName=false" alt="Descargas acumuladas de Contador.exe en todas las versiones" title="Descargas del ejecutable, no personas únicas. Se actualiza automáticamente con caché."></a>
-    <img src="https://img.shields.io/badge/Versi%C3%B3n-1.3-F1CA76?style=flat-square&amp;labelColor=1B2B23" alt="Versión 1.3">
+    <img src="https://img.shields.io/badge/Versi%C3%B3n-1.3.1-F1CA76?style=flat-square&amp;labelColor=1B2B23" alt="Versión 1.3.1">
     <a href="LICENSE"><img src="https://img.shields.io/badge/Licencia-MIT-1B2B23?style=flat-square" alt="Licencia MIT"></a>
   </p>
   <p>
@@ -20,7 +20,34 @@
 > [!IMPORTANT]
 > Los cofres se cuentan **al terminar la partida**, cuando Fortnite finaliza la repetición. Debes tener activada la opción **Grabar repeticiones**. Las rutas sugeridas son contenido editorial de la comunidad: no detectan cofres ni predicen premios.
 
-## Contador 1.3 · Explora el mapa, prepara tu ruta y consulta tu botín
+## Contador 1.3.1 · Sigue contando en segundo plano
+
+Al pulsar la **X** de la ventana, ahora puedes elegir:
+
+| Opción | Qué ocurre |
+|---|---|
+| **Mantener en segundo plano** | Oculta la ventana y mantiene la detección, el recuento y el overlay activos. |
+| **Salir de Contador** | Espera el análisis pendiente, guarda los datos y cierra el programa. |
+| **Cancelar** | Mantiene la ventana abierta. |
+
+<p align="center">
+  <img src="docs/images/cierre-segundo-plano.png" alt="Contador pregunta si mantenerlo en segundo plano, salir o cancelar al cerrar la ventana" width="960">
+</p>
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/images/bandeja-icono.png" alt="Moneda de Contador en los iconos ocultos junto al reloj de Windows" width="240"><br><strong>Encuéntralo junto al reloj.</strong></td>
+    <td align="center"><img src="docs/images/bandeja-menu.png" alt="Menú de la bandeja de Contador con Abrir Contador y Salir" width="240"><br><strong>Abre la ventana o sal desde la bandeja.</strong></td>
+  </tr>
+</table>
+
+Si no ves la moneda, pulsa la flecha **Mostrar iconos ocultos** junto al reloj de Windows. Un clic en el icono vuelve a abrir Contador; un clic derecho muestra **Abrir Contador** y **Salir**. Mantenerlo en segundo plano no inicia otra copia ni activa el arranque automático con Windows. Si el icono no está disponible, la opción de ocultar queda deshabilitada para que la ventana siga accesible.
+
+<sub>Capturas de la prueba real aportadas por el usuario, tomadas antes del cambio de etiqueta a v1.3.1.</sub>
+
+Consulta las [notas de Contador 1.3.1](docs/RELEASE-v1.3.1.md).
+
+## Mapa HD, rutas e informe
 
 La actualización 1.3 reúne el mapa interactivo con terreno HD, rutas editables e informe nativo. El contador conserva el recuento por cuenta, el historial y los overlays para jugar o transmitir.
 
@@ -36,7 +63,7 @@ La actualización 1.3 reúne el mapa interactivo con terreno HD, rutas editables
 Consulta las [notas de Contador 1.3](docs/RELEASE-v1.3.0.md).
 
 > [!NOTE]
-> El botón de descarga apunta a la última Release publicada, que puede seguir siendo anterior hasta que se publique la 1.3. El ejecutable de esta versión se genera en `dist\1.3.0\Contador.exe`.
+> El botón de descarga apunta a la última Release publicada, que puede seguir siendo anterior hasta que se publique la 1.3.1. El ejecutable de esta versión se genera en `dist\1.3.1\Contador.exe`.
 
 ### Terreno HD al acercar
 
@@ -315,7 +342,7 @@ No. Para usar la app, descarga **Contador.exe** en la sección **Assets** de una
 <details>
 <summary><strong>¿Cómo actualizo la app sin perder mis partidas?</strong></summary>
 
-Cierra Contador, descarga el nuevo ejecutable desde [Releases](https://github.com/Axxon-g/contador-cofres-fornite/releases) y reemplaza el ejecutable anterior. El historial se guarda en una carpeta independiente, no dentro del archivo .exe.
+Selecciona **Salir de Contador** en la ventana de cierre o **Salir** en el menú del icono junto al reloj. Espera a que termine de guardar, descarga el nuevo ejecutable desde [Releases](https://github.com/Axxon-g/contador-cofres-fornite/releases) y reemplaza el anterior. Ocultar la ventana en segundo plano no cierra el proceso. El historial se guarda en una carpeta independiente, no dentro del archivo .exe.
 
 </details>
 
@@ -346,7 +373,7 @@ Instala el [SDK de .NET 10 para Windows x64](https://dotnet.microsoft.com/downlo
 .\build.bat
 ```
 
-El script utiliza la versión de `src/Contador/Contador.csproj` para elegir la carpeta de salida. La versión es `1.3.0` y el destino es `dist\1.3.0\Contador.exe`; la interfaz muestra **v1.3** a partir de esa misma versión. La primera compilación necesita conexión para restaurar dependencias.
+El script utiliza la versión de `src/Contador/Contador.csproj` para elegir la carpeta de salida. La versión es `1.3.1` y el destino es `dist\1.3.1\Contador.exe`; la interfaz muestra **v1.3.1** a partir de esa misma versión. La primera compilación necesita conexión para restaurar dependencias.
 
 Para desarrollar o ejecutar las comprobaciones:
 
@@ -360,9 +387,10 @@ dotnet run --project tests/Contador.Checks/Contador.Checks.csproj -c Release -- 
 dotnet run --project tests/Contador.Checks/Contador.Checks.csproj -c Release -- --report-only
 dotnet run --project tests/Contador.DesktopChecks/Contador.DesktopChecks.csproj -c Release -- --map-ui-only
 dotnet run --project tests/Contador.DesktopChecks/Contador.DesktopChecks.csproj -c Release -- --instance-only
+dotnet run --project tests/Contador.DesktopChecks/Contador.DesktopChecks.csproj -c Release -- --tray-only
 ```
 
-Durante la preparación de estas funciones pasaron **48 comprobaciones del mapa**, **18 de interfaz**, **4 de caché HD** y **8 de instancia única**, en sus respectivas ejecuciones. La suite general de almacenamiento quedó bloqueada por permisos del entorno; no se considera aprobada. Antes de publicar la compilación 1.3 deben ejecutarse sus comprobaciones. Las capturas y pruebas no sustituyen validar el lector con nuevas versiones de Fortnite ni acreditan una sesión HD completa por Internet.
+En la compilación 1.3.1 pasaron **8 comprobaciones de segundo plano**, **3 de cierre**, **8 de instancia única** y **18 de interfaz**. Las capturas aportadas muestran la bandeja funcionando en el equipo del usuario. Durante el desarrollo del mapa también pasaron 48 comprobaciones del mapa y 4 de caché HD en sus respectivas ejecuciones. La suite general de almacenamiento quedó bloqueada por permisos del entorno; no se considera aprobada. Estas pruebas no sustituyen validar el lector con nuevas versiones de Fortnite ni acreditan una sesión HD completa por Internet.
 
 Conserva `vendor/`: contiene el lector y sus dependencias de código necesarias para compilar. Para usar el programa publicado basta con `Contador.exe`; no distribuyas carpetas de AppData ni historiales personales.
 

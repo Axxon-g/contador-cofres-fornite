@@ -6,6 +6,9 @@ namespace Contador;
 public partial class App : Application
 {
     private DesktopInstance? instance;
+    private TrayIcon? tray;
+    private CloseChoiceWindow? closeChoice;
+    private readonly List<Window> hiddenOwnedWindows = [];
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -43,8 +46,12 @@ public partial class App : Application
             base.OnStartup(e);
             ChestCounter.NativeOverlay.DrawCounterIcon = Contador.Engine.TokenIcon.Draw;
             ShutdownMode = ShutdownMode.OnMainWindowClose;
-            MainWindow = new MainWindow();
-            MainWindow.Show();
+            var window = new MainWindow();
+            MainWindow = window;
+            tray = new TrayIcon(RestoreMainWindow, ExitFromTray);
+            window.CloseChoiceRequested = ChooseClose;
+            window.BackgroundRequested = HideToTray;
+            window.Show();
         }
         catch (Exception error)
         {
@@ -60,6 +67,42 @@ public partial class App : Application
         if (!window.IsVisible) window.Show();
         if (window.WindowState == WindowState.Minimized) window.WindowState = WindowState.Normal;
         window.Activate();
+        tray?.SetBackground(false);
+        foreach (var owned in hiddenOwnedWindows.Where(Windows.Cast<Window>().Contains)) owned.Show();
+        hiddenOwnedWindows.Clear();
+    }
+
+    private WindowCloseChoice ChooseClose()
+    {
+        if (MainWindow == null) return WindowCloseChoice.Exit;
+        closeChoice = new CloseChoiceWindow(MainWindow, tray?.IsAvailable == true);
+        try
+        {
+            closeChoice.ShowDialog();
+            return closeChoice.Choice;
+        }
+        finally { closeChoice = null; }
+    }
+
+    private void HideToTray()
+    {
+        if (tray?.IsAvailable != true || MainWindow == null)
+            throw new InvalidOperationException("El icono de la bandeja no está disponible; Contador seguirá visible.");
+        hiddenOwnedWindows.Clear();
+        foreach (var owned in Windows.Cast<Window>().Where(w => w.Owner == MainWindow && w.IsVisible).ToArray())
+        {
+            hiddenOwnedWindows.Add(owned);
+            owned.Hide();
+        }
+        MainWindow.Hide();
+        tray.SetBackground(true);
+    }
+
+    private void ExitFromTray()
+    {
+        if (MainWindow is not MainWindow window || window.IsClosing) return;
+        window.RequestExit();
+        closeChoice?.Close();
     }
 
     private static bool RestoreLegacyWindow()
@@ -73,6 +116,7 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        tray?.Dispose();
         instance?.Dispose();
         base.OnExit(e);
     }

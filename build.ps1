@@ -12,6 +12,8 @@ if ($LASTEXITCODE -ne 0) { throw 'No pasaron las comprobaciones de cierre y sele
 if ($LASTEXITCODE -ne 0) { throw 'No pasaron las comprobaciones de la interfaz del mapa.' }
 & dotnet run --project tests/Contador.DesktopChecks/Contador.DesktopChecks.csproj -c Release -- --instance-only
 if ($LASTEXITCODE -ne 0) { throw 'No pasaron las comprobaciones de instancia única.' }
+& dotnet run --project tests/Contador.DesktopChecks/Contador.DesktopChecks.csproj -c Release -- --tray-only
+if ($LASTEXITCODE -ne 0) { throw 'No pasaron las comprobaciones de segundo plano y bandeja.' }
 [xml]$project = Get-Content -LiteralPath 'src/Contador/Contador.csproj' -Raw
 $publishDir = Join-Path 'dist' ([string]$project.Project.PropertyGroup.Version)
 & dotnet publish src/Contador/Contador.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o $publishDir

@@ -19,6 +19,33 @@ public static class Program
         {
             try
             {
+                if (args.Contains("--tray-only"))
+                {
+                    await TrayChecks.Run(application);
+                    application.Shutdown();
+                    return;
+                }
+                if (args.Contains("--tray-native-only"))
+                {
+                    TrayChecks.Native();
+                    application.Shutdown();
+                    return;
+                }
+                if (args.Length == 2 && args[0] == "--tray-render")
+                {
+                    TrayChecks.Render(application, args[1]);
+                    application.Shutdown();
+                    return;
+                }
+                if (args.Contains("--close-only"))
+                {
+                    await Scenario(false, false);
+                    await Scenario(true, false);
+                    await Scenario(false, true);
+                    Console.WriteLine("3 comprobaciones de cierre correctas.");
+                    application.Shutdown();
+                    return;
+                }
                 if (args.Contains("--instance-only"))
                 {
                     InstanceChecks.Run();

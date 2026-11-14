@@ -60,6 +60,10 @@ MapTiles.cs define la pirámide y el encuadre; MapTileCache.cs limita la carga a
 
 Evidencia: 48 comprobaciones del motor, 18 de WPF y cuatro de caché WebP aprobadas. Una pieza real 6/29/34 se verificó en una caché aislada; los renders en outputs/mapa-hd/renders del espacio de la tarea muestran ese alcance parcial. No se verificó la disponibilidad de todas las piezas ni una sesión HD completa desde el cliente. docs/MAPA-HD-1.2.7.md conserva estos límites. Disposición final: ship para la extensión opcional con respaldo local; excluye disponibilidad completa del proveedor. No corresponde detector web. No se cambian los tokens ni se repara la deriva anterior del sistema.
 
-## Comportamiento del filtro de fechas
+## Bandeja de Windows y cierre (1.3.1)
+
+Al pulsar X, una ventana modal con el sistema visual existente permite mantener en segundo plano, salir o cancelar. La elección se ejecuta tras completar el evento Closing para evitar reentrancia. Ocultar conserva detección y overlay; salir utiliza el guardado diferido existente. El icono nativo usa la moneda de la app, apertura con clic y menú contextual Abrir Contador/Salir. Si el registro falla, la opción de ocultar se deshabilita. Capturas de prueba real aportadas por el usuario en docs/images/bandeja-icono.png, bandeja-menu.png y cierre-segundo-plano.png, previas al cambio de etiqueta a v1.3.1. No se cambian tokens ni metadatos del sistema visual.
+
+## Detalle del filtro de fechas
 
 Ajustes includes native DatePicker controls for inclusive local start/end dates, Apply, a 01/11/2026 open-end preset and Clear. Controls wrap at the minimum window width; inline errors describe invalid ranges. The shared status panel names the applied period on Resumen, Historial and Ajustes; Informe carries its own period, while editorial routes are independent of replay filters. History is filtered without deleting stored matches. All-date remains the default; filters persist and scope totals, profiles, CSV, report and overlays.
