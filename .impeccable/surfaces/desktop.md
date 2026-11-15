@@ -1,4 +1,48 @@
+## Ubicación del cofre
+
+El cofre de 56 × 56 aparece antes del total personal en Resumen; se elimina del pie de la navegación.
+
 # Desktop — Operate
+
+## Sistema vigente · refinamiento pirata autorizado
+
+El usuario rechazó la dirección exclusivamente sobria y pidió recuperar rojo y colores de animación inspirados en One Piece: esta decisión sustituye la dirección sobria registrada más abajo. Se conserva la aplicación WPF Operate y sus seis espacios; no hay cambios funcionales en este refinamiento.
+
+Fuente vigente: App.xaml, MainWindow.xaml y Navigate() en MainWindow.xaml.cs. Rail rojo pirata, fondo marino, paneles azules, marfil, dorado vivo, títulos turquesa y lema coral. DESIGN.md contiene los valores normativos. Navegación activa dorada con texto Ground; resto transparente con texto Ink. Moneda centrada de 72 unidades sobre la marca, cofre aportado por el usuario de 64 al pie; ambos son recursos WPF locales con proporción conservada. No se incrustan pósteres de anime ni se añade animación.
+
+Ventana 1180 × 820, mínimo 860 × 640, rail 184 y contenido flexible; cuenta global y seis espacios: Resumen, Historial, Equipo, Mapa y rutas, Informe y Ajustes. Siguen vigentes las reglas de estado compacto, procedencia por jugador, mínimos de equipo, lectura visual opcional, controles nativos y foco visible. La paleta más expresiva no altera la distinción entre evidencia, estimación y registro personal.
+
+Evidencia visual: doce capturas de las seis pantallas a 1180 y 860 unidades en outputs/pirate-refresh/renders del espacio de la tarea. Renovación dirigida desde código, sin comp aprobado. Estas capturas no acreditan exactitud de conteos en partida.
+
+## Registro histórico anterior (no autoritativo para identidad, paleta ni composición vigentes)
+
+
+## Dirección sobria anterior · sustituida por refinamiento pirata
+
+Esta sección y DESIGN.md sustituyen las descripciones históricas de paleta, composición y navegación que siguen. Fuente: App.xaml, MainWindow.xaml, MainWindow.xaml.cs, RouteSuggestionsView.xaml y LiveMatchView.xaml. Renovación nativa WPF aprobada desde código, sin comp aprobado. Se conserva moneda/dorado y se adoptan fondos sobrios navy, rail tonal compacto y sección Equipo dedicada.
+
+Ventana 1180 × 820, mínimo 860 × 640; rail 184, contenido flexible con margen 28 horizontal/24 vertical. Fondo raíz Ground; paleta compartida Ground/Panel/Raised/Rail/Ink/Muted/Gold/Line/Ready de App.xaml. Segoe UI; navegación activa Raised con texto Gold, foco marfil. Moneda 48 × 48. Tablas compartidas de 46 unidades. Sin movimiento decorativo.
+
+La cabecera mantiene cuenta global, tarea y estado compacto. Seis espacios: Resumen (lectura opcional y registro personal), Historial (buscar, ordenar y exportar), Equipo (importar perspectivas, seleccionar partida y leer origen/cobertura por jugador), Mapa y rutas (mapa nativo y planificación manual), Informe (estadística por cuenta/período) y Ajustes (fechas, repeticiones, overlay y datos). Mapa e informe no muestran la franja compartida de lector; mantienen contexto propio.
+
+Equipo presenta mínimos registrados, no exactitud garantizada: conserva la mejor cifra por jugador sin duplicar perspectivas; la cobertura y procedencia acompañan cada fila. El detalle de archivos e importación es desplegable. Retirar una fuente no borra el archivo ni el historial personal. Estimaciones visuales excluidas del conteo reconciliado; cifras personales independientes.
+
+Evidencia visual: outputs/refresh-team/renders en el espacio de la tarea, seis pantallas en dos anchos. Esta documentación no acredita conteos perfectos en partida ni sustituye las pruebas del motor. La introducción compacta de Equipo deja visibles dos filas a 860 unidades. Los campos de fecha son oscuros y localizados (es-MX, dd/mm/aaaa), con calendario nativo. Verificación final comunicada por la implementación: 16 comprobaciones de shell, 285 del núcleo, 13 de lectura visual, 3 de equipo, 18 de mapa y 4 de cierre/cuenta aprobadas. Los controles nativos, calendarios, diálogos y overlay conservan sus límites específicos.
+
+## Registro histórico (no autoritativo para paleta o composición actuales)
+
+
+## Claridad del conteo en tiempo real
+
+La activación se presenta como «Activar conteo en tiempo real», con botón dorado e icono vectorial de reproducción. Al activarlo, la acción pasa a «Desactivar conteo» y a un estilo secundario. El estado textual distingue Desactivado, Esperando partida, Contando, En pausa y Necesita atención; solo Contando usa el tono verde. La cifra aproximada se oculta mientras está apagado. El historial conserva su presentación independiente.
+
+El diagnóstico técnico se mantiene en «Detalles del conteo», cerrado por defecto y oculto cuando está apagado. No se genera una fila vacía del jugador para repetir la cifra principal. Los compañeros aparecen solo si hay nombres detectados; la última partida se identifica expresamente. Se preserva la explicación de captura y el consentimiento, con nombres de acción coherentes. Verificación: 13 comprobaciones del panel, cuatro de cierre/cuentas y capturas a 780 y 520 unidades.
+
+## En desarrollo · partida y lectura visual opcional
+
+La renovación conserva la paleta navy/rojo/dorado y Segoe UI. La moneda de la navegación pasa a 80 unidades y el total histórico a 60. Un panel de partida precede al historial, con nombre del jugador, origen de la cifra y valor alineado a la derecha. La estimación visual usa ≈ y no altera el total de repeticiones. Los datos de compañeros de la última partida se identifican como tal; no se reutilizan como si fueran del equipo actual.
+
+El botón opcional pide permiso por ejecución antes de crear el capturador. Rechazar mantiene el flujo original; detenerlo revoca la sesión. Se captura solo el HUD de Fortnite en primer plano durante una partida, sin imágenes persistidas ni envíos. Los nombres visuales no se verifican ni sirven para atribuir cofres. Los cofres de compañeros siguen sin cifra en vivo hasta disponer de una repetición. Compilación real y prueba en partida pendientes por bloqueo de las referencias de Windows; el ejecutable distribuible anterior permanece intacto.
 
 Native Windows desktop, C# WPF (`net10.0-windows`). Source authority: `src/Contador/App.xaml`, `MainWindow.xaml`, and navigation/status assignments in `MainWindow.xaml.cs`. Root `DESIGN.md` records the extracted system; `PRODUCT.md` retains product truth.
 

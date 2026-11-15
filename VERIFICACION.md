@@ -1,3 +1,45 @@
+# Claridad del conteo en tiempo real · revisión de experiencia
+
+- 13 comprobaciones del panel y cuatro de cierre/cuentas aprobadas con el capturador real compilado, sin activar capturas del usuario.
+- Estados explícitos Desactivado, Esperando partida, Contando, En pausa y Necesita atención. La acción solicita permiso; pulsar el control por sí solo no activa la captura.
+- Botón dorado de activación, acción secundaria de desactivación, foco de teclado y ausencia de cifras vacías cuando está apagado. Diagnóstico técnico cerrado por defecto y oculto al desactivar.
+- Capturas revisadas a 780 y 520 unidades. Se corrigió el recorte del subtítulo de la cifra y se eliminaron las filas duplicadas/vacías del contador propio.
+- Compilación x64 completada y dist/2.0.0/Contador.exe reemplazado; copia verificada por SHA-256. El archivo Contador_test.rar del usuario se conserva sin modificar.
+
+---
+
+# Corrección de lectura visual de 2.0.0 · verificación del motor
+
+- Motor: 277 comprobaciones aprobadas, con variantes españolas/inglesas, tipos apilados, multiplicadores parcialmente leídos y atribución tardía de cofres destruidos.
+- OCR real de Windows: seis comprobaciones sobre imágenes generadas blancas/violetas, con color y filtro. Se reprodujo la pérdida del multiplicador en una variante y se verificó la conciliación de lecturas. No se capturó la pantalla del usuario.
+- Interfaz real compilada con Windows SDK: dos comprobaciones del panel y cuatro de cierre/cuentas aprobadas. Renderizado a 780 y 520 unidades sin sustituto del capturador.
+- Dos repeticiones locales finalizadas contienen respectivamente 11 cofres, cuatro destruidos, y 39 cofres, 30 destruidos. Esto comprueba que se registran destrucciones, no que estén todas las del juego.
+- Publicación autocontenida x64 completada y copia comprobada por SHA-256. dist/2.0.0 contiene solo el ejecutable corregido, versión 2.0.0.0. El EXE y RAR anteriores se preservaron fuera de dist como respaldo de trabajo.
+- Pendiente una prueba en partida con referencia manual. No se promete detección de roturas sin aviso XP ni exactitud completa.
+
+---
+
+# Registro anterior · desarrollo de lectura visual
+
+- 264 comprobaciones del motor aprobadas en una copia aislada, incluidas 14 de avisos XP/PE, duplicación, intervalos y separación de cifras visuales.
+- La interfaz se compiló y renderizó a 780 y 520 unidades con un sustituto de captura que nunca lee la pantalla. Dos comprobaciones verifican estado inicial apagado e historial separado. Esto no acredita el capturador real.
+- La descarga de Microsoft.Windows.SDK.NET.Ref quedó bloqueada en el entorno. No se completaron la compilación real del OCR, la prueba de permiso en partida ni la calibración con capturas reales.
+- dist/2.0.0/Contador.exe permanece en su compilación anterior, verificada a continuación. No se publicó un ejecutable con el OCR sin validar.
+
+---
+
+# Verificación de 2.0.0 · 14/11/2026
+
+- Publicación autocontenida Windows x64 completada. dist/2.0.0 contiene únicamente Contador.exe; versión de archivo 2.0.0.0. Copia comprobada mediante SHA-256. No se abrió la aplicación sobre el historial real; la interfaz se renderizó con datos ficticios.
+
+- Motor: 250 comprobaciones aprobadas, incluidas 25 del registro de interacciones y conciliación de fuentes.
+- Escritorio: 4 de cierre/cuentas, 3 de equipo, 18 de mapa, 8 de instancia única y 8 de segundo plano aprobadas.
+- Tres controles reales de solo lectura conservan los cofres personales: 11, 39 y 35. El mínimo de compañeros se mantiene en 6 y cambia de 21 a 22 y de 17 a 25. La diferencia de rellenos por campos replicados omitidos se reprodujo y corrigió; no se modificó el historial real.
+- La conciliación multiperspectiva se validó con casos sintéticos de duplicación, sesión ajena, enemigo, identidad propia, versión antigua, identidad ausente y conflicto. Falta una validación de campo con archivos de varios compañeros de una misma partida y conteo manual.
+- Las pruebas no garantizan exactitud completa del juego ni ausencia universal de fallos. El equipo sigue siendo experimental; no se adoptaron inferencias espaciales como cifras personales confirmadas.
+- Investigación y decisiones: docs/INVESTIGACION-v2.0.md. No se ejecutaron binarios de los proyectos comparados.
+
+---
 # Verificación de 1.3.2 · 14/11/2026
 
 - Motor: 225 comprobaciones aprobadas, incluyendo seguridad de lectura, CSV, equipo y publicación estable del overlay.
@@ -92,3 +134,25 @@ Pasaron 77 comprobaciones del motor y las cuatro comprobaciones WPF. Las nuevas 
 ## Corrección de bóvedas · 1.2.7
 
 43 comprobaciones del mapa y 15 de controles WPF aprobadas. Doce capturas nativas generadas, incluida capa aislada de nueve bóvedas. Alineación visual contrastada con la referencia aportada y grupos independientes de cofres raros. Corregida recursión de notificaciones de selección detectada durante esta ejecución. No se certifica ubicación de entradas ni precisión de las demás capas en una partida real.
+
+## Renovación del launcher y conciliación de equipo · 15/11/2026
+
+- 285 comprobaciones del motor aprobadas: selección de la mejor perspectiva por jugador, sesión/identidad verificadas, duplicados, conflictos y preservación del registro personal.
+- 16 comprobaciones del conjunto de pantallas, 13 del panel de conteo opcional, 3 del equipo, 18 del mapa y 4 de cierre/cuentas: 339 en total con el motor.
+- Seis pantallas capturadas a 1180 y 860 unidades con datos ficticios identificados, sin capturas reales ni acceso de red del mapa. Verificación de fechas es-MX y selección/limpieza del campo.
+- Publicación autocontenida Windows x64 correcta, versión 2.0.0. No se ejecutó el capturador contra una partida real.
+- Pendiente validación de campo: comparar archivos de varios compañeros de una misma partida con un conteo manual. Los datos de equipo siguen siendo mínimos y experimentales.
+
+## Preparación de 2.0.0 para publicación · 15/11/2026
+
+El script build.ps1 se verificó con compilación del motor y escritorio, seguida de 285 comprobaciones del motor, 4 de cierre/cuentas, 18 del mapa, 8 de instancia única, 8 de bandeja, 3 del equipo, 13 del conteo opcional y 16 del conjunto de pantallas/fechas: **355 aprobadas**. Las pruebas utilizan datos de prueba; no capturan una partida real.
+
+README y notas de versión usan el flujo actual de Equipo y la cuenta de cabecera. Incluyen capturas aportadas del uso real y una vista ficticia identificada para explicar la conciliación de fuentes. Los enlaces e imágenes locales del README se comprobaron.
+
+El formato de los archivos C# modificados de src/tests se normalizó con dotnet format en modo carpeta; los proyectos XML se separaron en líneas legibles. No se reescribieron bibliotecas heredadas solo por estilo. Se añade .editorconfig para conservar el formato.
+
+La compilación conserva advertencias del lector heredado. NuGet emitió NU1900 porque este entorno no pudo consultar sus datos de vulnerabilidades por falta de conexión; no se desactivó esa comprobación ni se presenta como una auditoría aprobada de dependencias.
+
+El script compila cada proyecto de pruebas una vez, ejecuta los escenarios sin reconstruirlos y publica en staging antes de reemplazar únicamente Contador.exe. Ya no elimina archivos ajenos de dist.
+
+La primera copia final fue bloqueada por la app abierta. Tras cerrarla, se reemplazó dist/2.0.0/Contador.exe y se verificó su igualdad SHA-256 con staging; se preservaron los archivos adicionales del usuario. El ejecutable queda fuera de Git y se adjunta a la Release.

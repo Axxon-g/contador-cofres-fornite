@@ -1,6 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup><TargetFramework>net10.0-windows</TargetFramework><OutputType>Exe</OutputType><UseWPF>true</UseWPF><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable></PropertyGroup>
-  <ItemGroup><ProjectReference Include="../../src/Contador/Contador.csproj"/></ItemGroup>
-  <ItemGroup><Content Include="../../src/Contador/App.xaml" Link="AppStyles.xaml" CopyToOutputDirectory="PreserveNewest"/></ItemGroup>
-  <ItemGroup><Content Include="../../src/Contador/MainWindow.xaml" Link="TeamLayout.xaml" CopyToOutputDirectory="PreserveNewest"/></ItemGroup>
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Contador/Contador.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="../../src/Contador/App.xaml" Link="AppStyles.xaml" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="../../src/Contador/MainWindow.xaml" Link="TeamLayout.xaml" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>

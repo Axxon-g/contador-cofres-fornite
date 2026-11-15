@@ -10,7 +10,7 @@ public static class ObsHud
     private static readonly Lazy<string> Coin = new(() => "data:image/png;base64," + Convert.ToBase64String(TokenIcon.Frame(64)));
 
     private static string Payload(OverlayView v) => JsonSerializer.Serialize(new
-    { total=v.Total, last=v.Last ?? "—", teamLast=v.LastTeamChests ?? "—", session=v.Session, treasures=v.Treasures, inMatch=v.CurrentLive });
+    { total = v.Total, last = v.Last ?? "—", teamLast = v.LastTeamChests ?? "—", session = v.Session, treasures = v.Treasures, inMatch = v.CurrentLive, visual = v.VisualEstimate });
 
     public static void Write(Store store, OverlayView view)
     {
@@ -22,15 +22,15 @@ public static class ObsHud
             if (!File.Exists(dataPath) || File.ReadAllText(dataPath) != payload) Atomic(dataPath, payload);
             var html = Render(view);
             if (!File.Exists(store.OverlayPath) || File.ReadAllText(store.OverlayPath) != html)
-                Atomic(store.OverlayPath,html);
+                Atomic(store.OverlayPath, html);
         }
     }
 
     private static void Atomic(string path, string value)
     {
         var temporary = path + ".tmp";
-        File.WriteAllText(temporary,value);
-        File.Move(temporary,path,true);
+        File.WriteAllText(temporary, value);
+        File.Move(temporary, path, true);
     }
 
     public static string Render(OverlayView view) => $$"""
@@ -63,8 +63,8 @@ public static class ObsHud
             if(node.textContent!==value)node.textContent=value;}
           for(const key of ['total','last','teamLast','session','treasures'])setText(key,d[key]);
           if(document.body.classList.contains('playing')!==d.inMatch)document.body.classList.toggle('playing',d.inMatch);
-          setText('state',d.inMatch?'En partida':'Estado  •  ');
-          setText('state-value',d.inMatch?'':'Esperando');
+          setText('state',d.inMatch?(d.visual?'Visual (aprox.)  •  ':'En partida'):'Estado  •  ');
+          setText('state-value',d.inMatch?(d.visual||''):'Esperando');
         };
         window.renderOverlay({{Payload(new OverlayView("—", null, "", false, null, [], "—", "—"))}});
         let loading=false;

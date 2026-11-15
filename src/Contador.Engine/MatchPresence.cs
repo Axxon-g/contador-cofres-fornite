@@ -6,15 +6,19 @@ namespace Contador.Engine;
 public static class MatchPresence
 {
     public static bool IsRecording(string folder, DateTime nowUtc)
+        => FindRecording(folder, nowUtc) != null;
+
+    public static string? FindRecording(string folder, DateTime nowUtc)
     {
-        if (!Directory.Exists(folder)) return false;
+        if (!Directory.Exists(folder)) return null;
         try
         {
             return new DirectoryInfo(folder).EnumerateFiles("*.replay")
                 .Where(f => nowUtc - f.LastWriteTimeUtc <= TimeSpan.FromMinutes(3))
-                .Any(f => ReplayHeaderProbe.IsLive(f.FullName) == true);
+                .OrderByDescending(f => f.LastWriteTimeUtc)
+                .FirstOrDefault(f => ReplayHeaderProbe.IsLive(f.FullName) == true)?.FullName;
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { return false; }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { return null; }
     }
 }
 
@@ -36,7 +40,9 @@ public sealed class SessionCounter(DateTime startedUtc)
         var count = matches.Sum(m => m.ChestsOpened);
         var model = OverlayModel.Build(view, null, recording);
         var last = view.Matches.OrderByDescending(m => m.MatchStartUtc ?? m.AnalyzedAtUtc).FirstOrDefault();
-        var teamTotal = TeamAccounting.LastTeamTotal(last);
+        var teamTotal = last?.TeammateChestsOpened is >= 0
+            ? (long?)last.ChestsOpened + TeamReplayReconciliation.Resolve(last, view.TeamReplaySources).TeammateChests
+            : null;
         return model with
         {
             LastTeamChests = teamTotal.HasValue ? "≥ " + teamTotal.Value.ToString("N0", L.Culture) : null,

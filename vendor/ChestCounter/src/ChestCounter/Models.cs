@@ -60,8 +60,17 @@ public sealed class TreasureFind
     public string? Teammate { get; set; }
 }
 
+public sealed class TeamChestRecord
+{
+    public string? EpicId { get; set; }
+    public string PlayerName { get; set; } = "";
+    public int Chests { get; set; }
+    public int Destroyed { get; set; }
+}
+
 public sealed class MatchRecord
 {
+    public bool SessionIdentityVerified { get; set; }
     public string SessionId { get; set; } = "";
     public string ReplayFile { get; set; } = "";
     public DateTime AnalyzedAtUtc { get; set; }
@@ -81,6 +90,9 @@ public sealed class MatchRecord
     public int ChestsOpened { get; set; }
     /// <summary>Observed teammate chest interactions only. Null means legacy data or an unidentified team.</summary>
     public int? TeammateChestsOpened { get; set; }
+    public List<TeamChestRecord> TeamChests { get; set; } = new();
+    public int UnattributedChestInteractions { get; set; }
+    public int LateAttributedInteractions { get; set; }
     public int AmmoBoxesOpened { get; set; }
     public int OtherContainersOpened { get; set; }
     /// <summary>Non-chest interactions by kind (loot cannons, ammo boxes, food boxes...).</summary>
@@ -146,6 +158,8 @@ public sealed class TrackerData
     public int AnalyzerVersion { get; set; } = 1;
     public DateTime CreatedUtc { get; set; } = DateTime.UtcNow;
     public List<MatchRecord> Matches { get; set; } = new();
+    /// <summary>Explicitly imported teammate replays; never added to personal history or session totals.</summary>
+    public List<MatchRecord> TeamReplaySources { get; set; } = new();
 
     /// <summary>Key = file name|size|last write ticks. Value = session id, "skipped" or "error: ...".</summary>
     public Dictionary<string, string> ProcessedFiles { get; set; } = new();

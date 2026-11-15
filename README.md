@@ -1,437 +1,209 @@
 <div align="center">
-  <img src="docs/images/banner.svg" alt="Contador — Tu botín, en cifras." width="960">
-  <h1>Contador de cofres para Fortnite</h1>
-  <p>Tu historial de cofres, en una app de Windows.<br>Partidas, mapa interactivo, rutas, informe y overlay en un solo ejecutable.</p>
+  <img src="src/Contador/Assets/pirate-shop-token.png" width="88" alt="Moneda de Contador">
+  <h1>Contador de cofres para Fortnite · 2.0</h1>
+  <p><strong>Tu botín, en cifras.</strong><br>Historial personal, equipo, mapa, informe y overlay para Windows.</p>
   <p>
-    <img src="https://img.shields.io/badge/Windows-10%20%2F%2011-1B2B23?style=flat-square" alt="Windows 10 y 11">
-    <img src="https://img.shields.io/badge/Arquitectura-x64-1B2B23?style=flat-square" alt="Arquitectura x64">
-    <a href="https://github.com/Axxon-g/contador-cofres-fornite/releases"><img src="https://img.shields.io/github/downloads/Axxon-g/contador-cofres-fornite/Contador.exe?style=flat-square&amp;label=Descargas&amp;color=FFC857&amp;labelColor=6E2636&amp;displayAssetName=false" alt="Descargas acumuladas de Contador.exe en todas las versiones" title="Descargas del ejecutable, no personas únicas. Se actualiza automáticamente con caché."></a>
-    <img src="https://img.shields.io/badge/Versi%C3%B3n-1.3.2-F1CA76?style=flat-square&amp;labelColor=1B2B23" alt="Versión 1.3.2">
-    <a href="LICENSE"><img src="https://img.shields.io/badge/Licencia-MIT-1B2B23?style=flat-square" alt="Licencia MIT"></a>
+    <img src="https://img.shields.io/badge/Windows-10%20%2F%2011-183D60?style=flat-square" alt="Windows 10 y 11">
+    <img src="https://img.shields.io/badge/x64-2.0.0-FFD05A?style=flat-square&amp;labelColor=80273C" alt="Versión 2.0.0 para x64">
+    <a href="https://github.com/Axxon-g/contador-cofres-fornite/releases"><img src="https://img.shields.io/github/downloads/Axxon-g/contador-cofres-fornite/Contador.exe?style=flat-square&amp;label=Descargas&amp;color=FFD05A&amp;labelColor=80273C&amp;displayAssetName=false" alt="Descargas acumuladas del ejecutable"></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/Licencia-MIT-183D60?style=flat-square" alt="Licencia MIT"></a>
   </p>
-  <p>
-    <a href="https://github.com/Axxon-g/contador-cofres-fornite/releases/latest/download/Contador.exe"><img src="docs/images/download.svg" width="310" alt="Descargar Contador.exe para Windows"></a>
-  </p>
-  <p><a href="https://github.com/Axxon-g/contador-cofres-fornite/releases">Todas las versiones</a> · <a href="#antes-de-abrir-seguridad-y-aviso-de-windows">Seguridad y SmartScreen</a> · <a href="#primeros-pasos">Primeros pasos</a> · <a href="#preguntas-frecuentes">Preguntas frecuentes</a> · <a href="https://github.com/Axxon-g/contador-cofres-fornite/issues">Informar de un problema</a></p>
-  <p><strong>Sin cuentas ni contraseñas. Análisis local en tu equipo.</strong></p>
-  <p><sub>La insignia suma las descargas de Contador.exe en todas las versiones publicadas. No cuenta personas únicas y puede tardar en reflejar nuevas descargas.</sub></p>
+  <p><a href="https://github.com/Axxon-g/contador-cofres-fornite/releases/latest"><strong>Descargar desde GitHub Releases</strong></a> · <a href="https://github.com/Axxon-g/contador-cofres-fornite/releases/latest/download/Contador.exe">Descarga directa de Contador.exe</a></p>
+  <p><a href="#primeros-pasos">Primeros pasos</a> · <a href="#equipo--experimental">Equipo</a> · <a href="#conteo-en-tiempo-real--experimental">Tiempo real</a> · <a href="#seguridad-y-privacidad">Seguridad</a> · <a href="#compilar-desde-el-código">Compilar</a></p>
+  <p><strong>Sin iniciar sesión ni introducir contraseñas de Epic.</strong></p>
 </div>
 
 > [!IMPORTANT]
-> Los cofres se cuentan **al terminar la partida**, cuando Fortnite finaliza la repetición. Debes tener activada la opción **Grabar repeticiones**. Las rutas sugeridas son contenido editorial de la comunidad: no detectan cofres ni predicen premios.
+> El historial se calcula con **repeticiones locales finalizadas**. Activa **Grabar repeticiones** en Fortnite. El conteo visual en tiempo real es opcional y experimental; no sustituye al historial ni garantiza detectar cada apertura.
 
-## Contador 1.3.2 · Equipo experimental y actualizaciones más estables
+La descarga apunta a la última versión **publicada** en GitHub, que puede ser anterior a 2.0 hasta que se publique su Release. La insignia cuenta descargas del archivo, no personas únicas, y puede actualizarse con retraso.
 
-El contador personal conserva su funcionamiento. Ahora puedes activar **Mostrar datos del equipo** en Resumen para consultar las aperturas de compañeros que aparecen en tus repeticiones.
+## Lo nuevo en 2.0
 
-> [!WARNING]
-> **Función experimental, desactivada por defecto.** El conteo grupal puede no ser 100 % preciso: las repeticiones pueden omitir aperturas lejanas y el origen de algunas recompensas es estimado. No es un total verificado del equipo ni debe usarse para clasificaciones.
-
-| Dato | Cómo interpretarlo |
+| Función | Qué cambia |
 |---|---|
-| **Tus cofres y recompensas** | Siguen separados; activar el equipo no modifica tus cifras personales. |
-| **Equipo · registro parcial** | Suma tus cofres del período y las aperturas detectadas de compañeros. **≥** significa mínimo registrado. |
-| **Cobertura** | Indica cuántas partidas tienen datos del equipo y en cuántas faltan. Incluso las que tienen datos pueden estar incompletas. |
-| **Recompensas atribuidas** | Distingue origen observado y estimado. Una interacción cercana no demuestra quién originó una recompensa. |
-| **Equipo (última), en el overlay** | Mínimo detectado en la última partida; **—** cuando no hay datos suficientes. |
+| **Launcher renovado** | Rojo pirata, azul mar y dorado; moneda integrada y cofre junto al total personal. |
+| **Equipo por jugador** | Una sección propia para elegir partida, consultar cada cifra y conocer su origen y cobertura. |
+| **Fuentes complementarias** | Importa repeticiones de compañeros de la misma partida para ampliar la cobertura sin duplicar aportaciones. |
+| **Conteo visual opcional** | Estimación durante la partida a partir de avisos XP/PE, con permiso por ejecución. |
+| **Registro de aperturas** | Política común para cofres propios y del equipo, con tratamiento de duplicados, rellenos y autor identificado con retraso. |
+| **Cuenta siempre accesible** | Selección de perfil en la cabecera; resumen, historial, equipo e informe comparten el contexto. |
 
-El aviso permanece dentro de la sección del equipo, sin ventanas emergentes. Las repeticiones antiguas disponibles se vuelven a analizar cuando corresponde; si el archivo ya no existe, no se pueden recuperar sus datos del equipo.
-
-<p align="center">
-  <img src="docs/images/equipo-experimental.png" alt="Vista de prueba del apartado Equipo con aviso permanente de precisión y cifras separadas" width="600">
-  <br><sub>Vista de prueba con datos ficticios para mostrar la función experimental.</sub>
-</p>
-
-Esta versión también evita repintados y escrituras del overlay cuando las cifras no cambian, refuerza los límites de lectura de repeticiones y protege las exportaciones CSV frente a fórmulas. El ejecutable excluye el actualizador y el lanzador de espera heredados que esta interfaz no utiliza.
-
-Consulta las [notas de la versión 1.3.2](docs/RELEASE-v1.3.2.md) y la [arquitectura del proyecto](docs/ARQUITECTURA.md).
-
-## Segundo plano · Disponible desde 1.3.1
-
-Al pulsar la **X** de la ventana, ahora puedes elegir:
-
-| Opción | Qué ocurre |
-|---|---|
-| **Mantener en segundo plano** | Oculta la ventana y mantiene la detección, el recuento y el overlay activos. |
-| **Salir de Contador** | Espera el análisis pendiente, guarda los datos y cierra el programa. |
-| **Cancelar** | Mantiene la ventana abierta. |
+Se mantienen el mapa con terreno HD opcional, las rutas editables, filtros de fechas, exportación CSV, informe nativo, overlays y ejecución en segundo plano. Las protecciones de lectura y la protección de CSV frente a fórmulas se conservan.
 
 <p align="center">
-  <img src="docs/images/cierre-segundo-plano.png" alt="Contador pregunta si mantenerlo en segundo plano, salir o cancelar al cerrar la ventana" width="960">
+  <img src="docs/images/resumen-2.0.png" width="1000" alt="Contador 2.0: resumen, cofre junto al total personal, selección de cuenta y últimas partidas">
+  <br><sub>Captura de uso aportada por el autor. Las cifras son de su historial, no datos incluidos en la descarga.</sub>
 </p>
-
-<table>
-  <tr>
-    <td align="center"><img src="docs/images/bandeja-icono.png" alt="Moneda de Contador en los iconos ocultos junto al reloj de Windows" width="240"><br><strong>Encuéntralo junto al reloj.</strong></td>
-    <td align="center"><img src="docs/images/bandeja-menu.png" alt="Menú de la bandeja de Contador con Abrir Contador y Salir" width="240"><br><strong>Abre la ventana o sal desde la bandeja.</strong></td>
-  </tr>
-</table>
-
-Si no ves la moneda, pulsa la flecha **Mostrar iconos ocultos** junto al reloj de Windows. Un clic en el icono vuelve a abrir Contador; un clic derecho muestra **Abrir Contador** y **Salir**. Mantenerlo en segundo plano no inicia otra copia ni activa el arranque automático con Windows. Si el icono no está disponible, la opción de ocultar queda deshabilitada para que la ventana siga accesible.
-
-<sub>Capturas de la prueba real aportadas por el usuario, tomadas antes del cambio de etiqueta a v1.3.1.</sub>
-
-Consulta las [notas de Contador 1.3.1](docs/RELEASE-v1.3.1.md).
-
-## Mapa HD, rutas e informe
-
-La actualización 1.3 reúne el mapa interactivo con terreno HD, rutas editables e informe nativo. El contador conserva el recuento por cuenta, el historial y los overlays para jugar o transmitir.
-
-| Novedad | Qué puedes hacer |
-|---|---|
-| **Terreno HD por defecto** | Ver piezas de mayor resolución al acercar, con caché local y respaldo integrado. |
-| **Zoom hasta 3200 %** | Explorar zonas y separar grupos de ubicaciones. |
-| **Rutas editables** | Añadir y mover paradas, marcar puntos revisados y deshacer cambios. |
-| **Informe nativo** | Consultar cifras, gráficos y tesoros sin salir de la app. |
-| **Cuentas y fechas** | Revisar las estadísticas del perfil y período elegidos. |
-| **Inicio corregido** | Recuperar bloqueos abandonados y solicitar la ventana al abrir una segunda instancia. |
-
-Consulta las [notas de Contador 1.3](docs/RELEASE-v1.3.0.md).
-
-> [!NOTE]
-> El botón de descarga apunta a la última Release publicada, que puede seguir siendo anterior hasta que se publique la 1.3.2. El ejecutable de esta versión se genera en `dist\1.3.2\Contador.exe`.
-
-### Terreno HD al acercar
-
-**Terreno HD · Internet** viene activado por defecto para cargar piezas de mayor resolución de Fortnite.GG dentro del mapa propio. El zoom llega hasta **3200 %** y la caché local reutiliza lo descargado. Puedes desactivarlo desde la barra del mapa; si una pieza falla, permanece el mapa integrado. Es un servicio externo opcional, sin clave ni inicio de sesión, cuya disponibilidad puede variar. Mejorar la imagen no verifica ni actualiza las posiciones comunitarias. Consulta [fuentes, privacidad y límites del modo HD](docs/MAPA-HD-1.2.7.md).
-
-<p align="center">
-  <img src="docs/images/mapa-interactivo.png" alt="Mapa interactivo nativo: isla, grupos de cofres, búsqueda y filtros por tipo de botín" width="960">
-  <br><sub>Vista renderizada de la interfaz real. El mapa utiliza una instantánea comunitaria de ubicaciones posibles.</sub>
-</p>
-
-**Mapa y rutas** es un mapa propio integrado en la aplicación, inspirado en la interacción de Fortnite.GG: rueda y botones para acercar, arrastre, capas, búsqueda, selección de puntos y una ventana ampliada. Funciona sin conexión con una imagen de 2048 × 2048 píxeles y un catálogo comunitario de **2.146 referencias de botín**, más 16 lugares de referencia, para Treasure Hunters **43.10**.
-
-- **Nueve capas de botín:** 925 cofres, 40 raros, 69 enterrados, 879 cajas de munición, 141 carteles, 47 barriles de pesca, 28 cañones de botín, 8 santuarios y 9 bóvedas orientativas. Las bóvedas se corrigieron a partir de una imagen aportada y son posiciones aproximadas; conservan su ancla aunque actives otras capas. Los grupos muestran cuántos registros contienen; al acercarte puedes seleccionar los puntos individuales, incluidos los coincidentes.
-- **Tu ruta:** activa Editar ruta para añadir paradas con un clic o moverlas arrastrando. También puedes añadir un punto seleccionado, quitar paradas, vaciar o deshacer cambios. Las líneas unen tus paradas; no calculan un camino transitable ni evitan la tormenta.
-- **Revisión manual:** marca puntos como revisados, vacíos o pendientes y oculta lo ya revisado. Reiniciar revisión y vaciar la ruta se pueden deshacer. Esto no modifica el recuento real de cofres.
-- **Controles:** usa +/− o la rueda hasta 3200 %, las flechas y la tecla Inicio con el mapa enfocado. Ampliar mapa abre una ventana maximizada. Esc sale de edición; en la ventana ampliada, otro Esc la cierra. Los puntos coincidentes se distinguen en el selector de puntos próximos.
-
-- **Evidencia visible:** se distingue un testimonio de hallazgo, una recomendación de jugadores y una guía de localizaciones. No existe un conjunto comparable que permita clasificar dónde se han obtenido más recompensas.
-- **Datos y procedencia:** posiciones publicadas por [Crisis](https://lifecrisis.life/loot), consultadas el 13/11/2026; imagen servida por [Fortnite-API](https://fortnite-api.com/). Es una copia fija integrada, con atribución, no una conexión al juego ni una copia del código o iconos de Fortnite.GG. No se ha verificado cada aparición dentro de una partida; faltan alturas, plantas y probabilidades por punto.
-- **Rutas sugeridas:** conserva The Chest–Arlong Park, Lantern Landing, norte de Plunder Port y Windmill Village–Loguetown. Puedes cargarlas como punto de partida y editarlas. Sus paradas editoriales se distinguen de los registros de apariciones.
-- **Guardado local:** ruta, capas y revisiones se guardan en un archivo de planificación separado dentro de la carpeta de datos. No cambia tu historial. Las actualizaciones del juego pueden dejar obsoleto este catálogo; consulta su versión y fecha. Abrir fuentes necesita Internet.
-- **Informe:** un nuevo apartado nativo muestra total, sesión, media, récord, gráfico de los últimos 30 días, tipos de cofre, otras interacciones, orígenes, tesoros propios y del equipo y últimas 100 partidas. Comparte la cuenta y las fechas de Ajustes. Los tesoros del equipo son estimaciones y no se suman a tus propios totales. El botón **Abrir versión HTML** conserva el informe externo.
-
-Las guías buscan organizar la búsqueda de cofres, **no prometen premios ni una probabilidad superior por lugar**. Los relatos de Reddit son experiencias individuales, no estadísticas verificadas. Consulta la [investigación y las fuentes](docs/RUTAS-1.2.7.md).
-
-### Explora, organiza y consulta
-
-**Corrección de bóvedas:** se sustituyeron las ocho posiciones anteriores por nueve referencias visuales aproximadas, contrastadas con la imagen aportada. No representan entradas verificadas ni recalibran las demás capas.
-
-<p align="center">
-  <img src="docs/images/bovedas-corregidas.png" alt="Capa aislada de nueve bóvedas orientativas corregidas según la imagen de referencia" width="960">
-</p>
-
-<table>
-  <tr>
-    <td width="50%"><img src="docs/images/mapa-detalle.png" alt="Detalle del mapa al 800 por ciento con puntos seleccionables y una ruta manual"><br><strong>Acércate a cada zona.</strong><br>Selecciona puntos y distingue los registros agrupados.</td>
-    <td width="50%"><img src="docs/images/mapa-ruta.png" alt="Recorrido manual coral con paradas numeradas sobre el mapa"><br><strong>Prepara tu recorrido.</strong><br>Añade y mueve paradas; deshaz los cambios cuando lo necesites.</td>
-  </tr>
-</table>
-
-<p align="center">
-  <img src="docs/images/informe-nativo.png" alt="Informe dentro de Contador con totales, gráfico diario y estadísticas de demostración" width="960">
-  <br><sub>Informe nativo con datos ficticios de demostración. La barra superior pertenece a la herramienta de captura; no se incluye en la app.</sub>
-</p>
-
-**Para empezar:** abre **Mapa y rutas**, activa las capas que te interesan y acerca la isla. Para crear un recorrido, activa **Editar ruta** y pulsa donde quieras añadir una parada. Tus marcas son manuales y no cambian las cifras de partidas. Consulta los [controles, fuentes y límites del mapa](docs/MAPA-INTERACTIVO-1.2.7.md).
-
-<p align="center">
-  <img src="docs/images/resumen.png" alt="Pantalla de resumen de Contador: estado de detección, total, sesión y últimas partidas" width="960">
-</p>
-
-## Sin cuentas ni contraseñas
-
-**Contador no te pide usuario, correo, contraseña, códigos de verificación ni acceso a tu cuenta de Epic Games.** No tienes que iniciar sesión ni introducir credenciales para utilizarlo.
-
-El análisis se ejecuta localmente, en tu propio equipo, sobre los archivos de repetición que Fortnite ya guarda. El historial y los ajustes permanecen en tu carpeta de datos local. La app no envía estadísticas, no inyecta código ni modifica la memoria del juego. Solo tú decides si exportas o compartes algún archivo.
-
-Utiliza las repeticiones generadas por Fortnite y un lector comunitario de código abierto; **no es una aplicación oficial ni está aprobada por Epic Games**. Leer esos archivos no permite prometer inmunidad a sanciones. Las condiciones aplicables las establece [Epic Games](https://legal.epicgames.com/epicgames/tos).
-
-## Antes de abrir: seguridad y aviso de Windows
-
-### ¿Por qué aparece «Windows protegió su PC»?
-
-<p align="center">
-  <img src="docs/images/windows-smartscreen.png" alt="Aviso de Microsoft Defender SmartScreen: aplicación Contador con editor desconocido" width="535">
-</p>
-
-El ejecutable distribuido actualmente **no tiene una firma digital de editor verificado**. Microsoft Defender SmartScreen evalúa la reputación del archivo y de su editor; cuando no reconoce la aplicación puede mostrar este aviso y **Editor desconocido**.
-
-**Este aviso, por sí solo, no significa que se haya detectado un virus. Tampoco demuestra que el archivo sea seguro.** Una firma válida identifica al editor, pero incluso una aplicación firmada puede mostrar avisos mientras acumula reputación. Puedes consultar la [explicación oficial de Microsoft](https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/smartscreen-reputation) y nuestras [instrucciones de firma digital](docs/FIRMA.md).
-
-No necesitas desactivar Defender ni SmartScreen, añadir exclusiones o instalar certificados del proyecto. Si tu antivirus muestra una detección concreta o no puedes comprobar el origen del archivo, no lo ejecutes y [comparte el resultado en una incidencia](https://github.com/Axxon-g/contador-cofres-fornite/issues).
-
-### Consulta el análisis de VirusTotal
-
-<p align="center">
-  <a href="https://www.virustotal.com/gui/file/f0ebdf6c9a65c57b66b97957ab37574e96f32c136201fedcd97be4bb05e2a1c6"><img src="docs/images/virustotal-analysis.png" alt="Captura aportada del análisis de VirusTotal: cero detecciones entre 66 motores en el momento de la captura" width="960"></a>
-</p>
-
-La captura aportada muestra **0 detecciones entre 66 motores** en el momento en que se tomó. [Abre el informe en VirusTotal para consultar su estado](https://www.virustotal.com/gui/file/f0ebdf6c9a65c57b66b97957ab37574e96f32c136201fedcd97be4bb05e2a1c6).
-
-Ese informe corresponde exclusivamente al archivo con este **SHA-256**:
-
-```text
-f0ebdf6c9a65c57b66b97957ab37574e96f32c136201fedcd97be4bb05e2a1c6
-```
-
-La huella del ejecutable local **1.2.5** se comprobó el **12 de noviembre de 2026** y coincide con este informe. Aunque VirusTotal muestre el nombre `Contador.dll`, la coincidencia se comprobó por SHA-256, no por nombre. Esto no verifica automáticamente otras descargas o futuras compilaciones. **Comprueba la huella o analiza tu propio archivo.** Un resultado sin detecciones no garantiza ausencia de malware ni constituye una certificación de seguridad.
-
-### Comprueba tú mismo el archivo descargado
-
-1. Descarga **Contador.exe** únicamente desde las [Releases de este repositorio](https://github.com/Axxon-g/contador-cofres-fornite/releases).
-2. Antes de abrirlo, entra en [www.virustotal.com](https://www.virustotal.com/) y selecciona **File / Archivo → Choose file / Elegir archivo**.
-3. Selecciona el ejecutable que acabas de descargar. Revisa y acepta las condiciones del servicio antes de enviarlo.
-4. Espera el resultado y revisa las detecciones y la fecha del análisis. Haz esta comprobación con cada versión nueva si quieres verificar el archivo que vas a utilizar.
-
-> [!NOTE]
-> Subir el ejecutable a VirusTotal es una acción voluntaria que envía ese archivo a un servicio externo. No subas contraseñas, repeticiones, historiales ni otros archivos privados. El análisis local de partidas de Contador no requiere VirusTotal.
-
-Si prefieres comparar el SHA-256 sin subir el archivo, abre PowerShell en su carpeta y ejecuta:
-
-```powershell
-Get-FileHash -LiteralPath .\Contador.exe -Algorithm SHA256
-```
-
-Solo si coincide exactamente con el SHA-256 anterior estás consultando el informe de ese mismo archivo. Si la Release incluye `Contador.exe.sha256`, también puedes comparar la huella con ese archivo; esto comprueba integridad, pero no sustituye una firma digital ni un análisis de seguridad.
 
 ## Primeros pasos
 
-1. **Descarga [Contador.exe](https://github.com/Axxon-g/contador-cofres-fornite/releases/latest/download/Contador.exe)** y guárdalo en la carpeta que prefieras.
-2. **Activa las repeticiones en Fortnite:** Ajustes → Juego → Repeticiones → **Grabar repeticiones**.
-3. **Abre Contador.exe con doble clic.** El historial anterior compatible se recupera automáticamente si está en este equipo.
-4. **Deja la app abierta mientras juegas.** Al terminar una partida de Battle Royale, analizará la repetición y sumará tus cofres.
+1. Descarga **Contador.exe** desde los archivos de una [Release](https://github.com/Axxon-g/contador-cofres-fornite/releases). No necesitas descargar el código fuente.
+2. Activa **Grabar repeticiones** en Fortnite y juega una partida compatible con el lector.
+3. Abre Contador. En **Ajustes**, comprueba la carpeta de repeticiones; puedes elegirla si no se detecta automáticamente.
+4. Selecciona tu **Cuenta** en la cabecera. Solo aparecen perfiles encontrados en el historial local.
+5. Al terminar la partida, espera a que Fortnite finalice el archivo. La app analiza la repetición y actualiza las cifras.
 
-Solo necesitas el ejecutable. No hace falta descargar el código, abrir VS Code ni ejecutar archivos de compilación.
+**Requisitos:** Windows x64, repeticiones guardadas en ese equipo y espacio para ellas. El ejecutable incluye .NET; no necesitas instalar el SDK para usarlo. El OCR opcional requiere Windows 10 versión 2004 o posterior, un idioma de reconocimiento instalado y un HUD compatible.
 
-Si la carpeta no se encuentra, entra en **Ajustes → Elegir carpeta**. La ubicación habitual es:
+**Al actualizar:** sal desde la bandeja de Windows → **Salir**, sustituye `Contador.exe` y abre la versión nueva. No borres `%APPDATA%\ContadorModern`: allí están el historial y las preferencias. La migración conserva un respaldo previo; solo puede volver a analizar repeticiones que todavía existan.
 
-```text
-%LOCALAPPDATA%\FortniteGame\Saved\Demos
-```
+## Equipo · experimental
 
-## Todo tu botín, en un mismo sitio
+Tu repetición puede omitir aperturas lejanas de compañeros. **≥ significa mínimo registrado, no total exacto del servidor.** Incluso varias perspectivas pueden seguir siendo incompletas.
 
-| En la app | Para qué sirve |
+1. Deja que termine el análisis de tu partida.
+2. Abre **Equipo** y selecciona la partida.
+3. Pulsa **Importar repeticiones del equipo** y elige archivos `.replay` finalizados que te hayan compartido tus compañeros de esa misma partida.
+4. Revisa las columnas **Jugador**, **Cofres**, **Origen** y **Cobertura**.
+
+La app verifica sesión e identidad y que el grabador pertenezca al equipo conocido; no vincula fuentes solo por nombre. Conserva la mejor cifra disponible por jugador, sin sumar varias veces una misma contribución. Una observación desde otro compañero sigue siendo parcial.
+
+<p align="center">
+  <img src="docs/images/equipo-fuentes-2.0.png" width="1000" alt="Equipo: partida seleccionada, mínimo registrado, desglose por jugador y origen de las cifras">
+  <br><sub>Vista de prueba con datos ficticios para explicar las fuentes; no se incluyen en el historial del usuario.</sub>
+</p>
+
+- Los archivos se analizan localmente; no se suben ni se copian a un servidor.
+- Puedes retirar una fuente individual o todas las fuentes importadas sin borrar sus archivos ni tu historial personal.
+- Un archivo no apto no impide aprovechar otros válidos del lote. Se admiten hasta 20 archivos por operación y 1.000 resúmenes.
+- Las importaciones del equipo no cambian tus cofres ni tus recompensas personales.
+- El resumen acumulado distingue tus cofres y los compañeros detectados. La cobertura muestra las partidas que carecen de datos.
+
+Consulta la [investigación y sus límites](docs/INVESTIGACION-v2.0.md). Todavía falta validar varias perspectivas de una misma partida frente a un conteo manual completo; no se anuncia precisión perfecta.
+
+## Conteo en tiempo real · experimental
+
+En **Resumen**, pulsa **Activar conteo en tiempo real**. La app explica la captura y pide permiso; rechazar mantiene el análisis de repeticiones. Puedes desactivarlo en cualquier momento. El permiso no se guarda: al volver a abrir empieza desactivado.
+
+<p align="center">
+  <img src="docs/images/conteo-tiempo-real-2.0.png" width="1000" alt="Activación opcional del conteo en tiempo real y mínimos por jugador de la última partida finalizada">
+  <br><sub>Captura aportada por el autor. El equipo mostrado corresponde a la última partida finalizada, no a cifras en vivo de los compañeros.</sub>
+</p>
+
+| Cifra | Cómo interpretarla |
 |---|---|
-| **Resumen** | Consulta el total de tu cuenta, la sesión, la última partida, la media y tu récord. |
-| **Historial** | Busca por fecha o modo, ordena columnas y selecciona una partida para ver sus detalles. |
-| **Mapa y rutas** | Explora capas de ubicaciones posibles, prepara recorridos y guarda marcas manuales. |
-| **Informe** | Revisa estadísticas, gráficos y tesoros dentro de la app; abre el HTML si lo prefieres. |
-| **Exportar CSV** | Guarda las partidas del perfil y filtro visibles para abrirlas en una hoja de cálculo. |
-| **Perfiles** | Cambia entre las cuentas detectadas; sus estadísticas se mantienen separadas. |
-| **Overlay** | Muestra las cifras sobre el juego y ajusta su tamaño desde la app. |
-| **Pausar detección** | Detiene los siguientes análisis. El análisis que ya empezó termina normalmente. |
-| **Datos locales** | Abre el informe, la carpeta de datos y el registro de errores desde Ajustes. |
+| **Total personal** | Historial de repeticiones del perfil y período seleccionados. |
+| **≈ estimación visual** | Avisos de cofres con XP/PE reconocidos en pantalla; puede omitir o duplicar detecciones. |
+| **Equipo de la última partida** | Cifras del replay finalizado y fuentes vinculadas; no un conteo en directo de todos los compañeros. |
 
-<table>
-  <tr>
-    <td width="50%"><img src="docs/images/historial.png" alt="Historial con buscador, columnas de cofres y datos de demostración"><br><strong>Cada partida, en detalle.</strong></td>
-    <td width="50%"><img src="docs/images/ajustes.png" alt="Ajustes de carpeta, cuenta y overlay"><br><strong>El contador, a tu manera.</strong></td>
-  </tr>
-</table>
+Solo se procesan regiones del HUD de Fortnite en primer plano, en memoria. No se guardan ni envían capturas. Se pausa al perder el foco, detener la detección o dejar de detectarse una partida.
 
-<sub>Vistas previas renderizadas desde la interfaz de la app. La tabla de historial utiliza datos de demostración; no se incluyen en el programa.</sub>
+Los cofres rotos sin aviso XP/PE, HUD personalizado, cambios de escala y errores de reconocimiento pueden producir diferencias. El resultado final de la repetición se calcula por separado: **no se suma la estimación visual al historial**. [Funcionamiento, permiso y limitaciones](docs/LECTURA-VISUAL-2.0.md).
 
-## Elegir una cuenta
+## Mapa, rutas e informe
 
-Entra en **Ajustes → Cuenta** y selecciona el perfil. Cada opción muestra su nombre, partidas y cofres. Desde la versión **1.2.6**, el selector permanece disponible mientras se analizan repeticiones; si hay un análisis en curso, la elección se aplica al terminar. El resumen, historial, informe y overlays utilizan la cuenta elegida, que se recuerda al volver a abrir la app.
+**Mapa y rutas** permite acercar, desplazar, buscar, activar capas, seleccionar puntos y crear recorridos manuales. La base integrada funciona sin conexión. **Terreno HD · Internet** está activado por defecto y utiliza piezas de Fortnite.GG con caché local y respaldo integrado; puedes desactivarlo.
 
-Solo aparecen cuentas con partidas detectadas o importadas en este equipo. No se consulta el historial de otras cuentas por Internet ni se necesitan sus credenciales.
+El catálogo integrado corresponde a Treasure Hunters **43.10**: 2.146 referencias comunitarias de botín y 16 lugares. Es una instantánea fija, **no se actualiza con cada temporada**, no detecta el botín durante la partida y no garantiza premios. Las bóvedas son referencias orientativas. Las rutas unen paradas manuales; no calculan un camino transitable.
 
-## Contar desde una fecha o durante un evento
+**Informe** reúne totales, sesión, media, récord, tipos de cofre, tesoros y partidas sin salir del programa. Conserva **Abrir versión HTML**. Los filtros de **Ajustes → Fechas del contador** se aplican al resumen, historial, equipo, informe y overlays sin borrar partidas.
 
-En **Ajustes → Fechas del contador** puedes elegir **Desde** y **Hasta**, incluidos ambos días. Pulsa **Aplicar fechas** para guardar la selección.
+- [Controles y procedencia del mapa](docs/MAPA-INTERACTIVO-1.2.7.md)
+- [Terreno HD, privacidad y proveedor externo](docs/MAPA-HD-1.2.7.md)
+- [Rutas y fuentes comunitarias](docs/RUTAS-1.2.7.md)
 
-- Para empezar el **1 de noviembre de 2026**, pulsa **Desde 01/11/2026**. Aplica esa fecha inicial y deja el final abierto para seguir sumando nuevas partidas.
-- Puedes dejar cualquiera de las dos fechas vacía para no limitar ese extremo.
-- **Todo el historial** quita el filtro y recupera las cifras históricas sin borrar partidas.
+## Overlay y segundo plano
 
-El período activo aparece en la ventana y se aplica al resumen, historial, cofres, tesoros, última partida, sesión, informe, CSV y overlays. El selector conserva todas las cuentas conocidas y muestra sus cifras dentro del período. Las fechas se guardan al cerrar y abrir la aplicación.
-
-Se usa la fecha local de Windows de inicio de la partida. Si un registro antiguo no contiene esa fecha, se utiliza la fecha en que fue analizado; esos registros pueden requerir revisar su origen. El filtro no recupera partidas que no estén guardadas ni convierte la fecha de análisis en una fecha de partida conocida.
-
-Por defecto se conserva **Todo el historial**, también al actualizar desde versiones anteriores. Solo se cambia al elegir un período.
-
-<p align="center"><img src="docs/images/filtro-fechas.png" alt="Ajustes de fechas: calendarios desde y hasta, acceso al 1 de noviembre de 2026 y opción de ver todo el historial" width="960"></p>
-
-## ¿Ya usabas otro contador?
-
-**Abre la app y deja que recupere tu historial.** Desde la versión 1.1, Contador busca automáticamente los datos locales de **ChestCounter** y **ChestTracker**:
-
-- Incorpora las partidas que faltan sin duplicar las que ya están guardadas.
-- Si una partida tiene recuentos de distintas versiones, conserva el registro del analizador más reciente.
-- Crea una copia de seguridad antes de guardar la incorporación.
-- Mantiene los perfiles separados por cuenta.
-- Lee el historial anterior sin modificar los archivos de la otra aplicación.
-
-Los historiales se buscan en `%APPDATA%\ChestCounter\data.json` y `%APPDATA%\ChestTracker\data.json`. Los respaldos se guardan en `%APPDATA%\ContadorModern\Backups`.
-
-La recuperación es local a cada equipo. No necesitas scripts ni copiar archivos. Si un historial está dañado o es incompatible, la app lo indica y vuelve a intentarlo al siguiente inicio. **Esta función incorpora datos a Contador; no sincroniza las aplicaciones entre sí.**
-
-## Aviso de partida y contadores claros
-
-La app comprueba la cabecera de las repeticiones cada dos segundos para detectar que Fortnite está grabando. Muestra **EN PARTIDA** en la ventana y en el overlay, incluso si la detección de cofres está pausada. Al dejar de grabarse, retira el aviso. La detección depende de que Fortnite haya creado y actualizado la repetición; no consulta la memoria del juego.
-
-- **Última partida:** cofres de la partida finalizada más reciente.
-- **Esta sesión:** cofres de las partidas jugadas desde que abriste la app. Se reinicia al abrirla y excluye el historial importado y las repeticiones antiguas reanalizadas.
-- **Tesoros:** total de tesoros encontrados en el perfil seleccionado, con su etiqueta visible.
-
-Última partida y sesión pueden coincidir si solo has terminado una partida durante esta ejecución. Los cofres siguen contabilizándose al finalizar; el aviso de partida no es un recuento instantáneo de cada apertura.
-
-<p align="center"><img src="docs/images/overlay-en-partida.png" alt="Overlay de demostración: en partida, última partida 17, sesión 83, tesoros 22" width="260"></p>
-
-La versión 1.2 incorpora una paleta azul marino, rojo y dorado de inspiración pirata y la moneda aportada como referencia visual, integrada en el ejecutable.
-
-## Overlay para jugar y transmitir
-
-Actívalo en **Ajustes → Mostrar contador sobre el juego**. En Fortnite, selecciona **Pantalla completa en ventana** para que Windows pueda mostrarlo encima.
+Activa el overlay desde **Ajustes** y utiliza Fortnite en pantalla completa en ventana para permitir que Windows lo muestre encima.
 
 | Atajo | Acción |
 |---|---|
-| <kbd>Ctrl</kbd> + <kbd>Mayús</kbd> + <kbd>O</kbd> | Mostrar u ocultar el overlay. |
-| <kbd>Ctrl</kbd> + <kbd>Mayús</kbd> + <kbd>L</kbd> | Bloquear o desbloquear el overlay. |
+| **Ctrl + Mayús + O** | Mostrar u ocultar el overlay. |
+| **Ctrl + Mayús + L** | Bloquear o desbloquear su posición. |
 
-Desbloquéalo para arrastrarlo a otra posición. Bloquéalo al jugar para que el ratón lo atraviese.
+Para OBS, añade una fuente **Navegador → Archivo local** y selecciona `overlay.html` desde la carpeta de datos. Conserva `overlay-data.js` a su lado; ambos se generan automáticamente. Mantén Contador abierto.
 
-**Para OBS:** añade una fuente **Navegador**, activa **Archivo local** y selecciona `overlay.html` en la carpeta de datos. Puedes encontrarla desde **Ajustes → Abrir datos**. Desde la versión 1.2.3, la fuente de OBS usa el mismo HUD que aparece sobre el juego: moneda, fondo transparente, estado, última partida, sesión y tesoros. Se actualiza cada dos segundos sin recargar toda la página. Mantén la app abierta y conserva `overlay-data.js` junto a `overlay.html`; ambos se generan automáticamente. Si tenías la fuente anterior, actualízala una vez en OBS después de abrir esta versión. Usa inicialmente un ancho de 300 y alto de 180 píxeles, y ajusta la escala en la escena.
+Al cerrar la ventana puedes **Mantener en segundo plano**, **Salir** o **Cancelar**. La moneda junto al reloj permite abrir Contador o salir con el menú contextual. Si no aparece, revisa **Mostrar iconos ocultos** de Windows.
 
-## Cómo funciona
+## Seguridad y privacidad
 
-Contador lee los archivos `.replay` que Fortnite guarda en tu equipo. Identifica al jugador que grabó la partida y los contenedores que abrió, con el lector de [LED-N/Fortnite-ChestCounter](https://github.com/LED-N/Fortnite-ChestCounter).
+**No se piden contraseñas, correo, códigos de verificación ni acceso a tu cuenta de Epic.** Los perfiles se identifican a partir de repeticiones locales. El historial y los ajustes se guardan en `%APPDATA%\ContadorModern`.
 
-- Solo lee las repeticiones; no modifica el juego.
-- No accede a la memoria de Fortnite ni a tus credenciales de Epic.
-- Las cajas de munición y otros contenedores se distinguen de los cofres.
-- Una partida renombrada no vuelve a sumarse.
-- Los historiales y preferencias se guardan localmente; la app no envía estadísticas.
+El análisis no modifica el juego ni lee su memoria. El conteo visual requiere permiso y no guarda ni envía capturas. La app no envía estadísticas a un servicio de seguimiento. El modo HD sí realiza conexiones al proveedor externo para obtener imágenes, y abrir enlaces utiliza tu navegador.
 
-Desde la versión 1.2.5 se revisan las repeticiones cada segundo. Tras finalizar, se comprueba brevemente su estabilidad y se muestran primero las cifras; el informe se genera después. La duración real depende del tamaño del archivo y del equipo.
+Contador usa un lector comunitario sobre archivos generados por Fortnite. **No es oficial ni está aprobado por Epic Games; no se garantiza inmunidad a sanciones.**
 
-Fortnite escribe la clave necesaria para leer la repetición al finalizar la partida. Por eso el total se actualiza después, aunque la app esté abierta durante el juego.
+### Aviso de Windows
 
-### Diagrama del proyecto
+<p align="center"><img src="docs/images/windows-smartscreen.png" width="535" alt="Windows SmartScreen muestra Contador como una aplicación con editor desconocido"></p>
 
-<p align="center">
-  <a href="https://gitdiagram.com/axxon-g/contador-cofres-fornite"><img src="docs/images/architecture-diagram.png" alt="Diagrama del proyecto: lectura de repeticiones, análisis, historial local, interfaz y overlays" width="960"></a>
-</p>
+El ejecutable no tiene firma de editor verificado. Windows puede mostrar **Windows protegió su PC** o **Editor desconocido** por reputación insuficiente. El aviso no demuestra que haya un virus, ni garantiza que el archivo sea seguro. No necesitas desactivar el antivirus, crear exclusiones ni instalar certificados del proyecto.
 
-[Explora el diagrama interactivo en GitDiagram](https://gitdiagram.com/axxon-g/contador-cofres-fornite) para ver los componentes y sus relaciones. En términos sencillos: **Fortnite guarda la repetición → Contador la lee y analiza → guarda el historial local → actualiza la ventana, el overlay y el informe**.
+Si aparece una detección concreta o no puedes comprobar su origen, no lo ejecutes y [comparte el resultado](https://github.com/Axxon-g/contador-cofres-fornite/issues). [Información de firma](docs/FIRMA.md).
 
-La imagen es una captura orientativa del diagrama generado por una herramienta externa; puede quedar desactualizada y no constituye una auditoría de seguridad. Puedes contrastarla con el código de este repositorio.
+### Comprueba el archivo que descargues
+
+Puedes subir **tu copia del ejecutable** a [VirusTotal](https://www.virustotal.com/) antes de abrirla. El [análisis compartido anteriormente](https://www.virustotal.com/gui/file/f0ebdf6c9a65c57b66b97957ab37574e96f32c136201fedcd97be4bb05e2a1c6) corresponde a otro archivo y **no acredita esta compilación 2.0**. Ningún resultado aislado garantiza ausencia de malware.
+
+Para calcular su huella en PowerShell:
+
+```powershell
+Get-FileHash .\Contador.exe -Algorithm SHA256
+```
+
+Compara el resultado con la huella publicada para esa misma Release, si está disponible. La coincidencia verifica la identidad del archivo, no su seguridad por sí sola. El código y las dependencias están disponibles para revisión.
 
 ## Preguntas frecuentes
 
 <details>
-<summary><strong>No aparece ningún cofre. ¿Qué reviso?</strong></summary>
+<summary><strong>¿Por qué no se actualiza al abrir cada cofre?</strong></summary>
 
-Comprueba que **Grabar repeticiones** está activado y que jugaste una partida de Battle Royale. Verifica la carpeta en Ajustes y deja terminar la partida. Si aparece un error, abre **Ajustes → Registro de errores**.
-
-Fortnite puede crear la carpeta de repeticiones después de la primera partida grabada.
-
+El historial depende de que Fortnite finalice la repetición. El conteo visual opcional observa avisos XP/PE y es aproximado; no puede ver aperturas que no produzcan un aviso compatible.
 </details>
 
 <details>
-<summary><strong>El total es distinto al de mi contador anterior.</strong></summary>
+<summary><strong>¿Funciona en consolas o GeForce NOW?</strong></summary>
 
-Comprueba que estás viendo la misma cuenta y que la recuperación del historial terminó. Los totales también pueden diferir si las aplicaciones usan versiones distintas del analizador. Contador conserva el registro del analizador más reciente para una partida compartida; no suma ambos registros.
-
-La importación recupera partidas conocidas por el contador anterior. No puede reconstruir partidas que ninguna aplicación guardó y cuya repetición ya no está disponible.
-
+Esta versión es una app de Windows que necesita repeticiones locales. No obtiene esos archivos automáticamente desde una consola ni desde el equipo remoto de GeForce NOW. Introducir un nombre de usuario no recupera sus cofres mediante una API pública.
 </details>
 
 <details>
-<summary><strong>¿Cuenta en tiempo real, mientras abro cada cofre?</strong></summary>
+<summary><strong>¿Por qué mi equipo muestra menos cofres de los que abrió?</strong></summary>
 
-El recuento final se obtiene **después de la partida**, cuando Fortnite termina de escribir la repetición. Durante la grabación, la app puede indicar que hay una partida en curso.
-
+Las repeticiones pueden omitir acciones de compañeros, especialmente lejanas. Importar sus perspectivas mejora la cobertura; no convierte el registro en un total exacto del servidor. Revisa la columna Origen y el indicador ≥.
 </details>
 
 <details>
-<summary><strong>¿Qué pasa si Fortnite se cierra o cambia su formato?</strong></summary>
+<summary><strong>¿Puedo recuperar mi historial anterior?</strong></summary>
 
-Una repetición incompleta o incompatible puede no contarse. Una actualización de Fortnite puede requerir actualizar el lector. El historial ya guardado se conserva.
-
-Si necesitas ayuda, [abre una incidencia](https://github.com/Axxon-g/contador-cofres-fornite/issues) con la versión de la app y el mensaje de error. Revisa el registro antes de compartirlo: puede contener datos de tus partidas.
-
+La app busca historiales locales de ChestCounter y ChestTracker, incorpora partidas sin duplicarlas y conserva respaldos. No sincroniza equipos ni recupera archivos eliminados de Fortnite. Puedes elegir la cuenta en la cabecera y revisar las fechas en Ajustes.
 </details>
 
 <details>
-<summary><strong>¿Tengo que instalar .NET o descargar “Source code”?</strong></summary>
+<summary><strong>¿Qué hago si no aparece ningún cofre o falla un replay?</strong></summary>
 
-No. Para usar la app, descarga **Contador.exe** en la sección **Assets** de una Release. Los archivos **Source code (zip)** y **Source code (tar.gz)** contienen el código para desarrolladores.
-
+Comprueba Grabar repeticiones, carpeta, cuenta y período. Deja terminar la partida y revisa Ajustes → Registro de errores. Una actualización del formato de Fortnite puede requerir cambios del lector; no toda repetición es compatible.
 </details>
 
-<details>
-<summary><strong>¿Cómo actualizo la app sin perder mis partidas?</strong></summary>
+## Compilar desde el código
 
-Selecciona **Salir de Contador** en la ventana de cierre o **Salir** en el menú del icono junto al reloj. Espera a que termine de guardar, descarga el nuevo ejecutable desde [Releases](https://github.com/Axxon-g/contador-cofres-fornite/releases) y reemplaza el anterior. Ocultar la ventana en segundo plano no cierra el proceso. El historial se guarda en una carpeta independiente, no dentro del archivo .exe.
-
-</details>
-
-## Tus datos
-
-Desde **Ajustes → Abrir datos** puedes acceder a `%APPDATA%\ContadorModern`.
-
-| Archivo o carpeta | Contenido |
-|---|---|
-| `data.json` | Historial de partidas. |
-| `config.json` | Preferencias y cuenta seleccionada. |
-| `mapa-crossbones-43.10-20261113.json` | Capas, ruta y revisiones manuales del mapa 43.10, separadas del historial. |
-| `Backups/` | Respaldos de la importación automática. |
-| `report.html` | Informe con los colores, moneda y tipografía del launcher. Se regenera automáticamente. |
-| `overlay.html` | HUD transparente para la fuente Navegador de OBS. |
-| `overlay-data.js` | Cifras y estado actualizados automáticamente por la app. |
-| `matches.csv` | Exportación generada del historial. |
-| `errors.log` | Diagnóstico, cuando se registran errores. |
-
-Para hacer un respaldo o cambiar de equipo, copia la carpeta de datos con Contador cerrado.
-
-<details>
-<summary><strong>Para desarrolladores: compilar y comprobar</strong></summary>
-
-Instala el [SDK de .NET 10 para Windows x64](https://dotnet.microsoft.com/download/dotnet/10.0) y ejecuta desde la raíz del proyecto:
+Necesitas el **SDK de .NET 10** en Windows x64. Conserva `vendor`: contiene el lector y las bibliotecas necesarias. El SDK no es necesario para ejecutar la descarga ya compilada.
 
 ```powershell
+git clone https://github.com/Axxon-g/contador-cofres-fornite.git
+cd contador-cofres-fornite
 .\build.bat
 ```
 
-El script utiliza la versión de `src/Contador/Contador.csproj` para elegir la carpeta de salida. La versión es `1.3.2` y el destino es `dist\1.3.2\Contador.exe`; la interfaz muestra **v1.3.2** a partir de esa misma versión. La primera compilación necesita conexión para restaurar dependencias.
+El script comprueba el motor y los controles de escritorio y genera **`dist\2.0.0\Contador.exe`**. Cierra la app antes de sustituir ese archivo. La publicación es autocontenida; no hace falta distribuir los archivos de código ni ejecutar scripts en el equipo del usuario.
 
-Para desarrollar o ejecutar las comprobaciones:
-
-```powershell
-dotnet run --project src/Contador/Contador.csproj
-dotnet run --project tests/Contador.Checks/Contador.Checks.csproj -c Release
-dotnet run --project tests/Contador.DesktopChecks/Contador.DesktopChecks.csproj -c Release
-
-# Comprobaciones específicas de las nuevas funciones
-dotnet run --project tests/Contador.Checks/Contador.Checks.csproj -c Release -- --map-only
-dotnet run --project tests/Contador.Checks/Contador.Checks.csproj -c Release -- --report-only
-dotnet run --project tests/Contador.DesktopChecks/Contador.DesktopChecks.csproj -c Release -- --map-ui-only
-dotnet run --project tests/Contador.DesktopChecks/Contador.DesktopChecks.csproj -c Release -- --instance-only
-dotnet run --project tests/Contador.DesktopChecks/Contador.DesktopChecks.csproj -c Release -- --tray-only
+```text
+src/Contador/              Interfaz WPF, captura opcional y coordinación
+src/Contador.Engine/       Reglas, fuentes, historial, informes y mapa
+tests/                    Comprobaciones del motor y de escritorio
+vendor/                   Lector y dependencias con sus licencias
+docs/                     Uso, seguridad, investigación y versiones
 ```
 
-En la versión 1.3.2 pasaron **225 comprobaciones del motor**, **4 de cierre y cuentas**, **3 del equipo**, **18 de interfaz del mapa**, **8 de instancia única** y **8 de segundo plano**. La suite del motor incluye comprobaciones de límites de lectura, CSV y actualizaciones sin parpadeos. Estas pruebas no garantizan un recuento grupal completo ni sustituyen validar nuevas versiones de Fortnite; tampoco acreditan una sesión HD completa por Internet.
+- [Notas de la versión 2.0](docs/RELEASE-v2.0.0.md)
+- [Arquitectura](docs/ARQUITECTURA.md) · [Verificación y límites](VERIFICACION.md)
+- [Investigación de lectores y conciliación](docs/INVESTIGACION-v2.0.md)
+- [Procedencia y licencias de dependencias](vendor/UPSTREAM.md)
+- Versiones anteriores: [1.3.2](docs/RELEASE-v1.3.2.md), [1.3.1](docs/RELEASE-v1.3.1.md), [1.3](docs/RELEASE-v1.3.0.md).
 
-Conserva `vendor/`: contiene el lector y sus dependencias de código necesarias para compilar. Para usar el programa publicado basta con `Contador.exe`; no distribuyas carpetas de AppData ni historiales personales.
+## Créditos
 
-Consulta [cómo publicar el ejecutable en GitHub Releases](docs/PUBLICAR.md) y el [estado de verificación](VERIFICACION.md).
+Basado en el lector de [LED-N/Fortnite-ChestCounter](https://github.com/LED-N/Fortnite-ChestCounter). Las referencias adicionales y decisiones adoptadas están documentadas en la investigación; los avisos aplicables se conservan en `vendor`.
 
-</details>
-
-## Créditos y licencia
-
-[MIT](LICENSE). La interfaz de escritorio utiliza el motor de [LED-N/Fortnite-ChestCounter](https://github.com/LED-N/Fortnite-ChestCounter), basado en [FortniteReplayDecompressor de Shiqan](https://github.com/Shiqan/FortniteReplayDecompressor) y OozSharp. Se conservan sus licencias y notas en [vendor/ChestCounter](vendor/ChestCounter) y [vendor/UPSTREAM.md](vendor/UPSTREAM.md).
-
-Este proyecto no está afiliado, aprobado ni patrocinado por Epic Games. Fortnite es una marca de Epic Games.
-
-<div align="center">
-  <br>
-  <a href="https://github.com/Axxon-g/contador-cofres-fornite/releases/latest/download/Contador.exe"><strong>Descargar Contador para Windows</strong></a>
-  <p>Abre la app. Juega tu partida. Consulta tu botín.</p>
-</div>
+Fortnite y los recursos del juego pertenecen a sus titulares. Las imágenes aportadas se usan para identificar y mostrar este proyecto comunitario. La licencia MIT del código no concede derechos sobre esas marcas o recursos. El terreno HD es un servicio externo de Fortnite.GG.

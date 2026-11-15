@@ -1,117 +1,160 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-10T00:00:00Z",
+  "generatedAt": "2026-11-15T15:16:55.471434+00:00",
   "title": "Design System: Contador desktop",
   "extensions": {
-    "shadows": [],
-    "typographyMeta": {
-      "body": {
-        "displayName": "Segoe UI",
-        "purpose": "Native WPF base: 14 device-independent units. Observed labels: 12, 13, 15, 17; titles: 20, 25, 28; counts: 42, 76. Regular and SemiBold."
-      }
-    },
-    "breakpoints": [],
     "colorMeta": {
       "ground": {
-        "displayName": "ground",
         "role": "neutral",
-        "canonical": "#101C2E"
+        "displayName": "ground"
       },
       "panel": {
-        "displayName": "panel",
         "role": "neutral",
-        "canonical": "#182D48"
+        "displayName": "panel"
+      },
+      "raised": {
+        "role": "neutral",
+        "displayName": "raised"
+      },
+      "rail": {
+        "role": "secondary",
+        "displayName": "Rojo pirata"
       },
       "ink": {
-        "displayName": "ink",
         "role": "neutral",
-        "canonical": "#FFF4DF"
+        "displayName": "ink"
       },
       "muted": {
-        "displayName": "muted",
         "role": "neutral",
-        "canonical": "#BDCEE3"
+        "displayName": "muted"
       },
       "gold": {
-        "displayName": "gold",
         "role": "primary",
-        "canonical": "#FFC857"
+        "displayName": "gold"
       },
       "line": {
-        "displayName": "line",
         "role": "neutral",
-        "canonical": "#4F7295"
+        "displayName": "line"
       },
       "ready": {
-        "displayName": "ready",
         "role": "secondary",
-        "canonical": "#A9D5A5"
+        "displayName": "ready"
       },
-      "row-alternate": {
-        "displayName": "row-alternate",
-        "role": "neutral",
-        "canonical": "#14243A"
-      },
-      "row-selected": {
-        "displayName": "row-selected",
-        "role": "neutral",
-        "canonical": "#365779"
-      },
-      "help-surface": {
-        "displayName": "help-surface",
-        "role": "neutral",
-        "canonical": "#20364C"
-      },
-      "help-ink": {
-        "displayName": "help-ink",
-        "role": "neutral",
-        "canonical": "#E2D1AD"
-      },
-      "text-selection": {
-        "displayName": "text-selection",
-        "role": "neutral",
-        "canonical": "#695128"
-      },
-      "pirate-red": {
-        "displayName": "Rojo pirata",
+      "sea": {
         "role": "secondary",
-        "canonical": "#6E2636"
+        "displayName": "Mar turquesa"
       },
-      "status-attention": {
-        "displayName": "Atención del lector",
+      "coral": {
         "role": "secondary",
-        "canonical": "#F1CA76"
+        "displayName": "Coral"
       }
     },
+    "typographyMeta": {
+      "body": {
+        "displayName": "Segoe UI nativa",
+        "purpose": "Unidades WPF; Regular y SemiBold."
+      }
+    },
+    "shadows": [],
     "motion": [],
+    "breakpoints": [],
+    "nativeWindow": {
+      "width": 1180,
+      "height": 820,
+      "minWidth": 860,
+      "minHeight": 640,
+      "railWidth": 184
+    },
     "nativeAssets": [
       {
         "path": "src/Contador/Assets/pirate-shop-token.png",
         "buildAction": "Resource",
-        "source": "/Contador;component/Assets/pirate-shop-token.png",
-        "width": 112,
-        "height": 112,
+        "width": 72,
+        "height": 72,
         "stretch": "Uniform",
         "accessibleName": "Moneda de tesoro pirata"
+      },
+      {
+        "path": "src/Contador/Assets/pirate-chest.png",
+        "buildAction": "Resource",
+        "width": 56,
+        "height": 56,
+        "stretch": "Uniform",
+        "accessibleName": "Cofre pirata"
       }
     ]
   },
-  "components": [],
+  "components": [
+    {
+      "name": "Botón secundario",
+      "kind": "button",
+      "description": "Traducción de estilo WPF para vista previa; la aplicación usa controles nativos.",
+      "html": "<button class=\"ds-button\">Explorar</button>",
+      "css": ".ds-button{font:14px \"Segoe UI\",sans-serif;background:#183D60;color:#FFF5DC;border:1px solid #517C9D;border-radius:8px;padding:10px 16px}.ds-button:hover{border-color:#FFD05A}.ds-button:focus-visible{outline:2px solid #FFF5DC;outline-offset:3px}.ds-button:disabled{opacity:.45}",
+      "refersTo": "button"
+    },
+    {
+      "name": "Botón principal",
+      "kind": "button",
+      "description": "Traducción de estilo WPF para vista previa; la aplicación usa controles nativos.",
+      "html": "<button class=\"ds-primary\">Importar repeticiones</button>",
+      "css": ".ds-primary{font:600 14px \"Segoe UI\",sans-serif;background:#FFD05A;color:#10243B;border:1px solid #FFD05A;border-radius:8px;padding:10px 16px}.ds-primary:hover{border-color:#FFD05A}.ds-primary:focus-visible{outline:2px solid #FFF5DC;outline-offset:3px}",
+      "refersTo": "button-primary"
+    },
+    {
+      "name": "Campo",
+      "kind": "input",
+      "description": "Traducción de estilo WPF para vista previa; la aplicación usa controles nativos.",
+      "html": "<input class=\"ds-input\" aria-label=\"Buscar\" placeholder=\"Buscar por fecha o modo\">",
+      "css": ".ds-input{font:14px \"Segoe UI\",sans-serif;background:#183D60;color:#FFF5DC;border:1px solid #517C9D;padding:10px 12px;caret-color:#FFD05A}.ds-input::placeholder{color:#CCE1EE}.ds-input:focus-visible{outline:2px solid #FFF5DC;outline-offset:3px}",
+      "refersTo": "input"
+    },
+    {
+      "name": "Navegación activa",
+      "kind": "nav",
+      "description": "Traducción de estilo WPF para vista previa; la aplicación usa controles nativos.",
+      "html": "<button class=\"ds-nav\" aria-current=\"page\">Equipo</button>",
+      "css": ".ds-nav{font:14px \"Segoe UI\",sans-serif;background:#FFD05A;color:#10243B;border:1px solid transparent;border-radius:8px;padding:11px 12px;text-align:left}.ds-nav:hover{border-color:#FFD05A}.ds-nav:focus-visible{outline:2px solid #FFF5DC;outline-offset:3px}",
+      "refersTo": "navigation-selected"
+    },
+    {
+      "name": "Panel tonal",
+      "kind": "card",
+      "description": "Traducción de estilo WPF para vista previa; la aplicación usa controles nativos.",
+      "html": "<section class=\"ds-card\">Conteo en tiempo real</section>",
+      "css": ".ds-card{font:600 24px \"Segoe UI\",sans-serif;background:#183D60;color:#FFF5DC;border-radius:10px;padding:22px}"
+    }
+  ],
   "narrative": {
-    "donts": [
-      "Don't descargar imágenes en ejecución, añadir transiciones ornamentales ni datos ficticios."
-    ],
-    "rules": [],
-    "keyCharacteristics": [
-      "Estado siempre en texto además del color.",
-      "Segoe UI respeta la plataforma Windows.",
-      "Moneda pirata integrada; sin descargas de imágenes, transiciones ornamentales ni datos ficticios."
-    ],
     "northStar": "Operate",
-    "overview": "Operate: una aplicación de recuento para Windows. Navegación nativa, tabla ordenable, selección de carpetas y exportación con diálogos del sistema.\n\nInterfaz de noche para acompañar una sesión de juego, con azul marino, rojo pirata y dorado de tesoro. La moneda aportada por el usuario forma parte de la identidad local de v1.2.",
+    "overview": "Herramienta nativa de Windows para contar con evidencia y resolver tareas sin ruido. El usuario sustituyó expresamente la dirección sobria por una identidad pirata más viva, inspirada en el color de animación: rail rojo, mar azul, tesoro dorado, turquesa y coral. La moneda y el cofre aportados forman parte de esa identidad aprobada; el sistema sigue siendo una herramienta nativa clara y compacta.\n\nSegoe UI, controles WPF y diálogos del sistema mantienen familiaridad de escritorio. La identidad procede de la moneda y el cofre integrados, las cifras doradas y los acentos marinos, sin transiciones ornamentales. Es una renovación aprobada desde código, sin composición aprobada por imagen.",
+    "keyCharacteristics": [
+      "Estado y procedencia expresados en texto además del color.",
+      "Navegación compacta y espacio de trabajo flexible.",
+      "Cuenta global, cifras personales y evidencia del equipo diferenciadas.",
+      "Moneda local integrada y controles nativos de Windows."
+    ],
+    "rules": [
+      {
+        "name": "The Evidence Rule",
+        "body": "El color acompaña el significado textual; nunca convierte una estimación o mínimo en una cifra exacta.",
+        "section": "colors"
+      },
+      {
+        "name": "The Task First Rule",
+        "body": "La primera vista presenta cuenta, tarea y estado compacto antes del detalle; la evidencia extensa se consulta en tablas o desplegables.",
+        "section": "layout"
+      }
+    ],
     "dos": [
-      "Do mantener el estado en texto además del color.",
-      "Do usar Segoe UI y los diálogos del sistema."
+      "Do mantener estado, procedencia y límites en texto.",
+      "Do usar Segoe UI, controles nativos y diálogos del sistema.",
+      "Do conservar la identidad pirata de moneda, cofre, rojo y dorado con acentos marinos.",
+      "Do distinguir cuenta personal, equipo y estimación visual."
+    ],
+    "donts": [
+      "Don't añadir transiciones ornamentales ni datos ficticios al producto.",
+      "Don't presentar mínimos o estimaciones como totales exactos."
     ]
   }
 }

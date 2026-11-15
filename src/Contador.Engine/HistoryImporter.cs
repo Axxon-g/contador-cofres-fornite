@@ -69,6 +69,7 @@ public static class HistoryImporter
             AnalyzerVersion = current.AnalyzerVersion, // Keep the current reader's upgrade/re-analysis policy.
             CreatedUtc = current.CreatedUtc,
             Matches = merged.Values.ToList(),
+            TeamReplaySources = current.TeamReplaySources,
             ProcessedFiles = new Dictionary<string, string>(current.ProcessedFiles)
         };
         // Do not import legacy fingerprints: available replays can still be re-read by the newer parser.

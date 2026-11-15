@@ -7,6 +7,7 @@ using Contador.Engine;
 using System.Windows.Controls;
 
 namespace Contador.DesktopChecks;
+
 public static class Program
 {
     [STAThread]
@@ -19,6 +20,24 @@ public static class Program
         {
             try
             {
+                if (args.Length >= 1 && args[0] == "--shell-refresh")
+                {
+                    await ShellRefreshChecks.Run(application, args.Length == 2 ? args[1] : null);
+                    application.Shutdown();
+                    return;
+                }
+                if (args.Contains("--ocr-fixture"))
+                {
+                    await OcrFixtureChecks.Run();
+                    application.Shutdown();
+                    return;
+                }
+                if (args.Length >= 1 && args[0] == "--live-view")
+                {
+                    await LiveViewChecks.Run(application, args.Length == 2 ? args[1] : null);
+                    application.Shutdown();
+                    return;
+                }
                 if (args.Contains("--team-only") || (args.Length == 2 && args[0] == "--team-render"))
                 {
                     await TeamViewChecks.Run(application, args.Length == 2 ? args[1] : null);
@@ -97,81 +116,84 @@ public static class Program
     private static async Task ProfileSelection()
     {
         L.Set("es");
-        var data = new TrackerData { Matches = [
+        var data = new TrackerData
+        {
+            Matches = [
             new() { EpicId="A", PlayerName="Jugador", SessionId="a", ChestsOpened=5, AnalyzedAtUtc=DateTime.UtcNow },
             new() { EpicId="B", PlayerName="Jugador", SessionId="b", ChestsOpened=12, AnalyzedAtUtc=DateTime.UtcNow }
-        ] };
-        var config = new Config { Profile="A" };
+        ]
+        };
+        var config = new Config { Profile = "A" };
         var picker = new ComboBox();
-        var window = new Window { Content=picker, Width=300, Height=100, Left=-20000, Top=-20000, ShowInTaskbar=false };
-        var folder = Path.Combine(Path.GetTempPath(), "ContadorProfiles-"+Guid.NewGuid());
+        var window = new Window { Content = picker, Width = 300, Height = 100, Left = -20000, Top = -20000, ShowInTaskbar = false };
+        var folder = Path.Combine(Path.GetTempPath(), "ContadorProfiles-" + Guid.NewGuid());
         var store = new Store(folder);
-        using var gate = new SemaphoreSlim(0,1); // Replay analysis currently owns the gate.
+        using var gate = new SemaphoreSlim(0, 1); // Replay analysis currently owns the gate.
         var saved = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var dashboard = new Dashboard { IsBusy=true };
+        var dashboard = new Dashboard { IsBusy = true };
         ProfilePickerController? controller = null;
         controller = new ProfilePickerController(picker, async key =>
         {
             await gate.WaitAsync();
             try
             {
-                config.Profile=key;
+                config.Profile = key;
                 store.SaveConfig(config);
-                dashboard.Refresh(data,config,new SessionCounter(DateTime.UtcNow));
-                controller!.Refresh(data,config);
+                dashboard.Refresh(data, config, new SessionCounter(DateTime.UtcNow));
+                controller!.Refresh(data, config);
                 saved.TrySetResult();
             }
             finally { gate.Release(); }
         });
         try
         {
-            controller.Refresh(data,config);
+            controller.Refresh(data, config);
             window.Show();
-            if(!picker.IsEnabled || picker.Items.Count!=2) throw new Exception("Selector bloqueado durante análisis.");
-            picker.SelectedValue="B";
-            controller.Refresh(data,config); // Scanner refresh must preserve the pending user choice.
-            if((string?)picker.SelectedValue!="B" || config.Profile!="A" || saved.Task.IsCompleted)
+            if (!picker.IsEnabled || picker.Items.Count != 2) throw new Exception("Selector bloqueado durante análisis.");
+            picker.SelectedValue = "B";
+            controller.Refresh(data, config); // Scanner refresh must preserve the pending user choice.
+            if ((string?)picker.SelectedValue != "B" || config.Profile != "A" || saved.Task.IsCompleted)
                 throw new Exception("La elección pendiente se perdió o modificó datos durante el análisis.");
             gate.Release();
             await saved.Task.WaitAsync(TimeSpan.FromSeconds(5));
             await Task.Yield();
-            var overlay = new SessionCounter(DateTime.UtcNow).Overlay(Profiles.View(data,config),false);
-            if(!picker.IsEnabled || config.Profile!="B" || store.LoadConfig()?.Profile!="B" || dashboard.Total!="12" || Profiles.View(data,config).Matches.Single().EpicId!="B")
+            var overlay = new SessionCounter(DateTime.UtcNow).Overlay(Profiles.View(data, config), false);
+            if (!picker.IsEnabled || config.Profile != "B" || store.LoadConfig()?.Profile != "B" || dashboard.Total != "12" || Profiles.View(data, config).Matches.Single().EpicId != "B")
                 throw new Exception("La cuenta elegida no se guardó o sus estadísticas se mezclaron.");
-            picker.SelectedValue="A";
-            if(config.Profile!="A" || dashboard.Total!="5") throw new Exception("No permite volver a la primera cuenta.");
-            controller.Refresh(new TrackerData(),config);
-            if(picker.IsEnabled) throw new Exception("Selector sin cuentas debe quedar inactivo.");
+            picker.SelectedValue = "A";
+            if (config.Profile != "A" || dashboard.Total != "5") throw new Exception("No permite volver a la primera cuenta.");
+            controller.Refresh(new TrackerData(), config);
+            if (picker.IsEnabled) throw new Exception("Selector sin cuentas debe quedar inactivo.");
         }
-        finally { window.Close(); if(Directory.Exists(folder)) Directory.Delete(folder,true); }
+        finally { window.Close(); if (Directory.Exists(folder)) Directory.Delete(folder, true); }
     }
     private static async Task Scenario(bool busy, bool saveFails)
     {
-        var window = new Window { Width=100, Height=100, Left=-20000, Top=-20000, ShowInTaskbar=false };
-        var gate = new SemaphoreSlim(busy ? 0 : 1,1);
+        var window = new Window { Width = 100, Height = 100, Left = -20000, Top = -20000, ShowInTaskbar = false };
+        var gate = new SemaphoreSlim(busy ? 0 : 1, 1);
         var closed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        int saves=0, starts=0, errors=0, closings=0;
-        bool inClosing=false;
+        int saves = 0, starts = 0, errors = 0, closings = 0;
+        bool inClosing = false;
         _ = new WindowCloseController(window, async () =>
         {
             if (inClosing) throw new Exception("Persistencia dentro de Closing.");
             await gate.WaitAsync();
-            try { saves++; if(saveFails) throw new IOException("Error simulado"); }
+            try { saves++; if (saveFails) throw new IOException("Error simulado"); }
             finally { gate.Release(); }
-        }, () => starts++, ex => { if(inClosing) throw new Exception("Diálogo dentro de Closing."); errors++; });
-        window.Closing += (_, _) => { inClosing=true; closings++; window.Dispatcher.BeginInvoke(DispatcherPriority.Send,new Action(()=>inClosing=false)); };
+        }, () => starts++, ex => { if (inClosing) throw new Exception("Diálogo dentro de Closing."); errors++; });
+        window.Closing += (_, _) => { inClosing = true; closings++; window.Dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() => inClosing = false)); };
         window.Closed += (_, _) => closed.TrySetResult();
         window.Show();
         window.Close(); // A single user request must eventually close without a second click.
-        if(busy)
+        if (busy)
         {
             await Task.Delay(80);
-            if(closed.Task.IsCompleted) throw new Exception("Se cerró antes de terminar el análisis.");
+            if (closed.Task.IsCompleted) throw new Exception("Se cerró antes de terminar el análisis.");
             window.Close(); // Repeated clicks while waiting must not save twice.
             gate.Release();
         }
         await closed.Task.WaitAsync(TimeSpan.FromSeconds(5));
-        if(starts!=1 || saves!=1 || errors!=(saveFails?1:0) || closings!=(busy?3:2))
+        if (starts != 1 || saves != 1 || errors != (saveFails ? 1 : 0) || closings != (busy ? 3 : 2))
             throw new Exception($"Cierre incorrecto: inicios={starts}, guardados={saves}, errores={errors}, Closing={closings}");
         gate.Dispose();
     }

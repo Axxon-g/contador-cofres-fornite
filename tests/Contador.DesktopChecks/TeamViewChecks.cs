@@ -22,26 +22,37 @@ internal static class TeamViewChecks
         var layout = XDocument.Load(Path.Combine(AppContext.BaseDirectory, "TeamLayout.xaml"));
         XNamespace x = "http://schemas.microsoft.com/winfx/2006/xaml";
         var element = layout.Descendants().Single(e => (string?)e.Attribute(x + "Name") == "TeamSummaryPanel");
+        foreach (var button in element.Descendants().Where(child => child.Name.LocalName == "Button"))
+            button.Attribute("Click")?.Remove(); // Standalone rendering has no MainWindow event connector.
         var panel = (StackPanel)XamlReader.Parse(element.ToString());
         var vm = new Dashboard();
         var config = new Config { Profile = "sample", ShowTeamStats = true };
-        var data = new TrackerData { Matches = [new MatchRecord
+        var data = new TrackerData
+        {
+            Matches = [new MatchRecord
         {
             EpicId = "sample", SessionId = "fixture", ChestsOpened = 39, TeammateChestsOpened = 21,
             TreasureFinds = [new() { SourceKind = ChestKinds.Normal, SourceCertain = true }],
             TeamTreasureFinds = [new() { SourceCertain = true, Teammate = "Compañero de prueba" }]
-        }] };
+        }]
+        };
         vm.Refresh(data, config, new SessionCounter(DateTime.UtcNow));
         var content = new StackPanel { Margin = new Thickness(24), DataContext = vm };
         content.Children.Add(new TextBlock
         {
-            Text = "VISTA DE PRUEBA · Datos ficticios del equipo", Margin = new Thickness(0, 0, 0, 20)
+            Text = "VISTA DE PRUEBA · Datos ficticios del equipo",
+            Margin = new Thickness(0, 0, 0, 20)
         });
         content.Children.Add(panel);
         var window = new Window
         {
-            Content = new ScrollViewer { Content = content }, Width = 850, Height = 600,
-            Left = -20000, Top = -20000, ShowInTaskbar = false, ShowActivated = false
+            Content = new ScrollViewer { Content = content },
+            Width = 850,
+            Height = 600,
+            Left = -20000,
+            Top = -20000,
+            ShowInTaskbar = false,
+            ShowActivated = false
         };
         window.Show();
         try

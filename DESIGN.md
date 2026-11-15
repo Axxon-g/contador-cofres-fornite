@@ -1,21 +1,18 @@
 ---
 name: Contador desktop
-description: Aplicación nativa de recuento para Windows
+description: Herramienta nativa de recuento con evidencia por cuenta y jugador
 colors:
-  ground: "#101C2E"
-  panel: "#182D48"
-  ink: "#FFF4DF"
-  muted: "#BDCEE3"
-  gold: "#FFC857"
-  line: "#4F7295"
-  pirate-red: "#6E2636"
-  ready: "#A9D5A5"
-  status-attention: "#F1CA76"
-  row-alternate: "#14243A"
-  row-selected: "#365779"
-  help-surface: "#20364C"
-  help-ink: "#E2D1AD"
-  text-selection: "#695128"
+  ground: "#10243B"
+  panel: "#183D60"
+  raised: "#285577"
+  rail: "#80273C"
+  ink: "#FFF5DC"
+  muted: "#CCE1EE"
+  gold: "#FFD05A"
+  line: "#517C9D"
+  ready: "#A6EBBA"
+  sea: "#80DDEB"
+  coral: "#FFAAC0"
 typography:
   body:
     fontFamily: Segoe UI
@@ -23,15 +20,15 @@ typography:
     fontWeight: 400
   headline:
     fontFamily: Segoe UI
-    fontSize: "28px"
+    fontSize: "27px"
     fontWeight: 600
   title:
     fontFamily: Segoe UI
-    fontSize: "20px"
+    fontSize: "19px"
     fontWeight: 600
   display:
     fontFamily: Segoe UI
-    fontSize: "76px"
+    fontSize: "60px"
     fontWeight: 600
   label:
     fontFamily: Segoe UI
@@ -39,31 +36,33 @@ typography:
     fontWeight: 400
 rounded:
   control: "8px"
+  selector: "7px"
   panel: "10px"
 spacing:
   sm: "8px"
   md: "12px"
   lg: "16px"
   xl: "24px"
-  xxl: "32px"
 components:
   button:
     backgroundColor: "{colors.panel}"
     textColor: "{colors.ink}"
     rounded: "{rounded.control}"
-    padding: "11px 18px"
+    padding: "10px 16px"
+  button-primary:
+    backgroundColor: "{colors.gold}"
+    textColor: "{colors.ground}"
+    rounded: "{rounded.control}"
+    padding: "10px 16px"
   navigation-selected:
     backgroundColor: "{colors.gold}"
     textColor: "{colors.ground}"
     rounded: "{rounded.control}"
+    padding: "11px 12px"
   input:
-    backgroundColor: "{colors.ground}"
+    backgroundColor: "{colors.panel}"
     textColor: "{colors.ink}"
     padding: "10px 12px"
-  status-panel:
-    backgroundColor: "{colors.panel}"
-    rounded: "{rounded.panel}"
-    padding: "13px 16px"
 ---
 
 # Design System: Contador desktop
@@ -72,54 +71,95 @@ components:
 
 **Creative North Star: "Operate"**
 
-Operate: una aplicación de recuento para Windows. Navegación nativa, tabla ordenable, selección de carpetas y exportación con diálogos del sistema.
+Herramienta nativa de Windows para contar con evidencia y resolver tareas sin ruido. El usuario sustituyó expresamente la dirección sobria por una identidad pirata más viva, inspirada en el color de animación: rail rojo, mar azul, tesoro dorado, turquesa y coral. La moneda y el cofre aportados forman parte de esa identidad aprobada; el sistema sigue siendo una herramienta nativa clara y compacta.
 
-Interfaz de noche para acompañar una sesión de juego, con azul marino, rojo pirata y dorado de tesoro. La moneda aportada por el usuario forma parte de la identidad local de v1.2.
+Segoe UI, controles WPF y diálogos del sistema mantienen familiaridad de escritorio. La identidad procede de la moneda y el cofre integrados, las cifras doradas y los acentos marinos, sin transiciones ornamentales. Es una renovación aprobada desde código, sin composición aprobada por imagen.
 
 **Key Characteristics:**
-- Estado siempre en texto además del color.
-- Segoe UI respeta la plataforma Windows.
-- Moneda pirata integrada; sin descargas de imágenes, transiciones ornamentales ni datos ficticios.
+- Estado y procedencia expresados en texto además del color.
+- Navegación compacta y espacio de trabajo flexible.
+- Cuenta global, cifras personales y evidencia del equipo diferenciadas.
+- Moneda local integrada y controles nativos de Windows.
 
 ## Colors
 
-Azul marino para el fondo, rojo pirata para la navegación, panel azul oscuro, texto marfil y secundario azul claro. El dorado enlaza el total y la selección de navegación; el verde claro indica detección disponible. Los valores normativos están en el frontmatter, extraídos del XAML y de los estados de navegación y detección.
+Los valores normativos del frontmatter proceden de los recursos compartidos de `src/Contador/App.xaml`.
+
+### Primary
+- **Dorado de tesoro:** acciones principales, cifras destacadas, presencia y fondo de navegación activa, con texto oscuro.
+
+### Secondary
+- **Rojo pirata:** rail de navegación recuperado por petición expresa.
+- **Mar turquesa:** títulos de página.
+- **Coral:** lema de marca.
+- **Verde disponible:** estados positivos de detección, acompañados de texto.
+
+### Neutral
+- **Fondo nocturno:** raíz de ventana y tablas.
+- **Panel marino:** contenedores, campos y filas alternas.
+- **Elevado tonal:** filas seleccionadas, desplegables y ayudas.
+- **Marfil:** lectura principal y foco visible.
+- **Azul gris:** etiquetas, explicación y navegación inactiva.
+- **Línea:** divisores y contornos.
+
+**The Evidence Rule.** El color acompaña el significado textual; nunca convierte una estimación o mínimo en una cifra exacta.
 
 ## Typography
 
-Segoe UI respeta la plataforma Windows. Escala observada: 12/13/14/15/17/20/25/28 para información, 42/76 para cifras. Regular y SemiBold. La cifra total domina; la cifra de sesión queda en segundo plano.
+**Body Font:** Segoe UI, con resolución nativa de Windows.
 
-Los valores `px` del frontmatter representan unidades independientes de dispositivo de WPF; no son píxeles físicos ni reglas CSS de la aplicación.
+Jerarquía funcional: encabezado de página 27, título compartido 19, cuerpo 14 y etiquetas 12. Títulos locales también usan 20 y 24; total personal 60, sesión 36, estimación visual 44 e informe 42. Regular y SemiBold. Las unidades `px` representan unidades independientes de dispositivo WPF, no píxeles físicos ni CSS. No se extrae altura de línea ni espaciado de letras inexistente.
 
 ## Layout
 
-Espaciado 8/12/16/24/32. Ventana mínima 860×640, principal 1120×780. Navegación de 200 unidades; área principal flexible con márgenes de 32 horizontales y 28 verticales. Contenido con desplazamiento donde hace falta. Overlay heredado, configurable e independiente.
+Ventana principal 1180 × 820, mínimo 860 × 640. Rail fijo de 184 unidades; contenido flexible con margen horizontal 28 y vertical 24. Cabecera persistente con título, tarea y selector de cuenta de 210 unidades. Estado compartido compacto separado por línea; mapa e informe usan su propio contexto.
+
+Seis espacios: Resumen, Historial, Equipo, Mapa y rutas, Informe y Ajustes. Desplazamiento vertical donde se requiere; tablas con desplazamiento horizontal automático. WrapPanel permite redistribuir grupos de controles. No hay puntos de ruptura CSS. El overlay heredado tiene composición y configuración independientes.
+
+**The Task First Rule.** La primera vista presenta cuenta, tarea y estado compacto antes del detalle; la evidencia extensa se consulta en tablas o desplegables.
 
 ## Elevation & Depth
 
-Capas tonales y líneas suaves delimitan el contenido. No hay sombras ni animaciones ornamentales definidas en la ventana principal.
+Capas tonales y divisores, sin sombras compartidas ni animación ornamental. Foco marfil de 2 unidades separado 3 del control; la acción de lectura visual usa separación de 4.
 
 ## Shapes
 
-Radios de controles 8 y paneles 10 unidades. Los controles nativos conservan su comportamiento de Windows.
+Botones con curvas de 8, selectores de 7 y paneles de 10 unidades. Moneda local integrada de 72 × 72, centrada sobre la marca en el rail, y cofre local de 56 × 56 antes del total personal de cofres. Ambos conservan proporción y nombre accesible; Assets/pirate-chest.png se compila como Resource WPF. El lema aparece en coral. Las referencias de animación orientan la paleta: no se incrustan pósteres ni se añade movimiento. Iconos de navegación de trazado vectorial de 16 unidades. Assets/Contador.ico mantiene la identidad para ventana, ejecutable y bandeja.
 
 ## Components
 
-Botones con borde discreto; al pasar el puntero el borde es dorado. El foco de teclado añade un borde dorado de 2 unidades. Desactivados: opacidad 0.45. Navegación activa: fondo dorado y texto azul marino.
+### Buttons
 
-Campos oscuros con cursor dorado y selección tostada. Selector de cuenta, casillas y deslizador son controles WPF. Tabla de solo lectura, ordenable, filas de 48 unidades, fondos alternos y selección azul más clara.
+Secundarios de panel, texto marfil y borde de línea. Primarios dorados, texto oscuro y SemiBold. Padding compartido 16 horizontal y 10 vertical; variantes compactas mantienen su densidad local. Hover con borde dorado; foco marfil; desactivados a opacidad 0.45.
 
-El estado tiene título, detalle y acción. El panel de ayuda usa azul tonal y texto arena. La moneda se muestra a 112 × 112 unidades con proporciones conservadas; `Assets/pirate-shop-token.png` es un Resource WPF integrado, cargado mediante URI de componente y con nombre accesible. El estado de partida ocupa una línea dorada de 18 unidades y peso Bold antes del estado del lector. Las superficies específicas se describen en `.impeccable/surfaces/desktop.md`.
+### Inputs / Fields
+
+Campos oscuros de panel, texto marfil, cursor dorado, selección tonal y borde de línea. ComboBox con flecha vectorial y desplegable tonal. Campos de fecha oscuros y localizados (es-MX, dd/mm/aaaa), con calendario nativo e interacción de teclado.
+
+### Navigation
+
+Rail compacto con moneda, nombre, seis botones de icono y texto y versión al pie. Activo con fondo dorado y texto oscuro; inactivo transparente y texto marfil. El título de página es turquesa.
+
+### Cards / Containers
+
+Paneles tonales sin sombras, curvas de 10 unidades. Panel de lectura visual con padding de 22; ayuda de 18. Divisores separan bloques sin envolver cada cifra en una tarjeta.
+
+### Tables and evidence
+
+Tablas de solo lectura, filas compartidas de 46 unidades, alternancia fondo/panel, selección elevada y texto marfil. Encabezados azul gris con padding 12 horizontal y 11 vertical. Historial ordenable. Equipo reúne jugador, cofres, origen y cobertura; ≥ indica mínimo registrado y las estimaciones visuales quedan excluidas.
+
+### Live reading
+
+Acción dorada para activar y secundaria para detener. Estimación oculta al estar apagado, estado textual visible y diagnóstico plegado por defecto. Las filas de jugadores existentes incluyen nombre, origen y contexto de partida.
 
 ## Do's and Don'ts
 
 ### Do:
-- Do mantener el estado en texto además del color.
-- Do usar Segoe UI y los diálogos del sistema.
+- Do mantener estado, procedencia y límites en texto.
+- Do usar Segoe UI, controles nativos y diálogos del sistema.
+- Do conservar la identidad pirata de moneda, cofre, rojo y dorado con acentos marinos.
+- Do distinguir cuenta personal, equipo y estimación visual.
 
 ### Don't:
-- Don't descargar imágenes en ejecución, añadir transiciones ornamentales ni datos ficticios.
-
-## Iconografía 1.2.1
-
-La moneda se distribuye en Assets/Contador.ico con siete tamaños (16 a 256). ApplicationIcon y Window.Icon usan el mismo recurso; el motor lo embebe como Contador.Token.ico y lo dibuja en el overlay mediante CreateIconFromResourceEx/DrawIconEx. Cada handle temporal se libera con DestroyIcon. Se verificó también el icono extraído por Windows del ejecutable publicado.
+- Don't añadir transiciones ornamentales ni datos ficticios al producto.
+- Don't presentar mínimos o estimaciones como totales exactos.

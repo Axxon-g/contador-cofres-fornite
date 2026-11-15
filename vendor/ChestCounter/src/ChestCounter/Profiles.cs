@@ -55,6 +55,7 @@ public static class Profiles
             CreatedUtc = d.CreatedUtc,
             Matches = d.Matches.Where(m => Key(m) == current.Key && MatchPeriod.Includes(m, c)).ToList(),
             ProcessedFiles = d.ProcessedFiles,
+            TeamReplaySources = d.TeamReplaySources.Concat(d.Matches).ToList(),
         };
     }
 

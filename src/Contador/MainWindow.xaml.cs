@@ -48,8 +48,12 @@ public partial class MainWindow : Window
         ErrorLog.FilePath = store.ErrorLogPath;
         config = store.LoadConfig() ?? new Config
         {
-            Language = "es", UpdateMode = "off", OpenReportOnStart = false,
-            ShowOverlay = false, OverlayLocked = true, LiveUpdate = false,
+            Language = "es",
+            UpdateMode = "off",
+            OpenReportOnStart = false,
+            ShowOverlay = false,
+            OverlayLocked = true,
+            LiveUpdate = false,
             DemosFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "FortniteGame", "Saved", "Demos")
         };
         config.Language = "es";
@@ -68,7 +72,7 @@ public partial class MainWindow : Window
                 ReportWriter.WriteOverlay(store, model);
             });
         ReportWriter.OverlayWriter = (target, _) => ObsHud.Write(target, overlayPublisher.Current);
-        tracker = new Tracker(store, config, data) { WriteReports=false, CompactAfterAnalysis=false };
+        tracker = new Tracker(store, config, data) { WriteReports = false, CompactAfterAnalysis = false };
         tracker.AnalysisStarting = () => Dispatcher.Invoke(ShowAnalysisStatus);
         DemosPath.Text = config.DemosFolder;
         OverlayCheck.IsChecked = config.ShowOverlay;
@@ -131,14 +135,14 @@ public partial class MainWindow : Window
             {
                 var before = data.Matches.Count;
                 var added = tracker.Scan();
-                return (Added:added,Changed:added>0 || data.Matches.Count!=before);
+                return (Added: added, Changed: added > 0 || data.Matches.Count != before);
             });
-            var count=scan.Added;
-            if(scan.Changed) Refresh();
+            var count = scan.Added;
+            if (scan.Changed) Refresh();
             var exists = Directory.Exists(config.DemosFolder);
             var errors = data.ProcessedFiles.Values.Count(v => v.StartsWith("error:", StringComparison.Ordinal));
             vm.Status = !exists ? "No se encontró la carpeta de repeticiones"
-                : count>0 ? "Partida actualizada"
+                : count > 0 ? "Partida actualizada"
                 : tracker.IsFinishing ? "La partida terminó. Preparando el recuento"
                 : recording ? "Partida en curso"
                 : errors > 0 ? "Hay repeticiones que no se pudieron leer"
@@ -156,10 +160,10 @@ public partial class MainWindow : Window
                     : $"Última revisión {DateTime.Now:HH:mm:ss} · Historial guardado localmente";
             if (importNotice.Length > 0) vm.Footer = importNotice;
             UpdateOverlay();
-            if(scan.Changed || !reportWritten)
+            if (scan.Changed || !reportWritten)
             {
-                await Task.Run(()=>ReportWriter.WriteAll(store,config,data));
-                reportWritten=true;
+                await Task.Run(() => ReportWriter.WriteAll(store, config, data));
+                reportWritten = true;
             }
             if (vm.Paused) { vm.Status = "Detección en pausa"; vm.StatusDetail = "El análisis anterior terminó. Reanuda la detección para revisar las siguientes repeticiones."; }
         }
@@ -178,6 +182,7 @@ public partial class MainWindow : Window
     {
         vm.Refresh(data, config, sessionCounter);
         profilePicker.Refresh(data, config);
+        RefreshLiveMatch();
     }
     private void ShowError(Exception ex)
     {
@@ -190,7 +195,7 @@ public partial class MainWindow : Window
     {
         if (closing) return;
         await gate.WaitAsync();
-        try { change(); store.SaveConfig(config); Refresh(); UpdateOverlay(); reportWritten=false; }
+        try { change(); store.SaveConfig(config); Refresh(); UpdateOverlay(); reportWritten = false; }
         catch (Exception ex) { ShowError(ex); }
         finally { gate.Release(); }
     }
@@ -212,6 +217,8 @@ public partial class MainWindow : Window
     {
         // Keep the session count consistent with the dashboard, including imports.
         var model = sessionCounter.Overlay(Profiles.View(data, config), recording);
+        if (recording && visualSession != null)
+            model = model with { VisualEstimate = "≈ " + visualEstimate };
         overlayPublisher.Publish(model, force);
     }
     private async Task CheckPresenceAsync()
@@ -221,8 +228,11 @@ public partial class MainWindow : Window
         try
         {
             var folder = config.DemosFolder;
-            recording = await Task.Run(() => MatchPresence.IsRecording(folder, DateTime.UtcNow));
+            var activeReplay = await Task.Run(() => MatchPresence.FindRecording(folder, DateTime.UtcNow));
+            recording = activeReplay != null;
             if (closing) return;
+            SetVisualRecording(activeReplay);
+            RefreshLiveMatch();
             var state = recording ? "EN PARTIDA · Cofres al finalizar" : "Esperando partida";
             if (vm.MatchState != state)
             {
@@ -238,26 +248,38 @@ public partial class MainWindow : Window
     }
     private void Navigate(string page)
     {
-        foreach (var (button, key) in new[] { (NavSummary, "summary"), (NavHistory, "history"), (NavRoutes, "routes"), (NavReport, "report"), (NavSettings, "settings") })
+        foreach (var (button, key) in new[] { (NavSummary, "summary"), (NavHistory, "history"), (NavTeam, "team"), (NavRoutes, "routes"), (NavReport, "report"), (NavSettings, "settings") })
         {
-            button.Background = (System.Windows.Media.Brush)FindResource(page == key ? "Gold" : "Panel");
+            button.Background = page == key ? (System.Windows.Media.Brush)FindResource("Gold") : System.Windows.Media.Brushes.Transparent;
             button.Foreground = (System.Windows.Media.Brush)FindResource(page == key ? "Ground" : "Ink");
         }
         SummaryPanel.Visibility = page == "summary" ? Visibility.Visible : Visibility.Collapsed;
         HistoryPanel.Visibility = page == "history" ? Visibility.Visible : Visibility.Collapsed;
+        TeamPanel.Visibility = page == "team" ? Visibility.Visible : Visibility.Collapsed;
         RoutesPanel.Visibility = page == "routes" ? Visibility.Visible : Visibility.Collapsed;
         ReportPanel.Visibility = page == "report" ? Visibility.Visible : Visibility.Collapsed;
         StatusPanel.Visibility = page is "routes" or "report" ? Visibility.Collapsed : Visibility.Visible;
         SettingsPanel.Visibility = page == "settings" ? Visibility.Visible : Visibility.Collapsed;
         PageTitle.Text = page switch
         {
-            "history" => "Cada partida, en detalle.",
-            "routes" => "Mapa y rutas.",
-            "report" => "Tu informe, aquí.",
-            "settings" => "A tu manera.",
-            _ => "Tu próxima partida cuenta."
+            "history" => "Historial",
+            "team" => "Equipo",
+            "routes" => "Mapa y rutas",
+            "report" => "Informe",
+            "settings" => "Ajustes",
+            _ => "Resumen"
+        };
+        PageSubtitle.Text = page switch
+        {
+            "history" => "Consulta tus partidas y exporta el registro.",
+            "team" => "Reúne las perspectivas de una misma partida.",
+            "routes" => "Explora el mapa y prepara tu próximo recorrido.",
+            "report" => "Tu progreso, tendencias y hallazgos.",
+            "settings" => "Personaliza fechas, repeticiones y overlay.",
+            _ => "Tu actividad, en un vistazo."
         };
     }
+    private void TeamPageClick(object sender, RoutedEventArgs e) => Navigate("team");
     private void SummaryClick(object sender, RoutedEventArgs e) => Navigate("summary");
     private void HistoryClick(object sender, RoutedEventArgs e) => Navigate("history");
     private void RoutesClick(object sender, RoutedEventArgs e) => Navigate("routes");
@@ -272,6 +294,7 @@ public partial class MainWindow : Window
     private void PauseClick(object sender, RoutedEventArgs e)
     {
         vm.Paused = !vm.Paused;
+        RefreshLiveMatch();
         if (!vm.IsBusy)
         {
             vm.Status = vm.Paused ? "Detección en pausa" : "Detección reanudada";
@@ -320,8 +343,8 @@ public partial class MainWindow : Window
         PeriodError.Text = "";
     }
     private async void EventPeriodClick(object sender, RoutedEventArgs e) =>
-        await SetPeriodAsync(new DateTime(2026,11,1), null);
-    private async void ClearPeriodClick(object sender, RoutedEventArgs e) => await SetPeriodAsync(null,null);
+        await SetPeriodAsync(new DateTime(2026, 11, 1), null);
+    private async void ClearPeriodClick(object sender, RoutedEventArgs e) => await SetPeriodAsync(null, null);
     private async void FolderClick(object sender, RoutedEventArgs e)
     {
         var picker = new OpenFolderDialog { Title = "Carpeta de repeticiones de Fortnite", Multiselect = false };
@@ -357,16 +380,16 @@ public partial class MainWindow : Window
     private void OpenDataClick(object sender, RoutedEventArgs e) => OpenPath(store.Folder);
     private async Task OpenHtmlReportAsync()
     {
-        if(closing) return;
+        if (closing) return;
         await gate.WaitAsync();
         try
         {
-            if(closing) return;
-            await Task.Run(()=>ReportWriter.WriteAll(store,config,data));
-            reportWritten=true;
+            if (closing) return;
+            await Task.Run(() => ReportWriter.WriteAll(store, config, data));
+            reportWritten = true;
             OpenPath(store.ReportPath);
         }
-        catch(Exception ex) { ShowError(ex); }
+        catch (Exception ex) { ShowError(ex); }
         finally { gate.Release(); }
     }
     private void ErrorsClick(object sender, RoutedEventArgs e) => OpenPath(store.ErrorLogPath);
@@ -390,6 +413,7 @@ public partial class MainWindow : Window
     private void BeginClose()
     {
         closing = true; timer.Stop(); presenceTimer.Stop();
+        StopVisualCapture();
         vm.Status = "Guardando antes de salir";
         vm.StatusDetail = vm.IsBusy ? "Esperando a que termine el análisis actual…" : "Cerrando el contador…";
         vm.NotifyAll();

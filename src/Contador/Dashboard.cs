@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Media;
 using ChestCounter;
 using Contador.Engine;
+using Contador.Live;
 
 namespace Contador;
 
@@ -17,13 +18,47 @@ public sealed record MatchRow(string Id, DateTime DateSort, string Date, string 
         $"Repetición: {m.ReplayFile}" +
         (m.Chests.Count > 0 ? "\n" + string.Join(" · ", m.Chests.GroupBy(c => c.Kind).Select(g => $"{L.Name(g.Key)}: {g.Count()}")) : ""));
 }
-public sealed class Dashboard : INotifyPropertyChanged
+public sealed partial class Dashboard : INotifyPropertyChanged
 {
+    public sealed record SquadRow(string Name, string Chests, string Source);
+    private bool visualCaptureEnabled;
+    private LiveCountPhase visualPhase;
+    public bool VisualCaptureEnabled
+    {
+        get => visualCaptureEnabled;
+        set { if (visualCaptureEnabled == value) return; visualCaptureEnabled = value; NotifyVisualState(); }
+    }
+    public LiveCountPhase VisualPhase
+    {
+        get => visualPhase;
+        set { if (visualPhase == value) return; visualPhase = value; NotifyVisualState(); }
+    }
+    public string VisualCaptureAction => VisualCaptureEnabled ? "Desactivar conteo" : "Activar conteo en tiempo real";
+    public bool IsVisualCounting => VisualCaptureEnabled && VisualPhase == LiveCountPhase.Counting;
+    public string VisualStateLabel => !VisualCaptureEnabled ? "Desactivado" : VisualPhase switch
+    {
+        LiveCountPhase.Counting => "Contando",
+        LiveCountPhase.Paused => "En pausa",
+        LiveCountPhase.Unavailable => "Necesita atención",
+        _ => "Esperando partida"
+    };
+    public bool HasSquadRows => SquadRows.Count > 0;
+    private void NotifyVisualState()
+    {
+        foreach (var name in new[] { nameof(VisualCaptureEnabled), nameof(VisualPhase),
+            nameof(VisualCaptureAction), nameof(IsVisualCounting), nameof(VisualStateLabel) })
+            Changed(name);
+    }
+    public string VisualCount { get; set; } = "—";
+    public string VisualStatus { get; set; } = "Actívalo para ver una estimación de tus cofres mientras juegas.";
+    public string VisualDiagnostic { get; set; } = "La lectura visual reconoce avisos XP/PE; no detecta la rotura de un cofre sin aviso.";
+    public string SquadContext { get; set; } = "El equipo aparecerá al leer una partida.";
+    public IReadOnlyList<SquadRow> SquadRows { get; set; } = Array.Empty<SquadRow>();
     public event PropertyChangedEventHandler? PropertyChanged;
     public void Changed([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new(name));
     public string Status { get; set; } = "Preparando el contador";
     public string StatusDetail { get; set; } = "Comprobando las repeticiones locales…";
-    public Brush StatusColor { get; set; } = new SolidColorBrush(Color.FromRgb(241,202,118));
+    public Brush StatusColor { get; set; } = new SolidColorBrush(Color.FromRgb(241, 202, 118));
     public string Total { get; set; } = "0";
     public string Session { get; set; } = "0";
     public string ProfileLabel { get; set; } = "Tu cuenta se detectará al leer la primera partida.";
@@ -43,6 +78,11 @@ public sealed class Dashboard : INotifyPropertyChanged
         + "Es una suma mínima de registros, no el total real del equipo. Incluso en las partidas con datos puede faltar lo que ocurre lejos. "
         + (TeamInfo.CoveredMatches < TeamInfo.Matches
             ? "Si falta el archivo de repetición, no se puede recuperar ese dato del equipo." : "");
+    public string TeamMembers => TeamInfo.MemberSummary;
+    public string TeamEvidence => $"Perspectivas complementarias utilizadas: {TeamInfo.ReplaySourcesUsed}. "
+        + $"Fuentes contradictorias sin añadir: {TeamInfo.ConflictingSources}. "
+        + $"Interacciones de cofres sin autor, no asignadas: {TeamInfo.UnattributedInteractions}. "
+        + "Importar más perspectivas amplía los datos registrados, sin garantizar que el juego grabara todo.";
     public string OwnChestRewards => $"{TeamInfo.OwnRecordedRewards:N0} recompensas registradas: "
         + $"{TeamInfo.OwnChestRewards + TeamInfo.OwnProbableChestRewards:N0} atribuidas a cofres";
     public string OtherOwnRewards => $"Origen directo observado en cofres: {TeamInfo.OwnChestRewards:N0}. "
@@ -88,7 +128,7 @@ public sealed class Dashboard : INotifyPropertyChanged
     public void Filter()
     {
         History.Clear();
-        foreach (var row in rows.Where(r => (r.Date+" "+r.Mode).Contains(search, StringComparison.CurrentCultureIgnoreCase)))
+        foreach (var row in rows.Where(r => (r.Date + " " + r.Mode).Contains(search, StringComparison.CurrentCultureIgnoreCase)))
             History.Add(row);
     }
     public void Refresh(TrackerData data, Config config, SessionCounter sessionCounter)
@@ -96,7 +136,7 @@ public sealed class Dashboard : INotifyPropertyChanged
         PeriodLabel = "Período: " + MatchPeriod.Describe(config);
         var matches = Profiles.View(data, config).Matches;
         ShowTeamStats = config.ShowTeamStats;
-        TeamInfo = TeamAccounting.Create(matches);
+        TeamInfo = TeamAccounting.Create(matches, data.TeamReplaySources.Concat(data.Matches));
         Report = PlayerReport.Create(data, config, sessionCounter, DateTime.Now);
         Total = matches.Sum(m => (long)m.ChestsOpened).ToString("N0", L.Culture);
         var sessionMatches = sessionCounter.Matches(Profiles.View(data, config));
@@ -104,6 +144,7 @@ public sealed class Dashboard : INotifyPropertyChanged
         SessionDetail = $"{sessionMatches.Count} partidas desde que abriste la app";
         ProfileLabel = Profiles.Current(data, config)?.Name ?? "Tu cuenta se detectará al leer la primera partida.";
         var ordered = matches.OrderByDescending(m => m.MatchStartUtc ?? m.AnalyzedAtUtc).ToList();
+        RefreshTeam(ordered, data.TeamReplaySources, data.Matches);
         LastMatch = ordered.Count > 0 ? $"Última partida: {ordered[0].ChestsOpened} cofres" : "Última partida: todavía no hay datos.";
         var avg = matches.Count == 0 ? 0 : matches.Average(m => m.ChestsOpened);
         Stats = $"{matches.Count} partidas · {matches.Sum(m => m.TreasureFinds.Count)} recompensas registradas\nMedia {avg:0.0} · Récord {matches.Select(m => m.ChestsOpened).DefaultIfEmpty(0).Max()} cofres";

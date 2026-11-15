@@ -1,5 +1,11 @@
 # Arquitectura
 
+## Lectura visual opcional · experimental
+
+VisualChestCounter y VisualRoster contienen reglas puras, independientes del historial. VisualCaptureSession controla una autorización de ejecución y usa FortniteFrameSource para copiar únicamente regiones del HUD de Fortnite en primer plano. Windows.Media.Ocr procesa los píxeles en memoria. MainWindow.Live coordina permiso, pausa, cancelación y presentación. El permiso no se persiste. La estimación se publica como VisualEstimate separada en el overlay y nunca modifica MatchRecord, el historial ni las recompensas. Los nombres visuales no se utilizan como identidad de cuenta.
+
+La compilación completa con Windows SDK y las pruebas OCR sobre imágenes generadas están verificadas; la calibración con una partida real sigue pendiente. Ver docs/LECTURA-VISUAL-2.0.md. VisualChestCounter concilia cantidades parciales entre lecturas y no acepta una cifra alta aislada. El trabajo OCR se ejecuta fuera del hilo de interfaz y vuelve a comprobar partida, permiso y pausa antes de cada recorte.
+
 ## Responsabilidades
 
 - **Contador (WPF):** ventanas, navegación, selección de cuenta, bandeja y cierre. `MainWindow` coordina operaciones mediante una exclusión compartida; no decodifica repeticiones.
@@ -27,3 +33,10 @@
 - dist contiene artefactos de distribución ignorados por Git. No se publican historiales, preferencias ni claves.
 
 La limpieza de 1.3.2 delimita dependencias y extrae la publicación del overlay; no reemplaza el lector heredado ni elimina sus fuentes necesarias.
+## Registro de interacciones y perspectivas · 2.0
+
+ReplayAnalyzer traduce los paquetes del lector a ContainerInteractionLedger. Este conserva el estado replicado por canal y el ciclo consumido por contenedor; emite interacciones que se resuelven contra el grafo de identidad al terminar la lectura. La misma elegibilidad se utiliza para el dueño y sus compañeros.
+
+TeamReplayReconciliation verifica sesión, cuenta y pertenencia al equipo antes de sustituir una contribución observada. No muta MatchRecord ni utiliza nombres como identidad. TeamAccounting, Dashboard.Team, las filas de la última partida y la instantánea del overlay consumen esa misma conciliación. MainWindow.TeamReplays coordina selección, lectura fuera del hilo de interfaz y guardado bajo la exclusión compartida. El historial guarda resúmenes mínimos separados en TeamReplaySources; HistoryImporter los conserva.
+
+La exactitud personal no se infiere de proximidad espacial. Los datos ausentes del equipo siguen siendo desconocidos, no ceros confirmados. Las fuentes complementarias no se añaden como partidas personales. Investigación, procedencia y limitaciones: [INVESTIGACION-v2.0.md](INVESTIGACION-v2.0.md).

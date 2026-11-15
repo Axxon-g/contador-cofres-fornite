@@ -18,11 +18,13 @@ public sealed record OverlayRow(string Label, string Value, bool Treasure = fals
 public sealed record OverlayView(string Total, string? Current, string CurrentCaption, bool CurrentLive, string? Badge, IReadOnlyList<OverlayRow> Rows, string Treasures = "0", string Session = "0", string? Last = null)
 {
     public string? LastTeamChests { get; init; }
+    public string? VisualEstimate { get; init; }
 
     public bool HasSameContent(OverlayView? other) => other != null
         && Total == other.Total && Current == other.Current && CurrentCaption == other.CurrentCaption
         && CurrentLive == other.CurrentLive && Badge == other.Badge && Treasures == other.Treasures
         && Session == other.Session && Last == other.Last && LastTeamChests == other.LastTeamChests
+        && VisualEstimate == other.VisualEstimate
         && Rows.SequenceEqual(other.Rows);
 }
 
@@ -625,6 +627,8 @@ public static class NativeOverlay
 
     private static HudRow StateRow(OverlayView v)
     {
+        if (v.CurrentLive && v.VisualEstimate != null)
+            return new HudRow("Visual (aprox.)", v.VisualEstimate, true);
         if (v.CurrentLive && v.Current is { } cur && cur != "…")
         {
             return new HudRow(L.T("En direct", "Live", "En directo"), cur, true);

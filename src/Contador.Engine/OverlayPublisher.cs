@@ -38,6 +38,7 @@ public sealed class OverlayPublisher
         {
             CurrentLive = recording,
             Current = recording ? "…" : previous.Last,
+            VisualEstimate = null,
             Badge = recording ? "EN PARTIDA" : null
         });
     }
