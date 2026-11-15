@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="src/Contador/Assets/pirate-shop-token.png" width="88" alt="Moneda de Contador">
+  <img src="docs/images/banner.svg" width="960" alt="Contador — Tu botín, en cifras. Una aplicación de escritorio para Fortnite.">
   <h1>Contador de cofres para Fortnite · 2.0</h1>
   <p><strong>Tu botín, en cifras.</strong><br>Historial personal, equipo, mapa, informe y overlay para Windows.</p>
   <p>
@@ -8,7 +8,10 @@
     <a href="https://github.com/Axxon-g/contador-cofres-fornite/releases"><img src="https://img.shields.io/github/downloads/Axxon-g/contador-cofres-fornite/Contador.exe?style=flat-square&amp;label=Descargas&amp;color=FFD05A&amp;labelColor=80273C&amp;displayAssetName=false" alt="Descargas acumuladas del ejecutable"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/Licencia-MIT-183D60?style=flat-square" alt="Licencia MIT"></a>
   </p>
-  <p><a href="https://github.com/Axxon-g/contador-cofres-fornite/releases/latest"><strong>Descargar desde GitHub Releases</strong></a> · <a href="https://github.com/Axxon-g/contador-cofres-fornite/releases/latest/download/Contador.exe">Descarga directa de Contador.exe</a></p>
+  <p>
+    <a href="https://github.com/Axxon-g/contador-cofres-fornite/releases/latest/download/Contador.exe"><img src="docs/images/download.svg" width="310" alt="Descargar Contador.exe para Windows x64"></a>
+  </p>
+  <p><a href="https://github.com/Axxon-g/contador-cofres-fornite/releases/latest/download/Contador.exe">Descarga directa de Contador.exe</a> · <a href="https://github.com/Axxon-g/contador-cofres-fornite/releases">Todas las versiones y notas de actualización</a></p>
   <p><a href="#primeros-pasos">Primeros pasos</a> · <a href="#equipo--experimental">Equipo</a> · <a href="#conteo-en-tiempo-real--experimental">Tiempo real</a> · <a href="#seguridad-y-privacidad">Seguridad</a> · <a href="#compilar-desde-el-código">Compilar</a></p>
   <p><strong>Sin iniciar sesión ni introducir contraseñas de Epic.</strong></p>
 </div>
@@ -38,7 +41,7 @@ Se mantienen el mapa con terreno HD opcional, las rutas editables, filtros de fe
 
 ## Primeros pasos
 
-1. Descarga **Contador.exe** desde los archivos de una [Release](https://github.com/Axxon-g/contador-cofres-fornite/releases). No necesitas descargar el código fuente.
+1. Pulsa **Descargar Contador.exe** en el botón de arriba o utiliza la [descarga directa](https://github.com/Axxon-g/contador-cofres-fornite/releases/latest/download/Contador.exe). También puedes elegir una versión desde [GitHub Releases](https://github.com/Axxon-g/contador-cofres-fornite/releases). No necesitas descargar el código fuente.
 2. Activa **Grabar repeticiones** en Fortnite y juega una partida compatible con el lector.
 3. Abre Contador. En **Ajustes**, comprueba la carpeta de repeticiones; puedes elegirla si no se detecta automáticamente.
 4. Selecciona tu **Cuenta** en la cabecera. Solo aparecen perfiles encontrados en el historial local.
@@ -47,6 +50,12 @@ Se mantienen el mapa con terreno HD opcional, las rutas editables, filtros de fe
 **Requisitos:** Windows x64, repeticiones guardadas en ese equipo y espacio para ellas. El ejecutable incluye .NET; no necesitas instalar el SDK para usarlo. El OCR opcional requiere Windows 10 versión 2004 o posterior, un idioma de reconocimiento instalado y un HUD compatible.
 
 **Al actualizar:** sal desde la bandeja de Windows → **Salir**, sustituye `Contador.exe` y abre la versión nueva. No borres `%APPDATA%\ContadorModern`: allí están el historial y las preferencias. La migración conserva un respaldo previo; solo puede volver a analizar repeticiones que todavía existan.
+
+## Estadísticas públicas sin claves de usuario
+
+El apartado **Estadísticas**, debajo de Resumen, permite buscar por nombre Epic, PlayStation o Xbox, o utilizar el perfil local. La consulta pasa por el servicio de AXXON; los usuarios no configuran claves y el ejecutable no incluye la clave del proveedor. [Configuración del servicio y límites](docs/ESTADISTICAS-2.0.md).
+
+**Pendiente de activación pública:** el sitio axxon.dev debe desplegar la API y configurar las variables privadas del servidor antes de distribuir esta compilación. No se muestran datos ficticios como resultado real.
 
 ## Equipo · experimental
 
