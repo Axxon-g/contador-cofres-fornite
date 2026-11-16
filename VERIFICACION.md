@@ -1,3 +1,18 @@
+# Contador 2.2 · verificación previa a publicación
+
+- Motor: **365 comprobaciones** correctas.
+- Escritorio: **93 comprobaciones** correctas: cierre/cuentas (4), mapa (18), instancia (8), segundo plano (8), equipo (3), conteo visual (13), pantallas (20), perfil público (10) y tesoros (9).
+- Total: **458**. Las comprobaciones usan datos de prueba y no activan capturas del usuario.
+- Compilación Release del motor y escritorio completada. Las vistas grande y compacta se revisaron durante el rediseño.
+- Ejecutable final verificado por SHA-256; la huella y las instrucciones para adjuntarlo están en [RELEASE-v2.2.md](docs/RELEASE-v2.2.md).
+- Revisión de patrones de credenciales en cambios publicables sin coincidencias. Los registros, repeticiones, credenciales y duplicados locales se excluyen de Git.
+- Los avisos heredados del lector no son errores de compilación. La consulta de vulnerabilidades de NuGet no estuvo disponible durante la publicación previa; no se afirma una auditoría actualizada de paquetes.
+- Sigue pendiente validar el replay afectado reportado por otro usuario y varias perspectivas del mismo equipo contra un recuento manual. No se garantiza exactitud completa ni compatibilidad con todo formato de Fortnite.
+
+---
+
+## Registro histórico de validaciones
+
 # Claridad del conteo en tiempo real · revisión de experiencia
 
 - 13 comprobaciones del panel y cuatro de cierre/cuentas aprobadas con el capturador real compilado, sin activar capturas del usuario.

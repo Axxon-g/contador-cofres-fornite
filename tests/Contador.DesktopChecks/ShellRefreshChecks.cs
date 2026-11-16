@@ -25,9 +25,9 @@ internal static class ShellRefreshChecks
         foreach (var item in doc.Descendants())
         {
             foreach (var attribute in item.Attributes().Where(attribute =>
-                attribute.Name.LocalName is "Click" or "SelectionChanged" or "DateValidationError" or "ToggleRequested").ToList())
+                attribute.Name.LocalName is "Click" or "SelectionChanged" or "DateValidationError" or "ToggleRequested" or "HistoryRequested" or "ReportRequested" or "StatisticsRequested" or "ToggleLiveRequested").ToList())
                 attribute.Remove();
-            if (item.Name.LocalName is "RouteSuggestionsView" or "PlayerReportView" or "PlayerStatisticsView")
+            if (item.Name.LocalName is "RouteSuggestionsView" or "PlayerReportView" or "PlayerStatisticsView" or "TreasureOddsView" or "SummaryView")
                 item.Name = ui + "ContentControl"; // Prevent any constructor that reads local plans.
         }
         var text = doc.ToString().Replace("clr-namespace:Contador", "clr-namespace:Contador;assembly=Contador");
@@ -81,6 +81,16 @@ internal static class ShellRefreshChecks
         vm.TeamImportSummary = "Datos ficticios · dos fuentes vinculadas de una misma partida.";
         vm.Footer = "VISTA DE PRUEBA · Datos ficticios · Sin capturas de pantalla ni acceso al historial real";
         window.DataContext = vm;
+        ((ContentControl)window.FindName("SummaryPanel")).Content = new SummaryView { DataContext = vm };
+        var summary = (SummaryView)((ContentControl)window.FindName("SummaryPanel")).Content;
+        var liveToggle = (Button)summary.FindName("LiveToggle");
+        if (summary.FindName("LiveSection") is not Border || liveToggle.Visibility != Visibility.Visible)
+            throw new Exception("El botón de conteo debe estar visible sin expandir nada.");
+        var toggleRequested = false;
+        summary.ToggleLiveRequested += (_, _) => toggleRequested = true;
+        liveToggle.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        if (!toggleRequested || vm.VisualCaptureEnabled)
+            throw new Exception("El resumen debe solicitar permiso, nunca activar capturas por su cuenta.");
         var picker = (ComboBox)window.FindName("ProfilePicker");
         picker.ItemsSource = new[] { "Cuenta de prueba", "Otra cuenta de prueba" };
         picker.SelectedIndex = 0;
@@ -90,9 +100,12 @@ internal static class ShellRefreshChecks
         ((ContentControl)window.FindName("RoutesPanel")).Content = routes;
         ((ContentControl)window.FindName("ReportPanel")).Content = new PlayerReportView { DataContext = vm };
         ((ContentControl)window.FindName("StatisticsPanel")).Content = await PlayerStatisticsViewChecks.CreatePreview();
-        var paths = new[] { "SummaryPanel", "StatisticsPanel", "HistoryPanel", "TeamPanel", "RoutesPanel", "ReportPanel", "SettingsPanel" };
-        var navs = new[] { "NavSummary", "NavStatistics", "NavHistory", "NavTeam", "NavRoutes", "NavReport", "NavSettings" };
-        var titles = new[] { "Resumen", "Estadísticas", "Historial", "Equipo", "Mapa y rutas", "Informe", "Ajustes" };
+        var treasures = new TreasureOddsView();
+        treasures.SetHistory(126, "Cuenta de prueba", "Período de prueba", 3);
+        ((ContentControl)window.FindName("TreasuresPanel")).Content = treasures;
+        var paths = new[] { "SummaryPanel", "StatisticsPanel", "HistoryPanel", "TeamPanel", "RoutesPanel", "TreasuresPanel", "ReportPanel", "SettingsPanel" };
+        var navs = new[] { "NavSummary", "NavStatistics", "NavHistory", "NavTeam", "NavRoutes", "NavTreasures", "NavReport", "NavSettings" };
+        var titles = new[] { "Resumen", "Estadísticas", "Historial", "Equipo", "Mapa y rutas", "Tesoros y probabilidades", "Informe", "Ajustes" };
         window.Show();
         try
         {
@@ -109,7 +122,7 @@ internal static class ShellRefreshChecks
                     foreach (var name in paths) ((FrameworkElement)window.FindName(name)).Visibility = name == paths[index] ? Visibility.Visible : Visibility.Collapsed;
                     ((TextBlock)window.FindName("PageTitle")).Text = titles[index];
                     ((TextBlock)window.FindName("PageSubtitle")).Text = "Vista de prueba · datos ficticios";
-                    ((FrameworkElement)window.FindName("StatusPanel")).Visibility = paths[index] is "RoutesPanel" or "ReportPanel" or "StatisticsPanel" ? Visibility.Collapsed : Visibility.Visible;
+                    ((FrameworkElement)window.FindName("StatusPanel")).Visibility = paths[index] is "RoutesPanel" or "ReportPanel" or "StatisticsPanel" or "TreasuresPanel" ? Visibility.Collapsed : Visibility.Visible;
                     for (var n = 0; n < navs.Length; n++)
                     {
                         var button = (Button)window.FindName(navs[n]);
@@ -130,6 +143,20 @@ internal static class ShellRefreshChecks
                         png.Frames.Add(BitmapFrame.Create(bitmap));
                         using var stream = File.Create(Path.Combine(output, $"{paths[index]}-{width}.png"));
                         png.Save(stream);
+                        if (paths[index] == "SettingsPanel")
+                        {
+                            var settings = (ScrollViewer)window.FindName("SettingsPanel");
+                            settings.ScrollToEnd();
+                            await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
+                            content.UpdateLayout();
+                            var bottom = new RenderTargetBitmap((int)Math.Ceiling(content.ActualWidth), (int)Math.Ceiling(content.ActualHeight), 96, 96, PixelFormats.Pbgra32);
+                            bottom.Render(content);
+                            var bottomPng = new PngBitmapEncoder();
+                            bottomPng.Frames.Add(BitmapFrame.Create(bottom));
+                            using var bottomFile = File.Create(Path.Combine(output, $"SettingsTools-{width}.png"));
+                            bottomPng.Save(bottomFile);
+                            settings.ScrollToTop();
+                        }
                     }
                 }
             }
@@ -148,7 +175,7 @@ internal static class ShellRefreshChecks
             vm.SelectedTeamMatch = vm.TeamMatches.Last();
             if (vm.TeamPlayers.Count != 1 || vm.TeamSelectedTotal != "—")
                 throw new Exception("Una partida antigua sin datos de equipo inventa compañeros.");
-            Console.WriteLine("18 comprobaciones del conjunto de pantallas correctas, con datos ficticios y sin red.");
+            Console.WriteLine("20 comprobaciones del conjunto de pantallas correctas, con datos ficticios y sin red.");
         }
         finally { window.Close(); }
     }

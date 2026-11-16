@@ -26,6 +26,25 @@ public sealed class Tracker
     private readonly Config _config;
     private readonly TrackerData _data;
     private readonly ReplayFileStability _stability = new();
+    private readonly ReplayRetryPolicy retries = new();
+    private static readonly object ParserLock = new();
+    private static Thread? activeParser;
+    public bool HasRetries => retries.HasPending;
+    public long Revision { get; private set; }
+    public string? ArchiveWarning { get; private set; }
+    public bool ParserBlocked => activeParser?.IsAlive == true;
+
+    /// <summary>Only failures for files still present; successful matches and history are untouched.</summary>
+    public int RetryFailedFiles()
+    {
+        var keys = ReplayFiles().Select(FileKey).ToHashSet(StringComparer.Ordinal);
+        var failed = _data.ProcessedFiles.Where(pair => keys.Contains(pair.Key)
+            && pair.Value.StartsWith("error:", StringComparison.Ordinal)).Select(pair => pair.Key).ToList();
+        foreach (var key in failed) _data.ProcessedFiles.Remove(key);
+        retries.Reset();
+        if (failed.Count > 0) _store.SaveData(_data);
+        return failed.Count;
+    }
     public bool WriteReports { get; set; } = true;
     public bool CompactAfterAnalysis { get; set; } = true;
     /// <summary>Raised only when replay analysis will actually run, not on idle directory polling.</summary>
@@ -99,8 +118,15 @@ public sealed class Tracker
         HasPending = false;
         IsFinishing = false;
         var ready = new List<FileInfo>();
-        foreach (var file in UnprocessedFiles().ToList())
+        var candidates = UnprocessedFiles().ToList();
+        retries.Retain(candidates.Select(FileKey).ToHashSet(StringComparer.Ordinal));
+        foreach (var file in candidates)
         {
+            if (!retries.IsDue(FileKey(file), DateTime.UtcNow))
+            {
+                HasPending = true;
+                continue;
+            }
             file.Refresh();
             if (!file.Exists)
             {
@@ -227,6 +253,7 @@ public sealed class Tracker
         try
         {
             record = Analyze(file, ParseTimeout);
+            retries.Complete(key);
         }
         catch (Exception ex)
         {
@@ -235,8 +262,19 @@ public sealed class Tracker
                 HasPending=true;
                 return new Outcome(Skipped: "Repetición todavía actualizándose; se reintentará.");
             }
-            var message = (ex as AggregateException)?.InnerException?.Message ?? ex.Message;
+            var failure = (ex as AggregateException)?.InnerException ?? ex;
+            var message = failure.Message;
+            if (failure is ParserOccupiedException)
+            {
+                HasPending = true;
+                return new Outcome(Skipped: "El lector anterior todavía está terminando; el archivo sigue pendiente.");
+            }
             ErrorLog.Write($"Unreadable replay: {file.FullName} ({file.Length} bytes, {file.LastWriteTime:yyyy-MM-dd HH:mm:ss})", ex);
+            if (retries.Schedule(key, failure, DateTime.UtcNow))
+            {
+                HasPending = true;
+                return new Outcome(Skipped: "Fallo temporal de lectura; nuevo intento en unos minutos.");
+            }
             _data.ProcessedFiles[key] = "error: " + message;
             _store.SaveData(_data);
             return new Outcome(Error: $"{file.Name} : {message}");
@@ -249,10 +287,25 @@ public sealed class Tracker
         }
         record.ReplayFile = file.Name;
 
+        if (_config.ArchiveReplays && record.IsBattleRoyale)
+        {
+            try
+            {
+                ReplayArchive.Save(file, Path.Combine(_store.Folder, "ReplayArchive"), key);
+                ArchiveWarning = null;
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                ArchiveWarning = "La partida se contó, pero no se pudo guardar su repetición. Revisa el espacio y los permisos.";
+                ErrorLog.Write("Local replay archive", ex);
+            }
+        }
+
         if (!record.IsBattleRoyale)
         {
             // Also drop a record left by an older version of the tool for this replay.
             _data.Matches.RemoveAll(m => m.SessionId == record.SessionId);
+            Revision++;
             _data.ProcessedFiles[key] = "autre mode";
             _store.SaveData(_data);
             return new Outcome(Skipped: L.T("pas une partie Battle Royale (créatif / autre mode)", "not a Battle Royale match (Creative / other mode)", "no es una partida de Battle Royale (Creativo / otro modo)"));
@@ -274,6 +327,7 @@ public sealed class Tracker
         }
 
         _data.Matches.Add(record);
+        Revision++;
         _data.ProcessedFiles[key] = record.SessionId;
         _store.SaveData(_data);
         if (_liveFile == file.FullName)
@@ -372,6 +426,21 @@ public sealed class Tracker
     /// <summary>Reads the file (even while Fortnite writes it) and parses it on a lowest-priority background thread.</summary>
     private MatchRecord Analyze(FileInfo file, TimeSpan timeout)
     {
+        // The parser uses static hooks. A timed-out thread must finish before another one starts.
+        lock (ParserLock)
+        {
+            if (activeParser?.IsAlive == true) throw new ParserOccupiedException();
+            return AnalyzeExclusive(file, timeout);
+        }
+    }
+
+    private sealed class ParserOccupiedException : Exception
+    {
+        public ParserOccupiedException() : base("El lector anterior aún está activo. Reinicia Contador si no termina.") { }
+    }
+
+    private MatchRecord AnalyzeExclusive(FileInfo file, TimeSpan timeout)
+    {
         byte[] bytes;
         using (var fs = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
         {
@@ -380,27 +449,33 @@ public sealed class Tracker
 
         MatchRecord? result = null;
         Exception? failure = null;
+        var cancellation = new CancellationTokenSource();
         var worker = new Thread(() =>
         {
             try
             {
                 using var ms = new MemoryStream(bytes, writable: false);
                 // The replays saved on a PC are those of its player: the replay owner is tracked (one profile per account).
-                result = new ReplayAnalyzer().Analyze(ms, file.Name, "");
+                result = new ReplayAnalyzer { Cancellation = cancellation.Token }.Analyze(ms, file.Name, "");
             }
             catch (Exception e)
             {
                 failure = e;
             }
+            finally { cancellation.Dispose(); }
         })
         {
             IsBackground = true,
             Priority = ThreadPriority.BelowNormal,
             Name = "ReplayAnalysis",
         };
+        activeParser = worker;
         worker.Start();
         if (!worker.Join(timeout))
         {
+            try { cancellation.Cancel(); }
+            catch (ObjectDisposedException) { /* The worker completed just after the deadline. */ }
+            worker.Join(TimeSpan.FromSeconds(1));
             throw new TimeoutException(L.T("analyse trop longue", "analysis took too long", "análisis demasiado largo"));
         }
         bytes = Array.Empty<byte>();

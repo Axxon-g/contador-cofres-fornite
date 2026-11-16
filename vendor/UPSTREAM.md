@@ -25,3 +25,9 @@ Config incorpora fechas locales opcionales; MatchPeriod compara días inclusivos
 ReplayAnalyzer now delegates container cycles and replicated SearchingPawn state to the owned ContainerInteractionLedger. Individual and teammate accounting use the same eligibility rule. Team identity is retained per player and verified session; TeamReplayReconciliation can replace an observed teammate contribution with that player's own locally parsed replay. It never adds that contribution twice or matches by display name alone.
 
 The multi-perspective approach was compared with LED-N/Fortnite-ChestCounter at c4ca1400ff1f79dbee4ea3ecb3f8eb72c8e6bb82 and lvortexxx/ChestTokenAssistant at 7eab883267a6b2c546a910ceaf0db7b1706b4905 (MIT). The implementation is local and does not import the latter's unsigned JSON/CSV summaries or its name fallback. Existing upstream notices remain in place. See docs/INVESTIGACION-v2.0.md for all reviewed sources, license constraints and limits. This release does not wholesale replace the parser and retains local security fixes.
+## Contador 2.2
+
+Las políticas de recuperación y las referencias de probabilidades se documentan en
+[ADAPTACION-2.2.md](../docs/ADAPTACION-2.2.md). Se conserva el aviso de la referencia
+MIT en LICENSE-ayman-studio.txt; no se conecta con su servicio de amigos. La UI, el
+comprobador de versiones y los módulos de cálculo propios están separados del lector.

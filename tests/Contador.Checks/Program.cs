@@ -5,6 +5,9 @@ using Contador.Engine;
 L.Set("es");
 int checks = 0;
 void Check(bool value, string message) { if (!value) throw new Exception(message); checks++; }
+await ReleaseCheckerChecks.Run(Check);
+TreasureProbabilityChecks.Run(Check);
+ReplayRecoveryChecks.Run(Check);
 if (args.Contains("--visual-only"))
 {
     VisualChecks.Run(Check);

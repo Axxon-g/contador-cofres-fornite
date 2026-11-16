@@ -1,16 +1,16 @@
 <Application x:Class="Contador.App" xmlns:primitives="clr-namespace:System.Windows.Controls.Primitives;assembly=PresentationFramework" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Application.Resources>
-        <SolidColorBrush x:Key="Ground" Color="#10243B" />
-        <SolidColorBrush x:Key="Panel" Color="#183D60" />
-        <SolidColorBrush x:Key="Raised" Color="#285577" />
-        <SolidColorBrush x:Key="Rail" Color="#80273C" />
-        <SolidColorBrush x:Key="Ink" Color="#FFF5DC" />
-        <SolidColorBrush x:Key="Muted" Color="#CCE1EE" />
-        <SolidColorBrush x:Key="Gold" Color="#FFD05A" />
-        <SolidColorBrush x:Key="Line" Color="#517C9D" />
-        <SolidColorBrush x:Key="Sea" Color="#80DDEB" />
-        <SolidColorBrush x:Key="Coral" Color="#FFAAC0" />
-        <SolidColorBrush x:Key="Ready" Color="#A6EBBA" />
+        <SolidColorBrush x:Key="Ground" Color="#24477E" />
+        <SolidColorBrush x:Key="Panel" Color="#1D3865" />
+        <SolidColorBrush x:Key="Raised" Color="#31588E" />
+        <SolidColorBrush x:Key="Rail" Color="#8C3347" />
+        <SolidColorBrush x:Key="Ink" Color="#FFF9ED" />
+        <SolidColorBrush x:Key="Muted" Color="#CFDEF2" />
+        <SolidColorBrush x:Key="Gold" Color="#F2CB68" />
+        <SolidColorBrush x:Key="Line" Color="#6384B1" />
+        <SolidColorBrush x:Key="Sea" Color="#92D7E5" />
+        <SolidColorBrush x:Key="Coral" Color="#ECAF93" />
+        <SolidColorBrush x:Key="Ready" Color="#AFE0B1" />
         <Style x:Key="KeyboardFocus" TargetType="Control">
             <Setter Property="Template">
                 <Setter.Value>
@@ -72,8 +72,8 @@
             <Setter Property="Foreground" Value="{StaticResource Muted}" />
             <Setter Property="BorderBrush" Value="Transparent" />
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-            <Setter Property="Padding" Value="12,11" />
-            <Setter Property="Margin" Value="0,0,0,6" />
+            <Setter Property="Padding" Value="12,10" />
+            <Setter Property="Margin" Value="0,0,0,5" />
         </Style>
         <Style TargetType="TextBox">
             <Setter Property="Padding" Value="12,10" />

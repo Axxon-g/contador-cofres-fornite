@@ -28,6 +28,7 @@ internal static class PlayerStatisticsViewChecks
         model.ManualName = "Jugador";
         await model.SearchAsync();
         Check(model.HasResult && model.Wins == "12", "El nombre basta para consultar estadísticas");
+        Check(model.KillsPerMatch == (2.5).ToString("N2") && model.PlayedTime == "25 h 0 min", "Las métricas derivadas usan el período consultado");
         Check(client.Query?.ByAccountId == false, "La consulta manual no necesita archivos locales");
         model.UseDetectedAccount = true;
         await model.SearchAsync();
@@ -40,7 +41,7 @@ internal static class PlayerStatisticsViewChecks
         Check(client.Query?.TimeWindow == "season", "El filtro de temporada se aplica");
         client.Fail = true;
         await model.SearchAsync();
-        Check(!model.HasResult && model.Message.Contains("privado"), "Los errores no se presentan como estadísticas cero");
+        Check(!model.HasResult && model.Message.Contains("privado") && model.KillsPerMatch == "—" && model.PlayedTime == "—", "Los errores no se presentan como estadísticas cero");
         model.Dispose();
         var before = client.Calls;
         await model.SearchAsync();

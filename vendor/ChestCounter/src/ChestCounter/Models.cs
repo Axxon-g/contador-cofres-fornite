@@ -116,6 +116,8 @@ public sealed class Config
     public DateTime? MatchDateFrom { get; set; }
     public DateTime? MatchDateThrough { get; set; }
     public string DemosFolder { get; set; } = "";
+    /// <summary>Opt-in local copies of successfully read replays, inside the data folder.</summary>
+    public bool ArchiveReplays { get; set; }
 
     /// <summary>Open the tool automatically when Fortnite starts (invisible standby process started with Windows).</summary>
     public bool StartWithFortnite { get; set; }

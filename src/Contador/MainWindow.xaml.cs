@@ -76,6 +76,7 @@ public partial class MainWindow : Window
         tracker.AnalysisStarting = () => Dispatcher.Invoke(ShowAnalysisStatus);
         DemosPath.Text = config.DemosFolder;
         OverlayCheck.IsChecked = config.ShowOverlay;
+        ArchiveCheck.IsChecked = config.ArchiveReplays;
         OverlayScale.Value = config.OverlaySize;
         PeriodFrom.Language = PeriodThrough.Language = System.Windows.Markup.XmlLanguage.GetLanguage(System.Globalization.CultureInfo.CurrentCulture.IetfLanguageTag);
         PeriodFrom.SelectedDate = config.MatchDateFrom;
@@ -86,6 +87,7 @@ public partial class MainWindow : Window
         Navigate("summary");
         Loaded += async (_, _) =>
         {
+            _ = CheckReleaseAsync();
             presenceTimer.Start();
             await CheckPresenceAsync();
             await gate.WaitAsync();
@@ -106,6 +108,10 @@ public partial class MainWindow : Window
             catch (Exception ex) { importNotice = "No se pudo recuperar el historial anterior. Consulta el registro en Ajustes."; ShowError(ex); }
             finally { vm.IsBusy = false; gate.Release(); vm.NotifyAll(); }
             if (!closing) { ApplyOverlay(); await ScanAsync(); if (!closing) timer.Start(); }
+        };
+        IsVisibleChanged += async (_, _) =>
+        {
+            if (IsVisible && IsLoaded && !closing) await CheckReleaseAsync();
         };
         timer.Tick += async (_, _) => await ScanAsync();
         presenceTimer.Tick += async (_, _) => await CheckPresenceAsync();
@@ -134,9 +140,9 @@ public partial class MainWindow : Window
             if (userRequested) ShowAnalysisStatus();
             var scan = await Task.Run(() =>
             {
-                var before = data.Matches.Count;
+                var before = tracker.Revision;
                 var added = tracker.Scan();
-                return (Added: added, Changed: added > 0 || data.Matches.Count != before);
+                return (Added: added, Changed: tracker.Revision != before);
             });
             var count = scan.Added;
             if (scan.Changed) Refresh();
@@ -144,22 +150,26 @@ public partial class MainWindow : Window
             var errors = data.ProcessedFiles.Values.Count(v => v.StartsWith("error:", StringComparison.Ordinal));
             vm.Status = !exists ? "No se encontró la carpeta de repeticiones"
                 : count > 0 ? "Partida actualizada"
+                : tracker.ParserBlocked ? "El lector anterior sigue activo"
                 : tracker.IsFinishing ? "La partida terminó. Preparando el recuento"
                 : recording ? "Partida en curso"
-                : errors > 0 ? "Hay repeticiones que no se pudieron leer"
+                : tracker.HasRetries ? "Lectura pendiente de reintento"
                 : "Listo para tu próxima partida";
             var color = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(
-                exists && errors == 0 ? "#A9D5A5" : "#F1CA76");
+                exists ? "#A9D5A5" : "#F1CA76");
             if (vm.StatusColor is not System.Windows.Media.SolidColorBrush current || current.Color != color)
                 vm.StatusColor = new System.Windows.Media.SolidColorBrush(color);
             vm.StatusDetail = !exists ? "Activa Grabar repeticiones en Fortnite o elige la carpeta correcta en Ajustes."
-                : errors > 0 ? $"{errors} archivos con error. Consulta el registro en Ajustes; el lector puede necesitar una actualización."
+                : tracker.ParserBlocked ? "No se iniciarán lecturas simultáneas. Si no termina, sal desde la bandeja y vuelve a abrir Contador."
                 : recording ? "Los cofres se sumarán cuando Fortnite finalice la repetición."
+                : tracker.HasRetries ? "Un archivo tuvo un fallo temporal. Se reintentará automáticamente sin borrar el historial."
+                : errors > 0 ? $"Detección activa · {errors} errores guardados de análisis anteriores. Revisa o reintenta en Ajustes."
                 : "Detección cada segundo. Los cofres se actualizan al finalizar la repetición.";
             if (scan.Changed || userRequested || !reportWritten)
                 vm.Footer = count > 0 ? $"{count} partida(s) añadida(s) · Última revisión {DateTime.Now:HH:mm:ss}"
                     : $"Última revisión {DateTime.Now:HH:mm:ss} · Historial guardado localmente";
             if (importNotice.Length > 0) vm.Footer = importNotice;
+            if (tracker.ArchiveWarning != null) vm.Footer = tracker.ArchiveWarning;
             UpdateOverlay();
             if (scan.Changed || !reportWritten)
             {
@@ -183,6 +193,9 @@ public partial class MainWindow : Window
     {
         vm.Refresh(data, config, sessionCounter);
         profilePicker.Refresh(data, config);
+        TreasuresPanel.SetHistory(
+            Profiles.View(data, config).Matches.Sum(match => (long)match.ChestsOpened),
+            vm.ProfileLabel, vm.PeriodLabel, Profiles.View(data, config).Matches.Count);
         var statisticsProfile = Profiles.Current(data, config);
         var statisticsEpicId = data.Matches.FirstOrDefault(match => statisticsProfile != null
             && Profiles.Key(match) == statisticsProfile.Key && !string.IsNullOrWhiteSpace(match.EpicId))?.EpicId;
@@ -253,7 +266,7 @@ public partial class MainWindow : Window
     }
     private void Navigate(string page)
     {
-        foreach (var (button, key) in new[] { (NavSummary, "summary"), (NavStatistics, "statistics"), (NavHistory, "history"), (NavTeam, "team"), (NavRoutes, "routes"), (NavReport, "report"), (NavSettings, "settings") })
+        foreach (var (button, key) in new[] { (NavSummary, "summary"), (NavStatistics, "statistics"), (NavHistory, "history"), (NavTeam, "team"), (NavRoutes, "routes"), (NavTreasures, "treasures"), (NavReport, "report"), (NavSettings, "settings") })
         {
             button.Background = page == key ? (System.Windows.Media.Brush)FindResource("Gold") : System.Windows.Media.Brushes.Transparent;
             button.Foreground = (System.Windows.Media.Brush)FindResource(page == key ? "Ground" : "Ink");
@@ -264,15 +277,17 @@ public partial class MainWindow : Window
         TeamPanel.Visibility = page == "team" ? Visibility.Visible : Visibility.Collapsed;
         RoutesPanel.Visibility = page == "routes" ? Visibility.Visible : Visibility.Collapsed;
         ReportPanel.Visibility = page == "report" ? Visibility.Visible : Visibility.Collapsed;
-        StatusPanel.Visibility = page is "routes" or "report" or "statistics" ? Visibility.Collapsed : Visibility.Visible;
+        TreasuresPanel.Visibility = page == "treasures" ? Visibility.Visible : Visibility.Collapsed;
+        StatusPanel.Visibility = page is "routes" or "report" or "statistics" or "treasures" ? Visibility.Collapsed : Visibility.Visible;
         SettingsPanel.Visibility = page == "settings" ? Visibility.Visible : Visibility.Collapsed;
         PageTitle.Text = page switch
         {
-            "statistics" => "Estadísticas",
-            "history" => "Historial",
+            "statistics" => "Perfil público",
+            "history" => "Partidas",
             "team" => "Equipo",
             "routes" => "Mapa y rutas",
-            "report" => "Informe",
+            "report" => "Mi progreso",
+            "treasures" => "Tesoros y probabilidades",
             "settings" => "Ajustes",
             _ => "Resumen"
         };
@@ -283,6 +298,7 @@ public partial class MainWindow : Window
             "team" => "Reúne las perspectivas de una misma partida.",
             "routes" => "Explora el mapa y prepara tu próximo recorrido.",
             "report" => "Tu progreso, tendencias y hallazgos.",
+            "treasures" => "Explora las probabilidades sin cambiar tu historial.",
             "settings" => "Personaliza fechas, repeticiones y overlay.",
             _ => "Tu actividad, en un vistazo."
         };
@@ -297,6 +313,7 @@ public partial class MainWindow : Window
     private void HistoryClick(object sender, RoutedEventArgs e) => Navigate("history");
     private void RoutesClick(object sender, RoutedEventArgs e) => Navigate("routes");
     private void ReportPageClick(object sender, RoutedEventArgs e) => Navigate("report");
+    private void TreasuresClick(object sender, RoutedEventArgs e) => Navigate("treasures");
     private void SettingsClick(object sender, RoutedEventArgs e) => Navigate("settings");
     private async void ScanClick(object sender, RoutedEventArgs e) => await ScanAsync(userRequested: true);
     private async void TeamStatsClick(object sender, RoutedEventArgs e)
@@ -426,6 +443,7 @@ public partial class MainWindow : Window
     private void BeginClose()
     {
         closing = true; timer.Stop(); presenceTimer.Stop();
+        releaseCancellation.Cancel();
         StatisticsPanel.Model.Dispose();
         StopVisualCapture();
         vm.Status = "Guardando antes de salir";

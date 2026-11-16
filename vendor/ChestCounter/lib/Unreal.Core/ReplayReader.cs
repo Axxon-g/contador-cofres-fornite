@@ -14,6 +14,8 @@ namespace Unreal.Core;
 /// <typeparam name="T"></typeparam>
 public abstract class ReplayReader<T> where T : Replay, new()
 {
+    /// <summary>Cooperative deadline checks; callers must still prevent overlapping parser instances.</summary>
+    public System.Threading.CancellationToken Cancellation { get; set; }
     /// <summary>
     /// const int32 UNetConnection::DEFAULT_MAX_CHANNEL_SIZE = 32767;
     /// see https://github.com/EpicGames/UnrealEngine/blob/70bc980c6361d9a7d23f6d23ffe322a2d6ef16fb/Engine/Source/Runtime/Engine/Private/NetConnection.cpp#L84
@@ -107,6 +109,7 @@ public abstract class ReplayReader<T> where T : Replay, new()
     /// </summary>
     public virtual T ReadReplay(FArchive archive)
     {
+        Cancellation.ThrowIfCancellationRequested();
         using var allocationBudget = ReplayLimits.Begin();
         Replay = new T();
 
@@ -314,6 +317,7 @@ public abstract class ReplayReader<T> where T : Replay, new()
     {
         while (!archive.AtEnd())
         {
+            Cancellation.ThrowIfCancellationRequested();
             // ChestCounter patch: a replay still being recorded can end in the middle of a chunk. Stop at the
             // last complete chunk instead of reading past the end.
             if (archive is BinaryReader whole && whole.Length - archive.Position < 8)
@@ -421,6 +425,7 @@ public abstract class ReplayReader<T> where T : Replay, new()
         using var binaryArchive = Decompress(decrypted);
         while (!binaryArchive.AtEnd())
         {
+            Cancellation.ThrowIfCancellationRequested();
             ReadDemoFrameIntoPlaybackPackets(binaryArchive);
         }
         replayDataIndex++;
@@ -664,6 +669,7 @@ public abstract class ReplayReader<T> where T : Replay, new()
         while (true)
         {
             var externalDataNumBits = archive.ReadIntPacked();
+            Cancellation.ThrowIfCancellationRequested();
             if (externalDataNumBits == 0)
             {
                 return;
@@ -912,6 +918,7 @@ public abstract class ReplayReader<T> where T : Replay, new()
         var @continue = true;
         while (@continue)
         {
+            Cancellation.ThrowIfCancellationRequested();
             if (archive.HasLevelStreamingFixes())
             {
                 // seenLevelIndex
@@ -1335,6 +1342,7 @@ public abstract class ReplayReader<T> where T : Replay, new()
         //  Read chunks of actor content
         while (!bunch.Archive.AtEnd())
         {
+            Cancellation.ThrowIfCancellationRequested();
             var repObject = ReadContentBlockPayload(bunch, out var bObjectDeleted, out var bHasRepLayout, out var payload);
 
             // Infinite-loop guard (matches UE UActorChannel::ProcessBunch, which checks Bunch.IsError()
@@ -1567,6 +1575,7 @@ public abstract class ReplayReader<T> where T : Replay, new()
             while (true)
             {
                 var handle = archive.ReadIntPacked();
+                Cancellation.ThrowIfCancellationRequested();
                 if (handle == 0 || archive.IsError)
                 {
                     break;
@@ -1858,6 +1867,7 @@ public abstract class ReplayReader<T> where T : Replay, new()
         while (true)
         {
             var handle = archive.ReadIntPacked();
+            Cancellation.ThrowIfCancellationRequested();
 
             if (handle == 0)
             {
@@ -2165,6 +2175,7 @@ public abstract class ReplayReader<T> where T : Replay, new()
         //var rejectedChannels = new Dictionary<uint, uint>();
         while (!bitReader.AtEnd())
         {
+            Cancellation.ThrowIfCancellationRequested();
             // For demo backwards compatibility, old replays still have this bit
             if (bitReader.EngineNetworkVersion < EngineNetworkVersionHistory.HISTORY_ACKS_INCLUDED_IN_HEADER)
             {

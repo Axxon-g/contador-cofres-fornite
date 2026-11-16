@@ -1,11 +1,11 @@
-﻿<UserControl x:Class="Contador.PlayerStatisticsView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<UserControl x:Class="Contador.PlayerStatisticsView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="VisibleWhenTrue" />
     </UserControl.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <StackPanel>
-            <TextBlock Text="Busca un jugador. Sin claves ni contraseñas." Style="{StaticResource SectionTitle}" TextWrapping="Wrap" />
-            <TextBlock Text="Escribe un nombre Epic, PlayStation o Xbox. La consulta pasa por el servicio de AXXON; la clave de Fortnite-API permanece en el servidor. No incluye cofres ni recompensas." Foreground="{StaticResource Muted}" Margin="0,6,0,18" TextWrapping="Wrap" />
+            <TextBlock Text="El rendimiento de cada jugador." Style="{StaticResource SectionTitle}" TextWrapping="Wrap" />
+            <TextBlock Text="Consulta victorias, eliminaciones y rendimiento por modalidad. Las estadísticas públicas no incluyen cofres ni recompensas." Foreground="{StaticResource Muted}" Margin="0,6,0,18" TextWrapping="Wrap" />
             <CheckBox Content="Usar cuenta seleccionada en el contador" IsChecked="{Binding UseDetectedAccount}" Margin="0,0,0,6" />
             <TextBlock Text="{Binding DetectedProfile}" Foreground="{StaticResource Sea}" Margin="0,0,0,14" TextWrapping="Wrap" />
             <WrapPanel>
@@ -18,7 +18,7 @@
                     <ComboBox x:Name="AccountTypeInput" ItemsSource="{Binding AccountTypes}" SelectedItem="{Binding SelectedAccountType}" DisplayMemberPath="Label" />
                 </StackPanel>
                 <StackPanel Width="180" Margin="0,0,12,12">
-                    <Label Content="Período de la API" Target="{Binding ElementName=WindowInput}" Foreground="{StaticResource Ink}" Padding="0,0,0,6" />
+                    <Label Content="Período" Target="{Binding ElementName=WindowInput}" Foreground="{StaticResource Ink}" Padding="0,0,0,6" />
                     <ComboBox x:Name="WindowInput" ItemsSource="{Binding Windows}" SelectedItem="{Binding SelectedWindow}" DisplayMemberPath="Label" />
                 </StackPanel>
                 <StackPanel Width="190" Margin="0,0,0,12">
@@ -34,6 +34,12 @@
             <StackPanel Visibility="{Binding HasResult, Converter={StaticResource VisibleWhenTrue}}">
                 <TextBlock Text="{Binding AccountName}" FontSize="25" FontWeight="SemiBold" Foreground="{StaticResource Gold}" TextWrapping="Wrap" />
                 <TextBlock Text="{Binding ResultContext}" Foreground="{StaticResource Muted}" Margin="0,4,0,4" TextWrapping="Wrap" />
+                <WrapPanel Margin="0,6,0,10">
+                    <TextBlock Text="Tiempo jugado: " Foreground="{StaticResource Muted}" />
+                    <TextBlock Text="{Binding PlayedTime}" Margin="0,0,20,0" />
+                    <TextBlock Text="Nivel del pase: " Foreground="{StaticResource Muted}" />
+                    <TextBlock Text="{Binding BattlePassLevel}" />
+                </WrapPanel>
                 <TextBlock Text="{Binding Updated}" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,0,0,18" TextWrapping="Wrap" />
                 <WrapPanel Margin="0,0,0,12">
                     <StackPanel Width="140" Margin="0,0,14,16">
@@ -57,8 +63,8 @@
                         <TextBlock Text="Porcentaje de victorias" Foreground="{StaticResource Muted}" TextWrapping="Wrap" />
                     </StackPanel>
                     <StackPanel Width="140" Margin="0,0,0,16">
-                        <TextBlock Text="{Binding BattlePassLevel}" FontSize="32" FontWeight="SemiBold" TextWrapping="Wrap" />
-                        <TextBlock Text="Nivel del pase actual" Foreground="{StaticResource Muted}" TextWrapping="Wrap" />
+                        <TextBlock Text="{Binding KillsPerMatch}" FontSize="32" FontWeight="SemiBold" TextWrapping="Wrap" />
+                        <TextBlock Text="Eliminaciones / partida" Foreground="{StaticResource Muted}" TextWrapping="Wrap" />
                     </StackPanel>
                 </WrapPanel>
                 <DataGrid ItemsSource="{Binding Modes}" MaxHeight="260" AutomationProperties.Name="Estadísticas por modalidad" HorizontalScrollBarVisibility="Auto">

@@ -42,3 +42,15 @@ ReplayAnalyzer traduce los paquetes del lector a ContainerInteractionLedger. Est
 TeamReplayReconciliation verifica sesión, cuenta y pertenencia al equipo antes de sustituir una contribución observada. No muta MatchRecord ni utiliza nombres como identidad. TeamAccounting, Dashboard.Team, las filas de la última partida y la instantánea del overlay consumen esa misma conciliación. MainWindow.TeamReplays coordina selección, lectura fuera del hilo de interfaz y guardado bajo la exclusión compartida. El historial guarda resúmenes mínimos separados en TeamReplaySources; HistoryImporter los conserva.
 
 La exactitud personal no se infiere de proximidad espacial. Los datos ausentes del equipo siguen siendo desconocidos, no ceros confirmados. Las fuentes complementarias no se añaden como partidas personales. Investigación, procedencia y limitaciones: [INVESTIGACION-v2.0.md](INVESTIGACION-v2.0.md).
+
+## Contador 2.2
+
+SummaryView y TreasureOddsView encapsulan la presentación sin acceder por su cuenta
+al historial. TreasureProbability y MissingMatchEstimate son cálculos puros; las
+simulaciones no se guardan como aperturas. ReplayRetryPolicy, ReplayArchive y
+ReplayDiagnostics delimitan recuperación, copias opcionales y diagnóstico reducido.
+ReleaseChecker solo consulta metadatos públicos de un destino fijo; la ventana
+controla cancelación, mensajes y apertura manual del enlace oficial. No hay un
+instalador automático ni se incorpora el actualizador heredado del CLI.
+
+[Detalles de recuperación](ADAPTACION-2.2.md) · [Interfaz](DISENO-2.2.md).

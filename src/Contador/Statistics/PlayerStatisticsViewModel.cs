@@ -63,6 +63,8 @@ public sealed class PlayerStatisticsViewModel : INotifyPropertyChanged, IDisposa
     public string Kills { get; private set; } = "—";
     public string Kd { get; private set; } = "—";
     public string WinRate { get; private set; } = "—";
+    public string KillsPerMatch { get; private set; } = "—";
+    public string PlayedTime { get; private set; } = "—";
     public string BattlePassLevel { get; private set; } = "—";
     public IReadOnlyList<ModeRow> Modes { get; private set; } = [];
 
@@ -146,6 +148,10 @@ public sealed class PlayerStatisticsViewModel : INotifyPropertyChanged, IDisposa
         Kills = Count(overall?.Kills);
         Kd = overall?.Kd?.ToString("N2") ?? "—";
         WinRate = overall?.WinRate?.ToString("N1") is string rate ? rate + " %" : "—";
+        KillsPerMatch = overall?.Kills is long kills && overall.Matches is > 0
+            ? ((double)kills / overall.Matches.Value).ToString("N2") : "—";
+        PlayedTime = overall?.MinutesPlayed is long minutes
+            ? $"{minutes / 60:N0} h {minutes % 60} min" : "—";
         BattlePassLevel = Count(snapshot.BattlePassLevel);
         Modes = snapshot.Modes.Select(mode => new ModeRow(mode.Mode, Count(mode.Matches), Count(mode.Wins), Count(mode.Kills),
             mode.Kd?.ToString("N2") ?? "—", mode.WinRate?.ToString("N1") is string value ? value + " %" : "—")).ToList();
@@ -156,7 +162,7 @@ public sealed class PlayerStatisticsViewModel : INotifyPropertyChanged, IDisposa
         HasResult = false;
         Modes = [];
         AccountName = ResultContext = Updated = "";
-        Wins = Matches = Kills = Kd = WinRate = BattlePassLevel = "—";
+        Wins = Matches = Kills = Kd = WinRate = BattlePassLevel = KillsPerMatch = PlayedTime = "—";
     }
 
     public void Cancel(bool showMessage = false)

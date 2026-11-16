@@ -1,0 +1,123 @@
+<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="Contador.SummaryView">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="0,0,14,16">
+            <Border x:Name="LiveSection" Background="{StaticResource Panel}" CornerRadius="12" Padding="20" Margin="0,0,0,16">
+                <StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Margin="0,0,16,0">
+                            <TextBlock Text="Cuenta mientras juegas" FontSize="20" FontWeight="SemiBold" />
+                            <TextBlock Text="Opcional · estimación visual en este PC" FontSize="12" Margin="0,5,0,0" />
+                        </StackPanel>
+                        <Button x:Name="LiveToggle" Grid.Column="1" Content="{Binding VisualCaptureAction}" Click="ToggleLiveClick" Style="{StaticResource PrimaryButton}" Margin="0" Padding="14,12" AutomationProperties.Name="{Binding VisualCaptureAction}" />
+                    </Grid>
+                    <WrapPanel Margin="0,12,0,0">
+                        <TextBlock Text="{Binding VisualStateLabel}" FontWeight="SemiBold" Foreground="{StaticResource Gold}" Margin="0,0,14,0" />
+                        <TextBlock Text="{Binding VisualCount, StringFormat={}{0} cofres estimados}" Margin="0,0,14,0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding VisualCaptureEnabled}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBlock Text="No se guardan ni envían capturas." FontSize="12" />
+                    </WrapPanel>
+                    <Expander Header="Cómo funciona y estado del conteo" Foreground="{StaticResource Muted}" Margin="0,10,0,0">
+                        <StackPanel Margin="0,10,0,0">
+                            <TextBlock Text="{Binding VisualStatus}" FontSize="12" />
+                            <TextBlock Text="Es una estimación: los cofres rotos sin aviso pueden sumarse al finalizar la repetición." FontSize="12" Margin="0,8,0,0" />
+                            <TextBlock Text="{Binding VisualDiagnostic}" FontSize="11" Margin="0,8,0,0" />
+                        </StackPanel>
+                    </Expander>
+                </StackPanel>
+            </Border>
+            <Border Background="{StaticResource Panel}" CornerRadius="12" Padding="20" Margin="0,0,0,16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1.2*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Margin="0,0,20,0">
+                        <TextBlock Text="Tus cofres registrados" FontSize="14" Foreground="{StaticResource Muted}" />
+                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                            <Image Source="/Contador;component/Assets/pirate-chest.png" Width="42" Height="42" Margin="0,0,12,0" Stretch="Uniform" IsHitTestVisible="False" />
+                            <TextBlock Text="{Binding Total}" FontSize="48" FontWeight="SemiBold" Foreground="{StaticResource Gold}" />
+                        </StackPanel>
+                        <TextBlock Text="Aperturas propias leídas de tus repeticiones" FontSize="11" Foreground="{StaticResource Muted}" Margin="0,8,0,0" />
+                    </StackPanel>
+                    <Grid Grid.Column="1">
+                        <Image Source="/Contador;component/Assets/treasure-hunters.jpg" Width="170" Height="112" HorizontalAlignment="Right" Opacity="0.12" Stretch="UniformToFill" IsHitTestVisible="False" ClipToBounds="True" />
+                        <StackPanel>
+                            <TextBlock Text="Esta sesión" Foreground="{StaticResource Muted}" FontSize="14" />
+                            <TextBlock Text="{Binding Session}" FontSize="34" FontWeight="SemiBold" Margin="0,8,0,0" />
+                            <TextBlock Text="{Binding SessionDetail}" FontSize="11" Foreground="{StaticResource Muted}" Margin="0,6,0,0" />
+                            <TextBlock Text="{Binding LastMatch}" FontSize="12" Margin="0,10,0,0" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+            <Border Background="{StaticResource Panel}" CornerRadius="12" Padding="20" Margin="0,0,0,16">
+                <StackPanel>
+                    <UniformGrid Columns="4" Margin="0">
+                        <StackPanel Margin="0,0,12,0">
+                            <TextBlock Text="{Binding Report.Matches, StringFormat={}{0:N0}}" FontSize="25" FontWeight="SemiBold" />
+                            <TextBlock Text="Partidas" FontSize="12" Foreground="{StaticResource Muted}" />
+                        </StackPanel>
+                        <StackPanel Margin="0,0,12,0">
+                            <TextBlock Text="{Binding Report.Average, StringFormat={}{0:0.0}}" FontSize="25" FontWeight="SemiBold" />
+                            <TextBlock Text="Cofres por partida" FontSize="12" Foreground="{StaticResource Muted}" />
+                        </StackPanel>
+                        <StackPanel Margin="0,0,12,0">
+                            <TextBlock Text="{Binding Report.Best, StringFormat={}{0:N0}}" FontSize="25" FontWeight="SemiBold" />
+                            <TextBlock Text="Mejor partida" FontSize="12" Foreground="{StaticResource Muted}" />
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Text="{Binding Report.Treasures, StringFormat={}{0:N0}}" FontSize="25" FontWeight="SemiBold" />
+                            <TextBlock Text="Recompensas propias" FontSize="12" Foreground="{StaticResource Muted}" />
+                        </StackPanel>
+                    </UniformGrid>
+                </StackPanel>
+            </Border>
+            <Border Background="{StaticResource Panel}" CornerRadius="12" Padding="20" Margin="0,0,0,16">
+                <StackPanel>
+                    <Grid Margin="0,0,0,12">
+                        <TextBlock Text="Últimas partidas" Style="{StaticResource SectionTitle}" />
+                        <Button Content="Ver todas" Click="HistoryClick" HorizontalAlignment="Right" Padding="12,7" Margin="0" />
+                    </Grid>
+                    <TextBlock Text="{Binding EmptyMessage}" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,0,0,8" />
+                    <DataGrid ItemsSource="{Binding Recent}" MaxHeight="210" AutomationProperties.Name="Últimas partidas">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Fecha" Binding="{Binding Date}" SortMemberPath="DateSort" Width="*" />
+                            <DataGridTextColumn Header="Modo" Binding="{Binding Mode}" Width="1.2*" />
+                            <DataGridTextColumn Header="Cofres" Binding="{Binding Chests}" Width="85" />
+                            <DataGridTextColumn Header="Posición" Binding="{Binding Placement}" Width="85" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <WrapPanel Margin="0,14,0,0">
+                        <Button Content="Ver mi progreso" Click="ReportClick" Padding="12,8" Margin="0,0,10,8" />
+                        <Button Content="Consultar perfil público" Click="StatisticsClick" Padding="12,8" Margin="0,0,0,8" />
+                    </WrapPanel>
+                </StackPanel>
+            </Border>
+            <Border Background="{StaticResource Panel}" CornerRadius="12" Padding="20" Margin="0,0,0,16">
+                <StackPanel>
+                    <Expander Header="Recompensas y calidad del registro" Foreground="{StaticResource Muted}" Margin="0">
+                        <StackPanel Margin="0,12,0,0">
+                            <TextBlock Text="{Binding OwnChestRewards}" FontSize="12" />
+                            <TextBlock Text="{Binding OtherOwnRewards}" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,8,0,0" />
+                            <TextBlock Text="Activa Grabar repeticiones en Fortnite → Ajustes → Juego. El recuento se guarda cuando termina la repetición compatible." FontSize="12" Foreground="{StaticResource Muted}" Margin="0,12,0,0" />
+                        </StackPanel>
+                    </Expander>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

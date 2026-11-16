@@ -23,3 +23,10 @@ dist/
 /history.json
 /data.json
 /config.json
+
+# Contexto local de diseño y duplicados de sincronización (se conservan en disco)
+.impeccable/
+/DESIGN-Axxon.md
+/PRODUCT-Axxon.md
+/docs/images/equipo-fuentes-2.0-Axxon.png
+/tests/Contador.Checks/Contador.Checks-Axxon.csproj

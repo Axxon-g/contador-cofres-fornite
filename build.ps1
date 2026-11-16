@@ -1,4 +1,4 @@
-﻿param([string]$SigningCertificateThumbprint, [uri]$TimestampServer)
+param([string]$SigningCertificateThumbprint, [uri]$TimestampServer)
 $ErrorActionPreference = 'Stop'
 Set-Location $PSScriptRoot
 if (-not (Get-Command dotnet -ErrorAction SilentlyContinue)) { throw 'Instala el SDK de .NET 10 para Windows x64 desde https://dotnet.microsoft.com/download/dotnet/10.0' }
@@ -18,7 +18,8 @@ $desktopChecks = @(
     @{ Arguments = @('--team-only'); Label = 'equipo' },
     @{ Arguments = @('--live-view'); Label = 'conteo opcional' },
     @{ Arguments = @('--shell-refresh'); Label = 'pantallas y fechas' },
-    @{ Arguments = @('--stats-view'); Label = 'estadísticas públicas sin clave' }
+    @{ Arguments = @('--stats-view'); Label = 'estadísticas públicas sin clave' },
+    @{ Arguments = @('--treasure-view'); Label = 'tesoros y simulación' }
 )
 foreach ($check in $desktopChecks) {
     & dotnet run --project tests/Contador.DesktopChecks/Contador.DesktopChecks.csproj -c Release --no-build --no-restore -- @($check.Arguments)

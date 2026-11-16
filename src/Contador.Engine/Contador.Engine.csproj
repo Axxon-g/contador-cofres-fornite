@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0-windows</TargetFramework>
+    <Version>2.2.0</Version>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -27,6 +28,8 @@
     <Compile Include="../../vendor/ChestCounter/src/ChestCounter/Profiles.cs" />
     <Compile Include="../../vendor/ChestCounter/src/ChestCounter/ReplayAnalyzer.cs" />
     <Compile Include="../../vendor/ChestCounter/src/ChestCounter/ReplayFileStability.cs" />
+    <Compile Include="../../vendor/ChestCounter/src/ChestCounter/ReplayRetryPolicy.cs" />
+    <Compile Include="../../vendor/ChestCounter/src/ChestCounter/ReplayArchive.cs" />
     <Compile Include="../../vendor/ChestCounter/src/ChestCounter/ReportWriter.cs" />
     <Compile Include="../../vendor/ChestCounter/src/ChestCounter/Tracker.cs" />
   </ItemGroup>

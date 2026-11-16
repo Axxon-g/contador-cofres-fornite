@@ -1,5 +1,10 @@
 # Changes made to FortniteReplayDecompressor
 
+Contador 2.2: `Unreal.Core/ReplayReader.cs` exposes an optional cancellation token
+and checks it at replay entry and chunk/packet/property loops. The coordinator
+requests cancellation at its deadline and prevents overlap while the old thread
+is still alive. Default tokens preserve normal parsing behavior.
+
 Original code: https://github.com/Shiqan/FortniteReplayDecompressor (MIT license, see LICENSE-FortniteReplayDecompressor), commit 76f74c1.
 
 Changes for ChestCounter:
