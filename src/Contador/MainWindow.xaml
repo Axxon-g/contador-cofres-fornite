@@ -23,6 +23,12 @@
                             <AccessText Text="_Resumen" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
+                    <Button x:Name="NavStatistics" Click="StatisticsClick" Style="{StaticResource NavigationButton}">
+                        <StackPanel xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Orientation="Horizontal">
+                            <Path Data="M 2,15 L 2,9 M 7,15 L 7,4 M 12,15 L 12,1" Width="16" Height="16" Stretch="Uniform" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.5" VerticalAlignment="Center" Margin="0,0,12,0" />
+                            <AccessText Text="_Estadísticas" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
                     <Button x:Name="NavHistory" Click="HistoryClick" Style="{StaticResource NavigationButton}">
                         <StackPanel Orientation="Horizontal">
                             <Path Data="M 3,2 L 13,2 L 13,15 L 3,15 Z M 5,6 L 11,6 M 5,10 L 11,10" Width="16" Height="16" Stretch="Uniform" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.5" VerticalAlignment="Center" Margin="0,0,12,0" />
@@ -145,6 +151,7 @@
                         </Border>
                     </StackPanel>
                 </ScrollViewer>
+                <local:PlayerStatisticsView x:Name="StatisticsPanel" Visibility="Collapsed" />
                 <Grid x:Name="HistoryPanel" Visibility="Collapsed" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />

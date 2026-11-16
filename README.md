@@ -1,10 +1,10 @@
 <div align="center">
   <img src="docs/images/banner.svg" width="960" alt="Contador — Tu botín, en cifras. Una aplicación de escritorio para Fortnite.">
-  <h1>Contador de cofres para Fortnite · 2.0</h1>
+  <h1>Contador de cofres para Fortnite · 2.0.1</h1>
   <p><strong>Tu botín, en cifras.</strong><br>Historial personal, equipo, mapa, informe y overlay para Windows.</p>
   <p>
     <img src="https://img.shields.io/badge/Windows-10%20%2F%2011-183D60?style=flat-square" alt="Windows 10 y 11">
-    <img src="https://img.shields.io/badge/x64-2.0.0-FFD05A?style=flat-square&amp;labelColor=80273C" alt="Versión 2.0.0 para x64">
+    <img src="https://img.shields.io/badge/x64-2.0.1-FFD05A?style=flat-square&amp;labelColor=80273C" alt="Versión 2.0.1 para x64">
     <a href="https://github.com/Axxon-g/contador-cofres-fornite/releases"><img src="https://img.shields.io/github/downloads/Axxon-g/contador-cofres-fornite/Contador.exe?style=flat-square&amp;label=Descargas&amp;color=FFD05A&amp;labelColor=80273C&amp;displayAssetName=false" alt="Descargas acumuladas del ejecutable"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/Licencia-MIT-183D60?style=flat-square" alt="Licencia MIT"></a>
   </p>
@@ -19,7 +19,14 @@
 > [!IMPORTANT]
 > El historial se calcula con **repeticiones locales finalizadas**. Activa **Grabar repeticiones** en Fortnite. El conteo visual en tiempo real es opcional y experimental; no sustituye al historial ni garantiza detectar cada apertura.
 
-La descarga apunta a la última versión **publicada** en GitHub, que puede ser anterior a 2.0 hasta que se publique su Release. La insignia cuenta descargas del archivo, no personas únicas, y puede actualizarse con retraso.
+La descarga apunta a la última versión **publicada** en GitHub, que puede ser anterior a 2.0.1 hasta que se publique su Release. La insignia cuenta descargas del archivo, no personas únicas, y puede actualizarse con retraso.
+
+## Lo nuevo en 2.0.1
+
+- **Estadísticas públicas:** busca un jugador por nombre Epic, PlayStation o Xbox desde el nuevo apartado bajo Resumen. No necesitas clave de API ni contraseña.
+- **Conexión corregida:** la app consulta directamente el dominio definitivo del servicio de AXXON, evitando la redirección que impedía cargar los resultados.
+- **Privacidad documentada:** solo se consulta el nombre o ID y los filtros elegidos. La clave del proveedor permanece en el servidor; replays, capturas e historial de cofres no se envían.
+- Se mantienen las funciones de 2.0 y el historial local. [Notas de actualización](docs/RELEASE-v2.0.1.md).
 
 ## Lo nuevo en 2.0
 
@@ -55,7 +62,7 @@ Se mantienen el mapa con terreno HD opcional, las rutas editables, filtros de fe
 
 El apartado **Estadísticas**, debajo de Resumen, permite buscar por nombre Epic, PlayStation o Xbox, o utilizar el perfil local. La consulta pasa por el servicio de AXXON; los usuarios no configuran claves y el ejecutable no incluye la clave del proveedor. [Configuración del servicio y límites](docs/ESTADISTICAS-2.0.md).
 
-**Pendiente de activación pública:** el sitio axxon.dev debe desplegar la API y configurar las variables privadas del servidor antes de distribuir esta compilación. No se muestran datos ficticios como resultado real.
+El servicio está disponible en [AXXON](https://www.axxon.dev/fortnite-tracker/). El nombre o ID público y los filtros se envían a AXXON y Fortnite-API; el alojamiento puede registrar datos técnicos de la consulta, incluida la dirección IP. Los resultados pueden proceder de una caché de hasta cinco minutos. Las cuentas privadas o los límites del proveedor pueden impedir una consulta. No se muestran datos ficticios como resultado real.
 
 ## Equipo · experimental
 
@@ -129,7 +136,7 @@ Al cerrar la ventana puedes **Mantener en segundo plano**, **Salir** o **Cancela
 
 **No se piden contraseñas, correo, códigos de verificación ni acceso a tu cuenta de Epic.** Los perfiles se identifican a partir de repeticiones locales. El historial y los ajustes se guardan en `%APPDATA%\ContadorModern`.
 
-El análisis no modifica el juego ni lee su memoria. El conteo visual requiere permiso y no guarda ni envía capturas. La app no envía estadísticas a un servicio de seguimiento. El modo HD sí realiza conexiones al proveedor externo para obtener imágenes, y abrir enlaces utiliza tu navegador.
+El análisis no modifica el juego ni lee su memoria. El conteo visual requiere permiso y no guarda ni envía capturas. Consultar **Estadísticas** envía únicamente el nombre o ID público y los filtros al servicio de AXXON y a Fortnite-API; no transmite replays, capturas ni historial local. La opción de usar la cuenta seleccionada puede actualizar esa consulta al cambiar de perfil después de buscar. El modo HD realiza conexiones a Fortnite.GG para obtener imágenes, y abrir enlaces utiliza tu navegador.
 
 Contador usa un lector comunitario sobre archivos generados por Fortnite. **No es oficial ni está aprobado por Epic Games; no se garantiza inmunidad a sanciones.**
 
@@ -195,7 +202,7 @@ cd contador-cofres-fornite
 .\build.bat
 ```
 
-El script comprueba el motor y los controles de escritorio y genera **`dist\2.0.0\Contador.exe`**. Cierra la app antes de sustituir ese archivo. La publicación es autocontenida; no hace falta distribuir los archivos de código ni ejecutar scripts en el equipo del usuario.
+El script comprueba el motor y los controles de escritorio y genera **`dist\2.0.1\Contador.exe`**. Cierra la app antes de sustituir ese archivo. La publicación es autocontenida; no hace falta distribuir los archivos de código ni ejecutar scripts en el equipo del usuario.
 
 ```text
 src/Contador/              Interfaz WPF, captura opcional y coordinación
@@ -205,7 +212,7 @@ vendor/                   Lector y dependencias con sus licencias
 docs/                     Uso, seguridad, investigación y versiones
 ```
 
-- [Notas de la versión 2.0](docs/RELEASE-v2.0.0.md)
+- [Notas de la versión 2.0.1](docs/RELEASE-v2.0.1.md) · [Versión 2.0](docs/RELEASE-v2.0.0.md)
 - [Arquitectura](docs/ARQUITECTURA.md) · [Verificación y límites](VERIFICACION.md)
 - [Investigación de lectores y conciliación](docs/INVESTIGACION-v2.0.md)
 - [Procedencia y licencias de dependencias](vendor/UPSTREAM.md)

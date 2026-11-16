@@ -17,7 +17,8 @@ $desktopChecks = @(
     @{ Arguments = @('--tray-only'); Label = 'bandeja' },
     @{ Arguments = @('--team-only'); Label = 'equipo' },
     @{ Arguments = @('--live-view'); Label = 'conteo opcional' },
-    @{ Arguments = @('--shell-refresh'); Label = 'pantallas y fechas' }
+    @{ Arguments = @('--shell-refresh'); Label = 'pantallas y fechas' },
+    @{ Arguments = @('--stats-view'); Label = 'estadísticas públicas sin clave' }
 )
 foreach ($check in $desktopChecks) {
     & dotnet run --project tests/Contador.DesktopChecks/Contador.DesktopChecks.csproj -c Release --no-build --no-restore -- @($check.Arguments)

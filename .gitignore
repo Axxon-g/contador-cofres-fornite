@@ -3,3 +3,23 @@
 dist/
 .vs/
 *.user
+
+# Credenciales y certificados privados
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+*.pem
+*.key
+**/credentials*.json
+**/secrets*.json
+
+# Archivos locales de usuario y diagnósticos
+*.replay
+*.dmp
+*.log
+/ContadorModern/
+/history.json
+/data.json
+/config.json

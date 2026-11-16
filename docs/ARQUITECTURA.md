@@ -25,6 +25,8 @@ La compilación completa con Windows SDK y las pruebas OCR sobre imágenes gener
 
 ## Límites que deben conservarse
 
+El apartado Estadísticas utiliza `PlayerStatisticsViewModel` → `PlayerStatisticsClient` → servicio fijo HTTPS de AXXON. La consulta inicial requiere pulsar Consultar; la cuenta local es opcional. Solo salen nombre/ID público y filtros, sin historial, capturas ni replays. El cliente no almacena claves, no envía Authorization/cookies y no sigue redirecciones. El JSON remoto se limita a 256 KiB y profundidad 12, valida identidad por ID y conserva datos ausentes. Cancelación y generación de solicitud impiden presentar resultados de un perfil anterior. La clave del proveedor y los límites compartidos pertenecen al servidor web, no al ejecutable.
+
 - Los datos personales y el registro parcial del equipo no se sustituyen entre sí.
 - Un dato de equipo ausente no equivale a cero; las atribuciones estimadas no son confirmaciones.
 - El historial se guarda en AppData, separado del ejecutable y de las rutas manuales del mapa.

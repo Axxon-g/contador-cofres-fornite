@@ -3,7 +3,7 @@ namespace Contador;
 public static class AppVersion
 {
     private static readonly Version Current = typeof(AppVersion).Assembly.GetName().Version
-        ?? new Version(2, 0, 0);
+        ?? new Version(2, 0, 1);
 
     public static string Full => $"{Current.Major}.{Current.Minor}.{Math.Max(0, Current.Build)}";
     public static string Display => Current.Build > 0 ? Full : $"{Current.Major}.{Current.Minor}";

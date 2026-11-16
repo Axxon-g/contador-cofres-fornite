@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-15T15:16:55.471434+00:00",
+  "generatedAt": "2026-11-15T18:42:20.095679+00:00",
   "title": "Design System: Contador desktop",
   "extensions": {
     "colorMeta": {
@@ -82,7 +82,15 @@
         "stretch": "Uniform",
         "accessibleName": "Cofre pirata"
       }
-    ]
+    ],
+    "nativeStatisticsSurface": {
+      "navigationPosition": 2,
+      "metricSize": 32,
+      "metricColumnWidth": 140,
+      "layout": "WrapPanel and native read-only DataGrid",
+      "credentialInput": false,
+      "palette": "Unchanged shared App.xaml resources"
+    }
   },
   "components": [
     {

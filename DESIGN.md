@@ -112,9 +112,9 @@ Jerarquía funcional: encabezado de página 27, título compartido 19, cuerpo 14
 
 ## Layout
 
-Ventana principal 1180 × 820, mínimo 860 × 640. Rail fijo de 184 unidades; contenido flexible con margen horizontal 28 y vertical 24. Cabecera persistente con título, tarea y selector de cuenta de 210 unidades. Estado compartido compacto separado por línea; mapa e informe usan su propio contexto.
+Ventana principal 1180 × 820, mínimo 860 × 640. Rail fijo de 184 unidades; contenido flexible con margen horizontal 28 y vertical 24. Cabecera persistente con título, tarea y selector de cuenta de 210 unidades. Estado compartido compacto separado por línea; mapa, informe y estadísticas usan su propio contexto.
 
-Seis espacios: Resumen, Historial, Equipo, Mapa y rutas, Informe y Ajustes. Desplazamiento vertical donde se requiere; tablas con desplazamiento horizontal automático. WrapPanel permite redistribuir grupos de controles. No hay puntos de ruptura CSS. El overlay heredado tiene composición y configuración independientes.
+Siete espacios: Resumen, Estadísticas, Historial, Equipo, Mapa y rutas, Informe y Ajustes. Desplazamiento vertical donde se requiere; tablas con desplazamiento horizontal automático. WrapPanel permite redistribuir grupos de controles. No hay puntos de ruptura CSS. El overlay heredado tiene composición y configuración independientes.
 
 **The Task First Rule.** La primera vista presenta cuenta, tarea y estado compacto antes del detalle; la evidencia extensa se consulta en tablas o desplegables.
 
@@ -138,7 +138,7 @@ Campos oscuros de panel, texto marfil, cursor dorado, selección tonal y borde d
 
 ### Navigation
 
-Rail compacto con moneda, nombre, seis botones de icono y texto y versión al pie. Activo con fondo dorado y texto oscuro; inactivo transparente y texto marfil. El título de página es turquesa.
+Rail compacto con moneda, nombre, siete botones de icono y texto y versión al pie. Activo con fondo dorado y texto oscuro; inactivo transparente y texto marfil. El título de página es turquesa.
 
 ### Cards / Containers
 
@@ -151,6 +151,10 @@ Tablas de solo lectura, filas compartidas de 46 unidades, alternancia fondo/pane
 ### Live reading
 
 Acción dorada para activar y secundaria para detener. Estimación oculta al estar apagado, estado textual visible y diagnóstico plegado por defecto. Las filas de jugadores existentes incluyen nombre, origen y contexto de partida.
+
+### Public player statistics
+
+Estadísticas ocupa el segundo lugar del rail, bajo Resumen, y conserva paleta y controles WPF. La primera vista pide nombre Epic, PlayStation o Xbox; ofrece cuenta local detectada como opción, filtros y acción de consulta, sin campos de credenciales. Estado textual accesible, resultados con cuenta/contexto/fecha, seis métricas SemiBold de 32 unidades en columnas adaptables de 140 y tabla por modalidad con desplazamiento horizontal. Datos ausentes usan raya, no cero. Los errores explican una acción concreta. No usa la franja del lector de repeticiones; el proveedor y sus límites se registran en PRODUCT.md y el brief de superficie.
 
 ## Do's and Don'ts
 

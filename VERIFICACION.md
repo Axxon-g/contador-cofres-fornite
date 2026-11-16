@@ -156,3 +156,26 @@ La compilación conserva advertencias del lector heredado. NuGet emitió NU1900 
 El script compila cada proyecto de pruebas una vez, ejecuta los escenarios sin reconstruirlos y publica en staging antes de reemplazar únicamente Contador.exe. Ya no elimina archivos ajenos de dist.
 
 La primera copia final fue bloqueada por la app abierta. Tras cerrarla, se reemplazó dist/2.0.0/Contador.exe y se verificó su igualdad SHA-256 con staging; se preservaron los archivos adicionales del usuario. El ejecutable queda fuera de Git y se adjunta a la Release.
+
+
+## Consulta mediante servicio compartido
+
+Se retiró la variante de claves por usuario y su almacén de credenciales. El cliente utiliza https://axxon.dev/api/fortnite-stats, sin Authorization ni valores privados. Compilación de la aplicación y publicación autocontenida verificadas en una copia de trabajo; 301 comprobaciones del motor, 9 del panel público y 18 del conjunto de pantallas aprobadas. Las pruebas usan datos ficticios y no una clave real.
+
+El servicio web supera 11 pruebas automatizadas de validación, normalización, ausencia de credenciales en respuestas, caché, límites y fallo cerrado. Las comprobaciones estáticas de seis páginas, Contador y descargas también pasan. La instalación de dependencias Vite quedó bloqueada por ENOTFOUND del registro npm y la revisión visual del sitio no pudo completarse por bloqueo de la vista previa/navegador. No se afirma que esa compilación web ni el despliegue hayan sido verificados.
+
+El ejecutable nuevo se publica en la carpeta de trabajo. La copia a dist fue denegada por el entorno; el archivo anterior de dist no se considera actualizado con esta revisión. Debe desplegarse/configurarse el servicio y verificarse una consulta real antes de distribuir la nueva compilación.
+
+## Corrección de estadísticas: dominio definitivo
+
+El cliente de Contador usa directamente https://www.axxon.dev/api/fortnite-stats. La dirección anterior sin www redirige a ese dominio; el cliente mantiene desactivadas las redirecciones automáticas. Se confirmó en navegador una respuesta JSON real de Axxon_G en el destino definitivo, sin leer la clave privada.
+
+Validación: 302 comprobaciones del motor y 9 del panel WPF de estadísticas aprobadas. Publicación Windows x64 generada con la preparación local de compilación existente; se verificó que todas las fuentes C#, XAML y proyectos de src/vendor coincidieran con el repositorio. Se reemplazó dist/2.0.0/Contador.exe y se comprobó su SHA-256 contra la compilación. La ejecución completa de la nueva app con una búsqueda real queda para la prueba del usuario; la comprobación de producción se hizo sobre el servicio y las pruebas del cliente usan respuestas simuladas.
+
+## Preparación 2.0.1
+
+Versión del proyecto, etiqueta derivada del ensamblado y ejecutable de distribución alineados a 2.0.1. Archivo: dist/2.0.1/Contador.exe; FileVersion 2.0.1.0 y ProductVersion 2.0.1. SHA-256: F16B7BB68ADD03DC50D4B8199E03B5AC248601ABF9D896E78C59FA8A57C0B679.
+
+Pruebas: motor 302; cierre/cuentas 4; mapa 18; instancia única 8; bandeja 8; equipo 3; conteo opcional 13; shell 18; estadísticas 9. Total 383 aprobadas. Publicación autocontenida Windows x64 y coincidencia de la copia comprobadas. La consulta de vulnerabilidades de NuGet no estuvo disponible por la conexión del entorno; no se presenta como una comprobación aprobada de dependencias.
+
+Revisión de publicación: integración nueva y flujos revisados estáticamente, sin hallazgos de fuga en los cambios examinados. Búsqueda de patrones de secretos sobre 354 textos actuales y 549 blobs históricos locales; la única coincidencia fue un GUID de sesión en una prueba, no una credencial. Ningún .env, certificado privado, clave o replay figura entre los archivos publicables. Se añadieron exclusiones preventivas de esos archivos y de registros/datos locales. No se inspeccionaron todos los binarios/imágenes ni todas las dependencias; no se garantiza ausencia absoluta de vulnerabilidades. La revisión cubre los cambios de la integración previa al ajuste de metadatos/documentación de 2.0.1.

@@ -80,6 +80,7 @@ public partial class MainWindow : Window
         PeriodFrom.Language = PeriodThrough.Language = System.Windows.Markup.XmlLanguage.GetLanguage(System.Globalization.CultureInfo.CurrentCulture.IetfLanguageTag);
         PeriodFrom.SelectedDate = config.MatchDateFrom;
         PeriodThrough.SelectedDate = config.MatchDateThrough;
+        Closed += (_, _) => StatisticsPanel.Model.Dispose();
         profilePicker = new ProfilePickerController(ProfilePicker, key => SaveAsync(() => config.Profile = key));
         Refresh();
         Navigate("summary");
@@ -182,6 +183,10 @@ public partial class MainWindow : Window
     {
         vm.Refresh(data, config, sessionCounter);
         profilePicker.Refresh(data, config);
+        var statisticsProfile = Profiles.Current(data, config);
+        var statisticsEpicId = data.Matches.FirstOrDefault(match => statisticsProfile != null
+            && Profiles.Key(match) == statisticsProfile.Key && !string.IsNullOrWhiteSpace(match.EpicId))?.EpicId;
+        StatisticsPanel.Model.SetProfile(statisticsEpicId, statisticsProfile?.Name);
         RefreshLiveMatch();
     }
     private void ShowError(Exception ex)
@@ -248,20 +253,22 @@ public partial class MainWindow : Window
     }
     private void Navigate(string page)
     {
-        foreach (var (button, key) in new[] { (NavSummary, "summary"), (NavHistory, "history"), (NavTeam, "team"), (NavRoutes, "routes"), (NavReport, "report"), (NavSettings, "settings") })
+        foreach (var (button, key) in new[] { (NavSummary, "summary"), (NavStatistics, "statistics"), (NavHistory, "history"), (NavTeam, "team"), (NavRoutes, "routes"), (NavReport, "report"), (NavSettings, "settings") })
         {
             button.Background = page == key ? (System.Windows.Media.Brush)FindResource("Gold") : System.Windows.Media.Brushes.Transparent;
             button.Foreground = (System.Windows.Media.Brush)FindResource(page == key ? "Ground" : "Ink");
         }
         SummaryPanel.Visibility = page == "summary" ? Visibility.Visible : Visibility.Collapsed;
+        StatisticsPanel.Visibility = page == "statistics" ? Visibility.Visible : Visibility.Collapsed;
         HistoryPanel.Visibility = page == "history" ? Visibility.Visible : Visibility.Collapsed;
         TeamPanel.Visibility = page == "team" ? Visibility.Visible : Visibility.Collapsed;
         RoutesPanel.Visibility = page == "routes" ? Visibility.Visible : Visibility.Collapsed;
         ReportPanel.Visibility = page == "report" ? Visibility.Visible : Visibility.Collapsed;
-        StatusPanel.Visibility = page is "routes" or "report" ? Visibility.Collapsed : Visibility.Visible;
+        StatusPanel.Visibility = page is "routes" or "report" or "statistics" ? Visibility.Collapsed : Visibility.Visible;
         SettingsPanel.Visibility = page == "settings" ? Visibility.Visible : Visibility.Collapsed;
         PageTitle.Text = page switch
         {
+            "statistics" => "Estadísticas",
             "history" => "Historial",
             "team" => "Equipo",
             "routes" => "Mapa y rutas",
@@ -271,6 +278,7 @@ public partial class MainWindow : Window
         };
         PageSubtitle.Text = page switch
         {
+            "statistics" => "Conecta el perfil y consulta sus estadísticas públicas.",
             "history" => "Consulta tus partidas y exporta el registro.",
             "team" => "Reúne las perspectivas de una misma partida.",
             "routes" => "Explora el mapa y prepara tu próximo recorrido.",
@@ -278,6 +286,11 @@ public partial class MainWindow : Window
             "settings" => "Personaliza fechas, repeticiones y overlay.",
             _ => "Tu actividad, en un vistazo."
         };
+    }
+    private void StatisticsClick(object sender, RoutedEventArgs e)
+    {
+        Navigate("statistics");
+
     }
     private void TeamPageClick(object sender, RoutedEventArgs e) => Navigate("team");
     private void SummaryClick(object sender, RoutedEventArgs e) => Navigate("summary");
@@ -413,6 +426,7 @@ public partial class MainWindow : Window
     private void BeginClose()
     {
         closing = true; timer.Stop(); presenceTimer.Stop();
+        StatisticsPanel.Model.Dispose();
         StopVisualCapture();
         vm.Status = "Guardando antes de salir";
         vm.StatusDetail = vm.IsBusy ? "Esperando a que termine el análisis actual…" : "Cerrando el contador…";

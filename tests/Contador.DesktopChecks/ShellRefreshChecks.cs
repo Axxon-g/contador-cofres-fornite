@@ -27,7 +27,7 @@ internal static class ShellRefreshChecks
             foreach (var attribute in item.Attributes().Where(attribute =>
                 attribute.Name.LocalName is "Click" or "SelectionChanged" or "DateValidationError" or "ToggleRequested").ToList())
                 attribute.Remove();
-            if (item.Name.LocalName is "RouteSuggestionsView" or "PlayerReportView")
+            if (item.Name.LocalName is "RouteSuggestionsView" or "PlayerReportView" or "PlayerStatisticsView")
                 item.Name = ui + "ContentControl"; // Prevent any constructor that reads local plans.
         }
         var text = doc.ToString().Replace("clr-namespace:Contador", "clr-namespace:Contador;assembly=Contador");
@@ -89,9 +89,10 @@ internal static class ShellRefreshChecks
         routes.Planner.HighDetailEnabled = false;
         ((ContentControl)window.FindName("RoutesPanel")).Content = routes;
         ((ContentControl)window.FindName("ReportPanel")).Content = new PlayerReportView { DataContext = vm };
-        var paths = new[] { "SummaryPanel", "HistoryPanel", "TeamPanel", "RoutesPanel", "ReportPanel", "SettingsPanel" };
-        var navs = new[] { "NavSummary", "NavHistory", "NavTeam", "NavRoutes", "NavReport", "NavSettings" };
-        var titles = new[] { "Resumen", "Historial", "Equipo", "Mapa y rutas", "Informe", "Ajustes" };
+        ((ContentControl)window.FindName("StatisticsPanel")).Content = await PlayerStatisticsViewChecks.CreatePreview();
+        var paths = new[] { "SummaryPanel", "StatisticsPanel", "HistoryPanel", "TeamPanel", "RoutesPanel", "ReportPanel", "SettingsPanel" };
+        var navs = new[] { "NavSummary", "NavStatistics", "NavHistory", "NavTeam", "NavRoutes", "NavReport", "NavSettings" };
+        var titles = new[] { "Resumen", "Estadísticas", "Historial", "Equipo", "Mapa y rutas", "Informe", "Ajustes" };
         window.Show();
         try
         {
@@ -108,7 +109,7 @@ internal static class ShellRefreshChecks
                     foreach (var name in paths) ((FrameworkElement)window.FindName(name)).Visibility = name == paths[index] ? Visibility.Visible : Visibility.Collapsed;
                     ((TextBlock)window.FindName("PageTitle")).Text = titles[index];
                     ((TextBlock)window.FindName("PageSubtitle")).Text = "Vista de prueba · datos ficticios";
-                    ((FrameworkElement)window.FindName("StatusPanel")).Visibility = index is 3 or 4 ? Visibility.Collapsed : Visibility.Visible;
+                    ((FrameworkElement)window.FindName("StatusPanel")).Visibility = paths[index] is "RoutesPanel" or "ReportPanel" or "StatisticsPanel" ? Visibility.Collapsed : Visibility.Visible;
                     for (var n = 0; n < navs.Length; n++)
                     {
                         var button = (Button)window.FindName(navs[n]);
@@ -147,7 +148,7 @@ internal static class ShellRefreshChecks
             vm.SelectedTeamMatch = vm.TeamMatches.Last();
             if (vm.TeamPlayers.Count != 1 || vm.TeamSelectedTotal != "—")
                 throw new Exception("Una partida antigua sin datos de equipo inventa compañeros.");
-            Console.WriteLine("16 comprobaciones del conjunto de pantallas correctas, con datos ficticios y sin red.");
+            Console.WriteLine("18 comprobaciones del conjunto de pantallas correctas, con datos ficticios y sin red.");
         }
         finally { window.Close(); }
     }

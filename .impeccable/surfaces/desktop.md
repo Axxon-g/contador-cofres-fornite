@@ -1,3 +1,17 @@
+# Desktop — Operate
+
+## Superficie vigente · estadísticas mediante servicio compartido
+
+Siete espacios: Resumen, Estadísticas, Historial, Equipo, Mapa y rutas, Informe, Ajustes. Estadísticas es el segundo botón. Paleta pirata, Segoe UI, ventana 1180 × 820/mínimo 860 × 640, rail 184 y moneda72 se conservan; cofre56 antes del total personal. Fuente: MainWindow, PlayerStatisticsView, PlayerStatisticsViewModel y Contador.Engine/Statistics en este árbol preparado.
+
+Estadísticas pide nombre Epic/PlayStation/Xbox por defecto y ofrece usar cuenta seleccionada como opción. Sin campos de claves, sin conexión de credenciales ni almacén Windows: el usuario rechazó expresamente ese enfoque. Consulta/cancelación y filtros historial/temporada/control preceden resultados. Las cifras32 se redistribuyen en columnas140; tabla de modalidades con desplazamiento horizontal. Cuenta, contexto, actualización y estados accesibles distinguen éxito, vacío y error. Raya no es cero; Tríos no está disponible y los filtros de fechas del contador no se aplican. No se muestra la franja del lector.
+
+El cliente usa exclusivamente https://www.axxon.dev/api/fortnite-stats, sin Authorization ni clave. El objetivo/filtros pasan al servicio AXXON; cofres, capturas y repeticiones no. Clave privada solo en Vercel del servicio; caché y cuotas requieren Upstash Redis. Sin configuración, respuesta503: no se afirma conexión operativa. Caché local de memoria cinco minutos, timeout15 segundos, respuesta256KiB; historial propio intacto.
+
+Evidencia de 2.0.1: 302 comprobaciones del motor y 81 de escritorio aprobadas. La versión de producto del ejecutable es 2.0.1. El servicio compartido anterior está desplegado y se comprobó una respuesta real en el dominio www; las pruebas del cliente usan respuestas simuladas. La nueva interfaz web detallada tiene su revisión visual pendiente y no se certifica aquí. Los registros siguientes son históricos; sus seis espacios, posición anterior del cofre o claves individuales no son autoritativos.
+
+## Registro histórico anterior
+
 ## Ubicación del cofre
 
 El cofre de 56 × 56 aparece antes del total personal en Resumen; se elimina del pie de la navegación.

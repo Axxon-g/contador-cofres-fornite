@@ -20,6 +20,12 @@ public static class Program
         {
             try
             {
+                if (args.Length >= 1 && args[0] == "--stats-view")
+                {
+                    await PlayerStatisticsViewChecks.Run(application, args.Length == 2 ? args[1] : null);
+                    application.Shutdown();
+                    return;
+                }
                 if (args.Length >= 1 && args[0] == "--shell-refresh")
                 {
                     await ShellRefreshChecks.Run(application, args.Length == 2 ? args[1] : null);

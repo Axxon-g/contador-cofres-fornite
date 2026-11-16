@@ -328,6 +328,7 @@ try
     VisualChecks.Run(Check);
     LedgerChecks.Run(Check);
     TeamReplayChecks.Run(Check);
+    PlayerStatisticsChecks.Run(Check);
     Console.WriteLine($"{checks} comprobaciones correctas.");
 }
 finally { Directory.Delete(folder, recursive: true); }
