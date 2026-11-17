@@ -117,6 +117,14 @@ internal static class InteractiveMapChecks
             "Carga limpia datos desconocidos sin inventar puntos");
         var otherVersion = new MapPlan(new MapPlanState { Dataset = "otra-isla", Route = [new("vieja", 1000, 1000)] });
         check(otherVersion.State.Route.Count == 0, "No mezcla posiciones de otro catálogo");
+        var longRoute = Enumerable.Range(0, 1500)
+            .Select(i => new RouteNode("Parada " + i, first.X, first.Y)).ToList();
+        var unlimited = new MapPlan();
+        unlimited.SetRoute(longRoute);
+        check(unlimited.AddStop(new("Una más", first.X, first.Y))
+            && unlimited.State.Route.Count == 1501, "Ruta admite más de cien y mil paradas");
+        var restoredRoute = new MapPlan(JsonSerializer.Deserialize<MapPlanState>(JsonSerializer.Serialize(unlimited.State)));
+        check(restoredRoute.State.Route.Count == 1501, "Recargar no recorta rutas largas");
         var bounded = new MapPlan();
         for (var i = 0; i < 35; i++) bounded.AddStop(new("Parada", first.X, first.Y));
         for (var i = 0; i < 30; i++) bounded.Undo();

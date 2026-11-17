@@ -34,3 +34,19 @@ El informe se recalcula al terminar un análisis o cambiar cuenta y período. No
 ## Comprobación
 
 `dotnet run --project tests/Contador.Checks -- --report-only` comprueba agregados, fechas, cuenta, sesión, separación del equipo, correspondencia con el HTML, estados vacíos, cobertura parcial e integridad de las guías. La vista aislada con datos ficticios se abre con `dotnet run --project tests/Contador.DesktopChecks -- --views-preview` y no lee ni escribe el historial del usuario.
+
+## Ampliación en 2.2 · 16/11/2026
+
+Se añaden dos opciones editables de la comunidad:
+
+- [RubyEii: circuito desde Lantern Landing](https://www.reddit.com/r/AllFortnite/comments/1xrf05a/how_to_average_50_chests_per_match_a_guide_with/).
+  La app marca Lantern Landing, el sector de The Chest y el regreso. El original
+  describe bóvedas, jardines y torres sin coordenadas verificadas: esos interiores
+  no se convierten en puntos exactos inventados.
+- [PurpleDuctape: búsqueda en Cursed Cavern](https://www.reddit.com/r/FortniteBR/comments/1xmtpaz/heres_some_help_with_the_chest_hunt/).
+  Marca el sector de inicio; la fuente explica el recorrido interior y la salida
+  sur. El mapa no distingue plantas ni garantiza cofres disponibles.
+
+Puedes añadir todas las referencias de cofres de un lugar, ordenadas por cercanía.
+Se excluyen posiciones ya incluidas en la ruta. La operación se deshace como una
+sola acción y no cambia el contador. No se garantiza transitabilidad ni premios.

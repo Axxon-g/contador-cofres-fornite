@@ -38,7 +38,8 @@ public sealed class ProfilePickerController
 
     private async void SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (updating || pendingKey != null || picker.SelectedValue is not string key) return;
+        if (updating || pendingKey != null || e.AddedItems.OfType<Choice>().FirstOrDefault() is not { } choice) return;
+        var key = choice.Key;
         pendingKey = key;
         picker.IsEnabled = false;
         try { await save(key); }

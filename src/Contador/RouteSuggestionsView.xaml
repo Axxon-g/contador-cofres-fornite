@@ -36,9 +36,11 @@
                     <TextBlock x:Name="ZoomLabel" Text="100 %" Width="55" VerticalAlignment="Center" Margin="0,0,6,6" />
                     <Button Content="Ver isla" Click="FitMap" Padding="10,7" Margin="0,0,6,6" />
                     <Button x:Name="ExpandButton" Content="Ampliar mapa" Click="ExpandMap" Padding="10,7" Margin="0,0,6,6" />
+                    <Button Content="Reiniciar ruta" Click="ClearRoute" IsEnabled="{Binding HasRoute}" Padding="10,7" Margin="0,0,6,6" />
                     <Button Content="Deshacer" Click="Undo" IsEnabled="{Binding CanUndo}" Padding="10,7" Margin="0,0,0,6" />
-                    <CheckBox Content="Editar ruta" IsChecked="{Binding EditRoute}" FontSize="13" Margin="10,0,4,6" VerticalAlignment="Center" ToolTip="En edición, pulsa para añadir paradas y arrástralas para moverlas. Esc sale de edición." />
+                    <CheckBox Content="Crear / editar ruta" IsChecked="{Binding EditRoute}" FontSize="13" Margin="10,0,4,6" VerticalAlignment="Center" ToolTip="En edición, pulsa para añadir paradas y arrástralas para moverlas. Esc sale de edición." />
                 </WrapPanel>
+                <TextBlock Text="Doble clic: empezar ruta · un clic: añadir parada · arrastrar parada: mover · Esc: terminar" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,4,0,0" TextWrapping="Wrap" />
             </StackPanel>
         </Border>
         <Grid Grid.Row="2" MinHeight="260">
@@ -57,6 +59,7 @@
                                 <TextBox x:Name="PointSearch" Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}" Padding="8" AutomationProperties.Name="Buscar puntos del mapa" />
                                 <Label Content="Ir a un lugar" Target="{Binding ElementName=PlacePicker}" Foreground="{StaticResource Ink}" Padding="0,12,0,6" />
                                 <ComboBox x:Name="PlacePicker" ItemsSource="{Binding PlaceNames}" SelectionChanged="PlaceChanged" Padding="7" AutomationProperties.Name="Centrar un lugar del mapa" />
+                                <Button Content="Añadir cofres de este lugar" Click="AddPlaceChests" Padding="8" Margin="0,8,0,10" ToolTip="Selecciona un lugar. Añade sus cofres por proximidad; no calcula accesos ni plantas." />
                                 <ItemsControl ItemsSource="{Binding Layers}" Margin="0,12,0,0">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
@@ -98,7 +101,7 @@
                             <StackPanel>
                                 <TextBlock Text="Mi ruta" FontSize="17" FontWeight="SemiBold" Margin="0,0,0,10" />
                                 <CheckBox Content="Mostrar ruta" IsChecked="{Binding ShowRoute}" FontSize="13" />
-                                <TextBlock Text="Activa Editar ruta en la barra superior para añadir o mover paradas." FontSize="12" Foreground="{StaticResource Muted}" Margin="0,0,0,12" />
+                                <TextBlock Text="Doble clic en el mapa para empezar. Después, un clic por parada. Arrastra una parada para moverla; Esc termina la edición. Sin límite de paradas." FontSize="12" Foreground="{StaticResource Muted}" Margin="0,0,0,12" />
                                 <ListBox x:Name="RouteStops" ItemsSource="{Binding RouteRows}" SelectedItem="{Binding SelectedStop}" DisplayMemberPath="Label" Height="140" FontSize="12" SelectionChanged="StopChosen" AutomationProperties.Name="Paradas de mi ruta" />
                                 <WrapPanel Margin="0,8,0,16">
                                     <Button Content="Quitar parada" Click="RemoveStop" IsEnabled="{Binding HasSelectedStop}" Padding="8" Margin="0,0,4,6" />

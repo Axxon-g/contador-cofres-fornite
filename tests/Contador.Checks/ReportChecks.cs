@@ -60,7 +60,7 @@ internal static class ReportChecks
         config.Profile = "B";
         check(PlayerReport.Create(data, config, session, date).Total == 500, "Cambio de cuenta recalcula informe");
         check(data.Matches.Count == 4 && data.Matches[0].ChestsOpened == 12, "El informe no modifica el historial");
-        check(RouteGuides.All.Count == 4, "Cuatro propuestas editoriales independientes");
+        check(RouteGuides.All.Count >= 6, "Conserva guías anteriores y añade recorridos de foros");
         check(RouteGuides.All.All(g => g.Sources.Count > 0 && !string.IsNullOrEmpty(g.Caution)),
             "Cada propuesta declara fuentes y límites");
         check(RouteGuides.All.SelectMany(g => g.Stops).All(s => s.U is >= 0 and <= 1 && s.V is >= 0 and <= 1),

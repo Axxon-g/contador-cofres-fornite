@@ -86,7 +86,7 @@ public sealed class MapPlannerModel : INotifyPropertyChanged
         {
             try
             {
-                if (new FileInfo(statePath).Length > 1_000_000) throw new InvalidDataException("Archivo demasiado grande.");
+                if (new FileInfo(statePath).Length > 64_000_000) throw new InvalidDataException("Archivo demasiado grande.");
                 state = JsonSerializer.Deserialize<MapPlanState>(File.ReadAllText(statePath));
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException)
@@ -185,11 +185,35 @@ public sealed class MapPlannerModel : INotifyPropertyChanged
     {
         if (!Plan.AddStop(new RouteNode(name ?? $"Mi parada {Plan.State.Route.Count + 1}", x, y)))
         {
-            SaveMessage = "La ruta admite hasta 100 paradas dentro del mapa.";
+            SaveMessage = "Elige una posición dentro de la isla para añadir la parada.";
             NotifyAll();
             return;
         }
         selectedGuide = null;
+        ShowRoute = true;
+        ChangedPlan();
+    }
+
+    public void AddPlaceChests(string place)
+    {
+        var remaining = Catalog.Points.Where(point => point.Place == place
+            && point.Kind is "chest" or "rare_chest" or "buried_chest")
+            .Where(point => !Plan.State.Route.Any(node => node.X == point.X && node.Y == point.Y))
+            .ToList();
+        if (remaining.Count == 0) return;
+        var route = Plan.State.Route.ToList();
+        var previous = route.LastOrDefault();
+        while (remaining.Count > 0)
+        {
+            var next = previous == null ? remaining[0] : remaining.MinBy(point =>
+                Math.Pow(point.X - previous.X, 2) + Math.Pow(point.Y - previous.Y, 2))!;
+            previous = new RouteNode(next.ListLabel, next.X, next.Y);
+            route.Add(previous);
+            remaining.Remove(next);
+        }
+        Plan.SetRoute(route);
+        selectedGuide = null;
+        ShowRoute = true;
         ChangedPlan();
     }
 

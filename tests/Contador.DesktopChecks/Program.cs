@@ -97,7 +97,7 @@ public static class Program
                 }
                 if (args.Contains("--map-ui-only"))
                 {
-                    await MapUiChecks.Run(application);
+                    await MapUiChecks.Run(application, args.Length == 2 ? args[1] : null);
                     application.Shutdown();
                     return;
                 }
@@ -172,7 +172,7 @@ public static class Program
             var overlay = new SessionCounter(DateTime.UtcNow).Overlay(Profiles.View(data, config), false);
             if (!picker.IsEnabled || config.Profile != "B" || store.LoadConfig()?.Profile != "B" || dashboard.Total != "12" || Profiles.View(data, config).Matches.Single().EpicId != "B")
                 throw new Exception("La cuenta elegida no se guardó o sus estadísticas se mezclaron.");
-            picker.SelectedValue = "A";
+            picker.SelectedIndex = 1; // User selection updates SelectedItem before SelectedValue.
             if (config.Profile != "A" || dashboard.Total != "5") throw new Exception("No permite volver a la primera cuenta.");
             controller.Refresh(new TrackerData(), config);
             if (picker.IsEnabled) throw new Exception("Selector sin cuentas debe quedar inactivo.");

@@ -1,3 +1,22 @@
+# Contador 2.2.1 · verificación previa a publicación
+
+- Motor: **369 comprobaciones** correctas.
+- Escritorio: **97 comprobaciones** correctas: cierre/cuentas (4), mapa (22),
+  instancia (8), segundo plano (8), equipo (3), conteo visual (13), pantallas (20),
+  perfil público (10) y tesoros (9).
+- Total: **466**, con datos de prueba y sin capturar la pantalla del usuario.
+- Se comprueban rutas de 1.501 paradas, recarga sin recortes, reinicio y deshacer,
+  incorporación de cofres por lugar y cambio de cuenta durante análisis.
+- Mapa revisado mediante capturas de prueba en dos anchos: 1.000 y 860 unidades.
+- Publicación autocontenida x64 como 2.2.1; archivo Windows 2.2.1.0. Copia final
+  verificada por SHA-256. Huella en [RELEASE-v2.2.1.md](docs/RELEASE-v2.2.1.md).
+- Se mantienen los límites de la lectura de repeticiones y del equipo. Esta
+  revisión no acredita precisión completa de conteos ni todos los formatos.
+- La consulta de vulnerabilidades de NuGet no estuvo disponible durante el
+  empaquetado; no se afirma una auditoría actualizada de dependencias.
+
+---
+
 # Contador 2.2 · verificación previa a publicación
 
 - Motor: **365 comprobaciones** correctas.

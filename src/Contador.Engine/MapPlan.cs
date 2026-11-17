@@ -24,7 +24,7 @@ public sealed class MapPlan
         State.Reviews = (State.Reviews ?? new()).Where(kv => ids.Contains(kv.Key)
             && Enum.IsDefined(kv.Value)).ToDictionary(kv => kv.Key, kv => kv.Value);
         State.Route = (State.Route ?? []).Where(n => n != null && n.Name != null
-            && n.Name.Length <= 180 && MapCatalog.ValidPosition(n.X, n.Y)).Take(100).ToList();
+            && n.Name.Length <= 180 && MapCatalog.ValidPosition(n.X, n.Y)).ToList();
         State.Layers = (State.Layers ?? []).Where(key => MapCatalog.Categories.Any(c => c.Key == key)).Distinct().ToList();
     }
 
@@ -45,7 +45,7 @@ public sealed class MapPlan
 
     public bool AddStop(RouteNode node)
     {
-        if (State.Route.Count >= 100 || !MapCatalog.ValidPosition(node.X, node.Y)) return false;
+        if (!MapCatalog.ValidPosition(node.X, node.Y)) return false;
         BeforeChange();
         State.Route.Add(node with { Name = string.IsNullOrWhiteSpace(node.Name) ? "Mi parada" : node.Name[..Math.Min(180, node.Name.Length)] });
         return true;
@@ -53,7 +53,7 @@ public sealed class MapPlan
 
     public void SetRoute(IEnumerable<RouteNode> nodes)
     {
-        var valid = nodes.Where(n => MapCatalog.ValidPosition(n.X, n.Y)).Take(100).ToList();
+        var valid = nodes.Where(n => MapCatalog.ValidPosition(n.X, n.Y)).ToList();
         BeforeChange();
         State.Route = valid;
     }

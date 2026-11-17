@@ -12,7 +12,7 @@ public sealed record RouteGuide(
 /// <summary>Editorial suggestions, independent of replay data and never loot predictions.</summary>
 public static class RouteGuides
 {
-    public const string Reviewed = "Revisado el 13/11/2026 · Treasure Hunters · Battle Royale / Cero construcción";
+    public const string Reviewed = "Revisado el 16/11/2026 · Treasure Hunters · Battle Royale / Cero construcción";
     public const string Notice = "Zonas de búsqueda, no zonas con premios garantizados. No hay datos comparables para clasificar dónde se han obtenido más recompensas. Los testimonios son individuales; busca más cofres sin descuidar la tormenta ni los combates.";
     public static IReadOnlyList<RouteGuide> All { get; } = Array.AsReadOnly<RouteGuide>([
         new(
@@ -56,7 +56,25 @@ public static class RouteGuides
                 new("Windmill Village", 88d / 375, 266d / 375, "Revisa las construcciones próximas y los cofres enterrados que encuentres; prioriza los accesos seguros."),
                 new("Loguetown", 164d / 375, 251d / 375, "Tras saquear la zona inicial, rota si la tormenta y el resto de equipos lo permiten.")
             ],
-            [new("Burnaviour · Windmill Village y rotación cercana", "https://burnaviour.dev/places/windmill-village/")])
+            [new("Burnaviour · Windmill Village y rotación cercana", "https://burnaviour.dev/places/windmill-village/")]),
+        new(
+            "Lantern Landing → The Chest → Lantern Landing",
+            "Recorrido compartido por RubyEii · Reddit · consultado el 16/11/2026",
+            "Una propuesta de la comunidad combina Lantern Landing, el sector de la bóveda cerca de The Chest y el regreso al lugar inicial. Las paradas indican sectores; consulta el recorrido original para los pasos interiores.",
+            "Los resultados publicados son personales. Las bóvedas, jardines y torres no están geolocalizados en esta guía. Ajusta la ruta al círculo, los accesos y los enemigos; no se garantiza un número de cofres ni premios.",
+            [
+                new("Lantern Landing", 0, 0, "Empieza por las construcciones próximas y revisa los accesos seguros."),
+                new("The Chest", 0, 0, "Referencia del sector: el autor propone la bóveda cercana y jardines. Ajusta las paradas manualmente a los accesos que conozcas."),
+                new("Lantern Landing", 0, 0, "Regresa solo si quedan cofres disponibles y la tormenta permite continuar.")
+            ],
+            [new("RubyEii · circuito y discusión (Reddit)", "https://www.reddit.com/r/AllFortnite/comments/1xrf05a/how_to_average_50_chests_per_match_a_guide_with/")]),
+        new(
+            "Cursed Cavern · explorar el interior",
+            "Recorrido de PurpleDuctape · Reddit · consultado el 16/11/2026",
+            "El autor recomienda comenzar dentro de Cursed Cavern, revisar sus zonas ocultas y continuar por la salida sur. Esta opción marca el área inicial: los pasos interiores se describen en la fuente y puedes dibujarlos en tu ruta.",
+            "Sin datos de altura, la vista del mapa no distingue cuevas, techos ni plantas. No copiamos posiciones interiores sin verificar ni prometemos cofres disponibles. Prioriza salir antes de la tormenta.",
+            [new("Cursed Cavern", 0, 0, "Comienza en el interior. Revisa accesos y salida sur; amplía la ruta manualmente cuando conozcas el terreno.")],
+            [new("PurpleDuctape · recorrido explicado (Reddit)", "https://www.reddit.com/r/FortniteBR/comments/1xmtpaz/heres_some_help_with_the_chest_hunt/")])
     ]);
 
     public static GuideSource Official { get; } = new(

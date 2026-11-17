@@ -1,10 +1,10 @@
 <div align="center">
   <img src="docs/images/banner.svg" width="960" alt="Contador — Tu botín, en cifras. Una aplicación de escritorio para Fortnite.">
-  <h1>Contador de cofres para Fortnite · 2.2</h1>
+  <h1>Contador de cofres para Fortnite · 2.2.1</h1>
   <p><strong>Tu botín, en cifras.</strong><br>Historial personal, mapa, tesoros, progreso y overlay para Windows.</p>
   <p>
     <img src="https://img.shields.io/badge/Windows-10%20%2F%2011-183D60?style=flat-square" alt="Windows 10 y 11">
-    <img src="https://img.shields.io/badge/x64-2.2-FFD05A?style=flat-square&amp;labelColor=80273C" alt="Versión 2.2 para x64">
+    <img src="https://img.shields.io/badge/x64-2.2.1-FFD05A?style=flat-square&amp;labelColor=80273C" alt="Versión 2.2.1 para x64">
     <a href="https://github.com/Axxon-g/contador-cofres-fornite/releases"><img src="https://img.shields.io/github/downloads/Axxon-g/contador-cofres-fornite/Contador.exe?style=flat-square&amp;label=Descargas&amp;color=FFD05A&amp;labelColor=80273C&amp;displayAssetName=false" alt="Descargas acumuladas del ejecutable"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/Licencia-MIT-183D60?style=flat-square" alt="Licencia MIT"></a>
   </p>
@@ -20,10 +20,20 @@
 > El historial se calcula con **repeticiones locales finalizadas**. Activa **Grabar repeticiones** en Fortnite. El conteo visual en tiempo real es opcional y experimental; no sustituye al historial ni garantiza detectar cada apertura.
 
 La descarga apunta a la última Release **publicada** en GitHub. Este código prepara
-**Contador 2.2**: el nuevo ejecutable estará disponible en ese botón cuando se adjunte
+**Contador 2.2.1**: el nuevo ejecutable estará disponible en ese botón cuando se adjunte
 y publique la Release. La insignia cuenta descargas del archivo, no personas únicas.
 
-## Lo nuevo en 2.2
+## Lo nuevo en 2.2.1
+
+- Rutas sin el límite de cien paradas, también al guardar y volver a abrir.
+- Doble clic para empezar y un clic por parada, con reinicio y opción de deshacer.
+- Añadir los cofres de un lugar en orden de proximidad.
+- Nuevas sugerencias editables de la comunidad con sus fuentes y limitaciones.
+- Corrección del selector para cambiar entre cuentas sin mezclar sus cifras.
+
+[Notas de Contador 2.2.1](docs/RELEASE-v2.2.1.md).
+
+## Funciones del contador
 
 | Función | Qué puedes hacer |
 |---|---|
@@ -51,7 +61,7 @@ al buscar un nombre.
   <br><sub>Vista con datos de ejemplo para mostrar la interfaz.</sub>
 </p>
 
-[Notas de Contador 2.2](docs/RELEASE-v2.2.md) ·
+[Notas de Contador 2.2.1](docs/RELEASE-v2.2.1.md) · [Cambios de 2.2](docs/RELEASE-v2.2.md) ·
 [Diseño](docs/DISENO-2.2.md) · [Probabilidades y límites](docs/PROBABILIDADES.md).
 
 ## Primeros pasos
@@ -133,6 +143,25 @@ El catálogo integrado corresponde a Treasure Hunters **43.10**: 2.146 referenci
 Vistas de la interfaz con datos de ejemplo, sin acceso al historial real del usuario.
 </details>
 
+### Crear tu ruta
+
+1. Abre **Mapa y rutas** y haz doble clic en el punto de inicio.
+2. Haz un clic por cada parada que quieras añadir. Puedes incorporar tantos puntos como necesites.
+3. Arrastra una parada para cambiar su posición. Pulsa **Esc** para terminar de editar.
+4. Usa **Reiniciar ruta** para vaciarla o **Deshacer** para recuperar una edición.
+
+Para empezar con un recorrido ya preparado, elige **Cargar ruta sugerida** y
+consulta **Guía y fuentes**. También puedes seleccionar un lugar y pulsar
+**Añadir cofres de este lugar**. Las sugerencias son orientativas y editables;
+no prometen una cantidad de cofres ni mejores probabilidades de premio.
+
+### Cambiar de cuenta
+
+Elige **Cuenta** en la cabecera. La selección se conserva mientras termina un
+análisis y actualiza las vistas para ese perfil. Si no aparecen tus otras cuentas,
+comprueba que haya partidas suyas en el historial local. Las cuentas sin partidas
+en el período elegido siguen disponibles, con sus cifras del período a cero.
+
 ## Overlay y segundo plano
 
 Activa el overlay desde **Ajustes** y utiliza Fortnite en pantalla completa en ventana para permitir que Windows lo muestre encima.
@@ -171,7 +200,7 @@ defecto. Solo conserva nuevas repeticiones compatibles analizadas; ocupa espacio
 no recupera archivos borrados y no los sube a ningún servidor.
 
 Una actualización del formato de Fortnite puede requerir cambios del lector.
-La versión 2.2 no garantiza resolver todos los archivos incompatibles.
+La versión 2.2.1 no garantiza resolver todos los archivos incompatibles.
 
 ## Seguridad y privacidad
 
@@ -191,7 +220,7 @@ Si aparece una detección concreta o no puedes comprobar su origen, no lo ejecut
 
 ### Comprueba el archivo que descargues
 
-Puedes subir **tu copia del ejecutable** a [VirusTotal](https://www.virustotal.com/) antes de abrirla. El [análisis compartido anteriormente](https://www.virustotal.com/gui/file/f0ebdf6c9a65c57b66b97957ab37574e96f32c136201fedcd97be4bb05e2a1c6) corresponde a otro archivo y **no acredita esta compilación 2.2**. Ningún resultado aislado garantiza ausencia de malware.
+Puedes subir **tu copia del ejecutable** a [VirusTotal](https://www.virustotal.com/) antes de abrirla. El [análisis compartido anteriormente](https://www.virustotal.com/gui/file/f0ebdf6c9a65c57b66b97957ab37574e96f32c136201fedcd97be4bb05e2a1c6) corresponde a otro archivo y **no acredita esta compilación 2.2.1**. Ningún resultado aislado garantiza ausencia de malware.
 
 Para calcular su huella en PowerShell:
 
@@ -243,7 +272,7 @@ cd contador-cofres-fornite
 .\build.bat
 ```
 
-El script comprueba el motor y los controles de escritorio y genera **`dist\2.2.0\Contador.exe`**. Cierra la app antes de sustituir ese archivo. La publicación es autocontenida; no hace falta distribuir los archivos de código ni ejecutar scripts en el equipo del usuario.
+El script comprueba el motor y los controles de escritorio y genera **`dist\2.2.1\Contador.exe`**. Cierra la app antes de sustituir ese archivo. La publicación es autocontenida; no hace falta distribuir los archivos de código ni ejecutar scripts en el equipo del usuario.
 
 ```text
 src/Contador/              Interfaz WPF, captura opcional y coordinación
@@ -253,7 +282,7 @@ vendor/                   Lector y dependencias con sus licencias
 docs/                     Uso, seguridad, investigación y versiones
 ```
 
-- [Notas de la versión 2.2](docs/RELEASE-v2.2.md) · [Versión 2.0.1](docs/RELEASE-v2.0.1.md) · [Versión 2.0](docs/RELEASE-v2.0.0.md)
+- [Notas de la versión 2.2.1](docs/RELEASE-v2.2.1.md) · [Versión 2.2](docs/RELEASE-v2.2.md) · [Versión 2.0.1](docs/RELEASE-v2.0.1.md) · [Versión 2.0](docs/RELEASE-v2.0.0.md)
 - [Arquitectura](docs/ARQUITECTURA.md) · [Verificación y límites](VERIFICACION.md)
 - [Investigación de lectores y conciliación](docs/INVESTIGACION-v2.0.md)
 - [Procedencia y licencias de dependencias](vendor/UPSTREAM.md)

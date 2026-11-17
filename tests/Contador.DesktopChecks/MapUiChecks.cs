@@ -10,7 +10,7 @@ namespace Contador.DesktopChecks;
 
 internal static class MapUiChecks
 {
-    public static async Task Run(Application app)
+    public static async Task Run(Application app, string? captureFolder = null)
     {
         ViewsPreview.LoadStyles(app);
         var view = new RouteSuggestionsView(false);
@@ -82,6 +82,36 @@ internal static class MapUiChecks
             Check(view.Planner.Plan.State.Route.Count == 0, "Vaciar ruta no altera catálogo");
             Click("Deshacer");
             Check(view.Planner.Plan.State.Route.Count == 3, "Deshacer recupera ruta vaciada");
+            view.Planner.ClearRoute();
+            view.Planner.AddPlaceChests("Lantern Landing");
+            var expected = view.Planner.Catalog.Points.Count(p => p.Place == "Lantern Landing"
+                && p.Kind is "chest" or "rare_chest" or "buried_chest");
+            Check(expected > 0 && view.Planner.Plan.State.Route.Count == expected,
+                "Añadir lugar incluye sus cofres sin depender de capas ni búsqueda");
+            view.Planner.AddPlaceChests("Lantern Landing");
+            Check(view.Planner.Plan.State.Route.Count == expected, "Añadir el mismo lugar no duplica paradas");
+            Click("Reiniciar ruta");
+            Check(!view.Planner.HasRoute, "Reinicio visible vacía la ruta");
+            Click("Deshacer");
+            Check(view.Planner.Plan.State.Route.Count == expected, "Reinicio permite recuperar la ruta");
+            if (captureFolder != null)
+            {
+                System.IO.Directory.CreateDirectory(captureFolder);
+                foreach (var size in new[] { 1000, 860 })
+                {
+                    window.Width = size;
+                    window.UpdateLayout();
+                    view.MapControl.Fit();
+                    await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
+                    var bitmap = new System.Windows.Media.Imaging.RenderTargetBitmap(
+                        (int)view.ActualWidth, (int)view.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+                    bitmap.Render(view);
+                    var encoder = new System.Windows.Media.Imaging.PngBitmapEncoder();
+                    encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(bitmap));
+                    using var output = System.IO.File.Create(System.IO.Path.Combine(captureFolder, $"map-{size}.png"));
+                    encoder.Save(output);
+                }
+            }
             Console.WriteLine($"{checks} comprobaciones WPF del mapa interactivo correctas.");
         }
         finally { window.Close(); }

@@ -21,6 +21,8 @@ public sealed class InteractiveMap : FrameworkElement
     public event EventHandler? ViewChanged;
     private Point start, last;
     private bool dragging;
+    private bool doubleClick;
+    private MapPosition? firstClickPosition;
     private int dragStop = -1;
     private MapPosition? stopPreview;
     private MapTileCache? tileCache;
@@ -250,6 +252,8 @@ public sealed class InteractiveMap : FrameworkElement
         Focus();
         start = last = e.GetPosition(this);
         dragging = false;
+        doubleClick = e.ClickCount == 2;
+        if (!doubleClick) firstClickPosition = Viewport.ToMap(start.X, start.Y);
         dragStop = -1;
         if (Model is { EditRoute: true, ShowRoute: true } model)
         {
@@ -278,7 +282,7 @@ public sealed class InteractiveMap : FrameworkElement
             return;
         }
         var hit = Hit(point);
-        ToolTip = hit == null ? "Rueda: zoom. Arrastra para mover. En edición, pulsa para añadir una parada." :
+        ToolTip = hit == null ? "Rueda: zoom. Arrastra para mover. Doble clic: crear ruta. Después, un clic por parada. Esc: terminar." :
             hit.Points.Count > 1 ? $"{hit.Points.Count} puntos próximos. Pulsa para acercarte o elegir uno." : hit.Points[0].ListLabel;
     }
     protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
@@ -289,12 +293,18 @@ public sealed class InteractiveMap : FrameworkElement
             Model?.MoveStop(dragStop, stopPreview.X, stopPreview.Y);
         else if (!dragging)
         {
-            if (Model?.EditRoute == true && dragStop < 0)
+            if (Model is { EditRoute: false } startModel && doubleClick)
+            {
+                startModel.EditRoute = true;
+                var position = firstClickPosition ?? Viewport.ToMap(point.X, point.Y);
+                startModel.AddStop(position.X, position.Y);
+            }
+            else if (Model?.EditRoute == true && dragStop < 0 && !doubleClick)
             {
                 var position = Viewport.ToMap(point.X, point.Y);
                 Model.AddStop(position.X, position.Y);
             }
-            else if (Hit(point) is { } group)
+            else if (!doubleClick && Hit(point) is { } group)
             {
                 Model?.SelectGroup(group.Points);
                 if (group.Points.Count > 1 && Viewport.Zoom < MapViewport.MaxZoom)

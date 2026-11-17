@@ -86,6 +86,10 @@ public partial class RouteSuggestionsView : UserControl
     private void AddPointStop(object sender, RoutedEventArgs e) => Planner.AddPointStop();
     private void RemoveStop(object sender, RoutedEventArgs e) => Planner.RemoveStop();
     private void ClearRoute(object sender, RoutedEventArgs e) => Planner.ClearRoute();
+    private void AddPlaceChests(object sender, RoutedEventArgs e)
+    {
+        if (PlacePicker.SelectedItem is string place) Planner.AddPlaceChests(place);
+    }
     private void Undo(object sender, RoutedEventArgs e) => Planner.Undo();
     private void OpenSource(object sender, RequestNavigateEventArgs e)
     {
